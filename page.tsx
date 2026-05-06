@@ -1,68 +1,88 @@
-import { aircraft, totalAircraft, useGroups } from "./aircraft";
-import Nav from "./Nav";
-import WikiImage from "./WikiImage";
+import Nav from "../../Nav";
+import WikiImage from "../../WikiImage";
+import { aircraft, getAircraft, relatedAircraft } from "../../aircraft";
 
-const featured = [
-  aircraft.find((item) => item.slug === "f-22-raptor")!,
-  aircraft.find((item) => item.slug === "airbus-a380")!,
-  aircraft.find((item) => item.slug === "supermarine-spitfire")!
-];
+export function generateStaticParams() {
+  return aircraft.map((item) => ({ slug: item.slug }));
+}
 
-export default function HomePage() {
+export default async function AircraftDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const item = getAircraft(slug);
+
+  if (!item) {
+    return (
+      <>
+        <Nav />
+        <main className="page">
+          <section className="container">
+            <a className="btn" href="/enciclopedia">← Volver</a>
+            <h1>Avión no encontrado</h1>
+          </section>
+        </main>
+      </>
+    );
+  }
+
+  const related = relatedAircraft(item);
+
   return (
     <>
       <Nav />
       <main className="page">
-        <section className="container hero">
+        <section className="container detail-hero">
           <div>
-            <p className="kicker">WikiAir · visual aviation index</p>
-            <h1>La enciclopedia visual de aviones.</h1>
-            <p className="lead">
-              Más de {totalAircraft} aeronaves iniciales separadas por uso: militares, comerciales,
-              privadas, carga, entrenamiento, históricas y experimentales. Con imágenes reales desde
-              Wikipedia/Wikimedia y un radar en vivo por OpenSky.
-            </p>
-            <div className="actions">
-              <a className="btn btn-primary" href="/enciclopedia">Explorar aviones</a>
-              <a className="btn btn-cyan" href="/radar">Ver radar</a>
+            <a className="back" href="/enciclopedia">← Volver a enciclopedia</a>
+            <p className="kicker">{item.use} · {item.category}</p>
+            <h1>{item.name}</h1>
+            <p className="lead">{item.summary}</p>
+
+            <div className="notice">
+              Datos técnicos referenciales. En próximas versiones pueden validarse contra Wikidata/Firebase por versión exacta.
             </div>
           </div>
 
-          <div className="hero-gallery">
-            {featured.map((item) => (
-              <div className="hero-shot" key={item.slug}>
-                <WikiImage title={item.wikiTitle} alt={item.name} className="air-img" />
-                <span className="image-label">{item.name}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="container">
-          <div className="stats">
-            <div className="stat"><strong>{totalAircraft}</strong><span>Aeronaves iniciales</span></div>
-            <div className="stat"><strong>7</strong><span>Usos principales</span></div>
-            <div className="stat"><strong>Live</strong><span>Radar OpenSky</span></div>
-            <div className="stat"><strong>PWA</strong><span>Instalable en celular</span></div>
+          <div className="detail-image">
+            <WikiImage title={item.wikiTitle} alt={item.name} className="air-img" />
           </div>
         </section>
 
         <section className="container section">
-          <p className="kicker">Separado por uso</p>
-          <div className="grid grid-3">
-            {useGroups.map((group) => (
-              <a className="card card-pad category-card" href={`/enciclopedia?uso=${encodeURIComponent(group.use)}`} key={group.use}>
-                <span className="badge">{group.count} fichas</span>
-                <strong>{group.use}</strong>
-                <span>Ver aeronaves de uso {group.use.toLowerCase()}.</span>
+          <div className="card card-pad">
+            <h2>Ficha técnica</h2>
+            <div className="spec-row"><span>Fabricante</span><strong>{item.manufacturer}</strong></div>
+            <div className="spec-row"><span>País</span><strong>{item.country}</strong></div>
+            <div className="spec-row"><span>Uso</span><strong>{item.use}</strong></div>
+            <div className="spec-row"><span>Categoría</span><strong>{item.category}</strong></div>
+            <div className="spec-row"><span>Era</span><strong>{item.era}</strong></div>
+            <div className="spec-row"><span>Estado</span><strong>{item.status}</strong></div>
+            <div className="spec-row"><span>Velocidad</span><strong>{item.maxSpeed}</strong></div>
+            <div className="spec-row"><span>Alcance</span><strong>{item.range}</strong></div>
+            <div className="spec-row"><span>Techo</span><strong>{item.ceiling}</strong></div>
+            <div className="spec-row"><span>Motores</span><strong>{item.engines}</strong></div>
+            <div className="spec-row"><span>Capacidad</span><strong>{item.capacity}</strong></div>
+            <div className="spec-row"><span>Licencia</span><strong>{item.license}</strong></div>
+          </div>
+        </section>
+
+        <section className="container section">
+          <p className="kicker">Más de {item.use}</p>
+          <div className="air-grid">
+            {related.map((other) => (
+              <a className="card air-card" href={`/avion/${other.slug}`} key={other.slug}>
+                <div className="air-thumb">
+                  <WikiImage title={other.wikiTitle} alt={other.name} className="air-img soft" />
+                  <span className="image-label">{other.use}</span>
+                </div>
+                <div className="air-body">
+                  <span className="badge">{other.category}</span>
+                  <div className="air-title">{other.name}</div>
+                  <div className="air-meta">{other.manufacturer}</div>
+                </div>
               </a>
             ))}
           </div>
         </section>
-
-        <footer className="container footer">
-          WikiAir V3 · Datos referenciales por versión. Imágenes solicitadas dinámicamente a Wikipedia/Wikimedia.
-        </footer>
       </main>
     </>
   );
