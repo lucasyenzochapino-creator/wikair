@@ -1,23 +1,27 @@
-import AircraftExplorer from "@/AircraftExplorer";
+import AircraftExplorer from "../AircraftExplorer";
+import Nav from "../Nav";
+import { totalAircraft } from "../aircraft";
 
 export default function EnciclopediaPage() {
   return (
-    <main className="page">
-      <section className="container">
-        <a className="back" href="/">← Volver</a>
+    <>
+      <Nav />
+      <main className="page">
+        <section className="container catalog-head">
+          <p className="kicker">Catálogo visual</p>
+          <h1>Enciclopedia WikiAir</h1>
+          <p className="lead">
+            {totalAircraft} aeronaves iniciales, separadas por uso, con buscador y acceso a ficha técnica.
+          </p>
+          <div className="notice">
+            Esta versión prioriza impacto visual y navegación. Las imágenes se cargan desde Wikipedia/Wikimedia y pueden tardar unos segundos la primera vez.
+          </div>
+        </section>
 
-        <p className="gold">WIKIAIR V3 PRO</p>
-
-        <h1>Enciclopedia por uso</h1>
-
-        <p style={{ color: "#cfcfcf", fontSize: 18, lineHeight: 1.6 }}>
-          Aeronaves organizadas por uso: militares, comerciales, privadas,
-          carga, entrenamiento, históricas y experimentales. Cada ficha incluye
-          imagen real cuando está disponible desde Wikipedia/Wikimedia.
-        </p>
-
-        <AircraftExplorer />
-      </section>
-    </main>
+        <section className="container">
+          <AircraftExplorer />
+        </section>
+      </main>
+    </>
   );
 }
