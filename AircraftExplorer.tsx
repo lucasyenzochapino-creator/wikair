@@ -1,82 +1,99 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { aircraft, useGroups } from "@/lib/aircraft";
-import WikiImage from "@/components/WikiImage";
+import { aircraft, useGroups, useOrder } from "./aircraft";
+import WikiImage from "./WikiImage";
 
 export default function AircraftExplorer() {
   const [query, setQuery] = useState("");
-  const [group, setGroup] = useState<(typeof useGroups)[number]>("Todos");
+  const [selectedUse, setSelectedUse] = useState("Todos");
+  const [visible, setVisible] = useState(60);
 
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const normalized = query.trim().toLowerCase();
+
     return aircraft.filter((item) => {
-      const matchesGroup = group === "Todos" || item.use === group;
-      const haystack = `${item.name} ${item.manufacturer} ${item.country} ${item.use} ${item.category} ${item.era}`.toLowerCase();
-      return matchesGroup && (!q || haystack.includes(q));
+      const matchesUse = selectedUse === "Todos" || item.use === selectedUse;
+      const searchable = `${item.name} ${item.manufacturer} ${item.country} ${item.category} ${item.era}`.toLowerCase();
+      const matchesSearch = !normalized || searchable.includes(normalized);
+      return matchesUse && matchesSearch;
     });
-  }, [query, group]);
+  }, [query, selectedUse]);
+
+  const shown = filtered.slice(0, visible);
 
   return (
-    <section className="container catalogSection">
+    <section>
       <div className="toolbar">
-        <div className="searchBox">
-          <label>Buscar avión, país, fabricante o uso</label>
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Ej: F-22, Airbus, Argentina, caza, carga..."
-          />
-        </div>
+        <input
+          className="search"
+          placeholder="Buscar por avión, fabricante, país, uso o categoría..."
+          value={query}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            setVisible(60);
+          }}
+        />
 
-        <div className="filterChips" aria-label="Filtros por uso">
-          {useGroups.map((item) => (
-            <button
-              key={item}
-              className={group === item ? "chip active" : "chip"}
-              onClick={() => setGroup(item)}
-              type="button"
-            >
-              {item}
-            </button>
+        <select
+          className="select"
+          value={selectedUse}
+          onChange={(event) => {
+            setSelectedUse(event.target.value);
+            setVisible(60);
+          }}
+        >
+          <option>Todos</option>
+          {useOrder.map((use) => (
+            <option key={use}>{use}</option>
           ))}
-        </div>
+        </select>
       </div>
 
-      <div className="resultInfo">
-        <strong>{filtered.length}</strong> aeronaves visibles · Base inicial ampliable
-      </div>
-
-      <div className="aircraftGrid">
-        {filtered.map((item) => (
-          <article className="aircraftCard" key={item.slug}>
-            <a href={`/avion/${item.slug}`} className="imageLink" aria-label={`Ver ficha de ${item.name}`}>
-              <WikiImage title={item.wikiTitle} alt={item.name} className="aircraftImage" />
-            </a>
-
-            <div className="aircraftContent">
-              <div className="cardTopline">
-                <span>{item.use}</span>
-                <span>{item.firstFlight}</span>
-              </div>
-
-              <h2>{item.name}</h2>
-              <p className="muted">{item.category}</p>
-
-              <div className="miniSpecs">
-                <span>País: {item.country}</span>
-                <span>Fabricante: {item.manufacturer}</span>
-                <span>Velocidad: {item.maxSpeed}</span>
-                <span>Alcance: {item.range}</span>
-              </div>
-
-              <p className="summary">{item.summary}</p>
-
-              <a className="detailsButton" href={`/avion/${item.slug}`}>Ver ficha técnica</a>
-            </div>
-          </article>
+      <div className="chips">
+        <button className={`chip ${selectedUse === "Todos" ? "active" : ""}`} onClick={() => setSelectedUse("Todos")}>
+          Todos · {aircraft.length}
+        </button>
+        {useGroups.map((group) => (
+          <button
+            key={group.use}
+            className={`chip ${selectedUse === group.use ? "active" : ""}`}
+            onClick={() => setSelectedUse(group.use)}
+          >
+            {group.use} · {group.count}
+          </button>
         ))}
       </div>
+
+      <p className="muted">
+        Mostrando {shown.length} de {filtered.length} aeronaves. Las imágenes se cargan desde Wikipedia/Wikimedia cuando están disponibles.
+      </p>
+
+      <div className="air-grid">
+        {shown.map((item) => (
+          <a className="card air-card" href={`/avion/${item.slug}`} key={item.slug}>
+            <div className="air-thumb">
+              <WikiImage title={item.wikiTitle} alt={item.name} className="air-img soft" />
+              <span className="image-label">{item.use}</span>
+            </div>
+            <div className="air-body">
+              <span className="badge">{item.category}</span>
+              <div className="air-title">{item.name}</div>
+              <div className="air-meta">
+                {item.manufacturer}<br />
+                {item.country} · {item.era}<br />
+                Estado: {item.status}
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      {visible < filtered.length && (
+        <button className="btn btn-primary load-more" onClick={() => setVisible((value) => value + 60)}>
+          Cargar más aviones
+        </button>
+      )}
     </section>
   );
 }

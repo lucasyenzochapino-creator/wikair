@@ -3,9 +3,10 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "WikiAir",
-  description: "Enciclopedia visual de aviación con aviones militares, comerciales, privados, históricos, carga, entrenamiento y radar en vivo.",
+  description: "Enciclopedia visual de aviación con imágenes reales, fichas técnicas y radar en vivo.",
   manifest: "/manifest.json",
-  themeColor: "#050505"
+  themeColor: "#050505",
+  viewport: "width=device-width, initial-scale=1"
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

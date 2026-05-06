@@ -1,26 +1,15 @@
-# WikiAir V2 Visual
+# WikiAir V3 Pro
 
-PWA de aviación con diseño dark luxury, imágenes reales cargadas desde Wikipedia/Wikimedia, buscador, filtros por uso, fichas técnicas y radar en vivo.
+PWA de aviación con diseño premium, más de 160 aeronaves iniciales, imágenes reales desde Wikipedia/Wikimedia, secciones por uso, buscador, ficha técnica y radar con OpenSky.
 
 ## Rutas
 
-- `/` Inicio premium
+- `/` Inicio visual
 - `/enciclopedia` Catálogo con buscador y filtros
 - `/avion/[slug]` Ficha técnica individual
-- `/historia` Línea de tiempo histórica
-- `/radar` Radar embebido
+- `/historia` Línea de tiempo
+- `/radar` Radar en vivo con OpenSky + acceso externo
 
-## Instalación local
+## Nota
 
-```bash
-npm install
-npm run dev
-```
-
-## Despliegue
-
-Subir los archivos extraídos a GitHub y conectar con Vercel. Framework: Next.js. No requiere variables de entorno para esta versión.
-
-## Imágenes reales
-
-Las tarjetas cargan miniaturas automáticamente desde la API pública de Wikipedia según el título de cada aeronave.
+Las imágenes se cargan dinámicamente desde la API REST pública de Wikipedia/Wikimedia según el título de cada aeronave.
