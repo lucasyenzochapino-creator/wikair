@@ -20,7 +20,4 @@ export default function EnciclopediaPage() {
       </section>
     </main>
   );
-}      </section>
-    </main>
-  );
 }
