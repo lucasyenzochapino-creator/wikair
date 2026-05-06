@@ -1,69 +1,61 @@
 import Header from "@/components/Header";
-import { aircraft, countByUse } from "@/lib/aircraft";
+import WikiImage from "@/components/WikiImage";
+import { aircraft, getAircraftBySlug } from "@/lib/aircraft";
+import { notFound } from "next/navigation";
 
-export default function HomePage() {
-  const stats = countByUse();
+export function generateStaticParams() {
+  return aircraft.map((item) => ({ slug: item.slug }));
+}
+
+export default function AircraftDetailPage({ params }: { params: { slug: string } }) {
+  const item = getAircraftBySlug(params.slug);
+  if (!item) return notFound();
+
+  const specs = [
+    ["Uso", item.use],
+    ["Categoría", item.category],
+    ["Fabricante", item.manufacturer],
+    ["País", item.country],
+    ["Primer vuelo", item.firstFlight],
+    ["Estado", item.status],
+    ["Velocidad máxima", item.maxSpeed],
+    ["Alcance", item.range],
+    ["Techo de vuelo", item.ceiling],
+    ["Motores", item.engines],
+    ["Tripulación", item.crew],
+    ["Capacidad", item.capacity],
+    ["Licencia requerida", item.license],
+    ["Era", item.era]
+  ];
 
   return (
     <main className="page">
       <Header />
+      <section className="container specLayout">
+        <div className="specImageBox">
+          <WikiImage title={item.wikiTitle} alt={item.name} className="aircraftImage" />
+        </div>
 
-      <section className="container hero">
-        <div>
-          <p className="kicker">WIKIAIR · Enciclopedia visual</p>
-          <h1>La app de aviación que sí llama la atención.</h1>
-          <p>
-            Base visual con aeronaves militares, comerciales, privadas, históricas, cargueras,
-            entrenadores y experimentales. Cada ficha tiene imagen real desde Wikipedia/Wikimedia,
-            datos técnicos y separación clara por uso.
+        <article className="specPanel">
+          <a className="backLink" href="/enciclopedia">← Volver a enciclopedia</a>
+          <p className="kicker">{item.use} · {item.country}</p>
+          <h1>{item.name}</h1>
+          <p className="lead">{item.summary}</p>
+
+          <div className="specGrid">
+            {specs.map(([label, value]) => (
+              <div className="specItem" key={label}>
+                <small>{label}</small>
+                <span>{value}</span>
+              </div>
+            ))}
+          </div>
+
+          <p className="notice">
+            Los datos pueden variar según versión, motor, configuración, carga y operador. Esta ficha está preparada para ser refinada con fuentes aeronáuticas específicas.
           </p>
-
-          <div className="heroActions">
-            <a className="primaryBtn" href="/enciclopedia">Explorar aviones</a>
-            <a className="secondaryBtn" href="/radar">Ver radar en vivo</a>
-          </div>
-        </div>
-
-        <div className="heroPanel" aria-label="Panel visual WikiAir">
-          <div className="heroPlane">✈</div>
-        </div>
+        </article>
       </section>
-
-      <section className="container statsGrid">
-        <div className="statCard">
-          <strong>{aircraft.length}</strong>
-          <span>Aeronaves iniciales</span>
-        </div>
-        {stats.slice(0, 3).map((item) => (
-          <div className="statCard" key={item.group}>
-            <strong>{item.count}</strong>
-            <span>{item.group}</span>
-          </div>
-        ))}
-      </section>
-
-      <section className="container featureGrid">
-        <a className="featureCard" href="/enciclopedia">
-          <p className="kicker">01</p>
-          <h2>Enciclopedia</h2>
-          <p>Buscador, filtros por uso y tarjetas visuales con foto real para cada aeronave.</p>
-        </a>
-        <a className="featureCard" href="/historia">
-          <p className="kicker">02</p>
-          <h2>Historia</h2>
-          <p>Línea de tiempo desde los pioneros hasta jets, guerra fría y era espacial.</p>
-        </a>
-        <a className="featureCard" href="/radar">
-          <p className="kicker">03</p>
-          <h2>Radar en vivo</h2>
-          <p>Mapa de tráfico aéreo centrado en Entre Ríos y zona litoral.</p>
-        </a>
-      </section>
-
-      <footer className="container footerNote">
-        Imágenes: se cargan automáticamente desde la API pública de Wikipedia cuando existe miniatura disponible.
-        Datos técnicos: valores aproximados por variante; la app está preparada para ampliar la base y conectar Firebase más adelante.
-      </footer>
     </main>
   );
 }
