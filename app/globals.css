@@ -9,6 +9,7 @@ html, body {
 }
 
 a { color: inherit; }
+button { font-family: inherit; }
 
 .page {
   min-height: 100vh;
@@ -78,7 +79,7 @@ a { color: inherit; }
   backdrop-filter: blur(12px);
 }
 
-.categoryNav a, .pill, .radarLink {
+.categoryNav a, .pill, .radarLink, .tabButton, .tabActive, .detailButton {
   border: 1px solid rgba(212,175,55,.35);
   background: rgba(212,175,55,.08);
   color: #f0d98a;
@@ -86,6 +87,23 @@ a { color: inherit; }
   padding: 9px 13px;
   text-decoration: none;
   font-size: 14px;
+  cursor: pointer;
+}
+
+.tabActive {
+  background: linear-gradient(135deg, #d4af37, #8a6415);
+  color: #050505;
+  font-weight: 800;
+}
+
+.detailButton {
+  width: 100%;
+  margin-top: 16px;
+  border-radius: 16px;
+  padding: 12px 14px;
+  background: rgba(0,217,255,.08);
+  border-color: rgba(0,217,255,.35);
+  color: #9eefff;
 }
 
 .groupBlock { padding: 32px 0 54px; }
@@ -94,7 +112,7 @@ a { color: inherit; }
 
 .aircraftGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
 }
 
@@ -140,6 +158,26 @@ a { color: inherit; }
   font-size: 14px;
 }
 
+.detailPanel {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.045);
+  border: 1px solid rgba(255,255,255,.10);
+}
+
+.detailPanel h4 {
+  margin: 0 0 12px;
+  color: #d4af37;
+  font-size: 20px;
+}
+
+.detailPanel p {
+  margin: 9px 0;
+  color: #dedede;
+  font-size: 14px;
+}
+
 .radarPanel {
   border: 1px solid rgba(255,255,255,.12);
   border-radius: 28px;
@@ -171,4 +209,5 @@ a { color: inherit; }
   .page { padding: 18px; }
   .imageBox { height: 190px; }
   .radarMap { height: 420px; }
+  .categoryNav { position: static; }
 }
