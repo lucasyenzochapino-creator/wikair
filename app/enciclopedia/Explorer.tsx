@@ -2,7 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { aircraft } from "./data";
+import { extraAircraft } from "./extraData";
 import { groups, type AircraftGroup } from "./types";
+
+const allAircraft = [...aircraft, ...extraAircraft];
 
 type WikiImage = { url: string; title: string };
 
@@ -30,19 +33,27 @@ function GalleryFromCommons({ query }: { query: string }) {
 
   useEffect(() => {
     let active = true;
-    const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query + " aircraft")}&gsrnamespace=6&gsrlimit=12&prop=imageinfo&iiprop=url&iiurlwidth=900&format=json&origin=*`;
+    const searches = [
+      `${query} aircraft`,
+      `${query} cockpit`,
+      `${query} interior`,
+      `${query} aviation`
+    ];
 
-    fetch(url)
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (!active || !data?.query?.pages) return;
-        const found = Object.values(data.query.pages)
-          .map((page: any) => ({ title: page.title?.replace("File:", "") || "Imagen", url: page.imageinfo?.[0]?.thumburl || page.imageinfo?.[0]?.url }))
-          .filter((item: WikiImage) => Boolean(item.url))
-          .slice(0, 10);
-        setImages(found);
+    Promise.all(
+      searches.map((text) => {
+        const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(text)}&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url&iiurlwidth=900&format=json&origin=*`;
+        return fetch(url).then((res) => (res.ok ? res.json() : null)).catch(() => null);
       })
-      .catch(() => setImages([]));
+    ).then((results) => {
+      if (!active) return;
+      const found = results
+        .flatMap((data) => Object.values(data?.query?.pages || {}) as any[])
+        .map((page: any) => ({ title: page.title?.replace("File:", "") || "Imagen", url: page.imageinfo?.[0]?.thumburl || page.imageinfo?.[0]?.url }))
+        .filter((item: WikiImage) => Boolean(item.url));
+      const unique = Array.from(new Map(found.map((item) => [item.url, item])).values()).slice(0, 12);
+      setImages(unique);
+    }).catch(() => setImages([]));
 
     return () => { active = false; };
   }, [query]);
@@ -67,7 +78,7 @@ export default function Explorer() {
   const [active, setActive] = useState<AircraftGroup>("Militar");
   const [open, setOpen] = useState<string | null>(null);
 
-  const list = useMemo(() => aircraft.filter((item) => item.group === active), [active]);
+  const list = useMemo(() => allAircraft.filter((item) => item.group === active), [active]);
 
   return (
     <>
@@ -81,7 +92,7 @@ export default function Explorer() {
 
       <section className="container groupBlock">
         <div className="groupTitle">
-          <p className="gold">{list.length} aeronaves cargadas</p>
+          <p className="gold">{list.length} aeronaves cargadas · Total WikiAir: {allAircraft.length}</p>
           <h2>{active}</h2>
         </div>
 
