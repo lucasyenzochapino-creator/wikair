@@ -3,9 +3,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { aircraft } from "./data";
 import { extraAircraft } from "./extraData";
+import { specialAviation } from "./specialAviation";
 import { groups, type AircraftGroup } from "./types";
 
-const allAircraft = [...aircraft, ...extraAircraft];
+const allAircraft = [...aircraft, ...extraAircraft, ...specialAviation];
 
 type WikiImage = { url: string; title: string };
 
@@ -33,19 +34,12 @@ function GalleryFromCommons({ query }: { query: string }) {
 
   useEffect(() => {
     let active = true;
-    const searches = [
-      `${query} aircraft`,
-      `${query} cockpit`,
-      `${query} interior`,
-      `${query} aviation`
-    ];
+    const searches = [`${query} aircraft`, `${query} cockpit`, `${query} interior`, `${query} aviation`];
 
-    Promise.all(
-      searches.map((text) => {
-        const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(text)}&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url&iiurlwidth=900&format=json&origin=*`;
-        return fetch(url).then((res) => (res.ok ? res.json() : null)).catch(() => null);
-      })
-    ).then((results) => {
+    Promise.all(searches.map((text) => {
+      const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(text)}&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url&iiurlwidth=900&format=json&origin=*`;
+      return fetch(url).then((res) => (res.ok ? res.json() : null)).catch(() => null);
+    })).then((results) => {
       if (!active) return;
       const found = results
         .flatMap((data) => Object.values(data?.query?.pages || {}) as any[])
@@ -58,9 +52,7 @@ function GalleryFromCommons({ query }: { query: string }) {
     return () => { active = false; };
   }, [query]);
 
-  if (!images.length) {
-    return <div className="galleryEmpty">Buscando galería real para esta aeronave...</div>;
-  }
+  if (!images.length) return <div className="galleryEmpty">Buscando galería real para esta aeronave...</div>;
 
   return (
     <div className="photoGallery">
@@ -100,7 +92,6 @@ export default function Explorer() {
           {list.map((plane) => {
             const isOpen = open === plane.name;
             const wikiUrl = `https://en.wikipedia.org/wiki/${encodeURIComponent(plane.wiki).replaceAll("%20", "_")}`;
-
             return (
               <article className="aircraftCard" key={plane.name}>
                 <div className="imageBox"><ImageFromWiki title={plane.wiki} name={plane.name} /></div>
@@ -112,6 +103,7 @@ export default function Explorer() {
                     <span>Motor: {plane.engine}</span>
                     <span>Capacidad: {plane.capacity}</span>
                     <span>Licencia: {plane.license}</span>
+                    {plane.mission && <span>Misión: {plane.mission}</span>}
                   </div>
                   <button className="detailButton" onClick={() => setOpen(isOpen ? null : plane.name)}>
                     {isOpen ? "Cerrar ficha" : "Ver ficha completa"}
@@ -127,6 +119,9 @@ export default function Explorer() {
                       <p><b>Principales operadores / países:</b> {plane.operators}</p>
                       <p><b>Interior / cabina:</b> {plane.interior}</p>
                       <p><b>Historia / uso:</b> {plane.history}</p>
+                      {plane.weapons && <p><b>Armamento / poder de fuego:</b> {plane.weapons}</p>}
+                      {plane.mission && <p><b>Objetivos de misión:</b> {plane.mission}</p>}
+                      {plane.rescueRole && <p><b>Rol de rescate:</b> {plane.rescueRole}</p>}
 
                       <h4>Galería dentro de WikiAir</h4>
                       <GalleryFromCommons query={plane.wiki} />
