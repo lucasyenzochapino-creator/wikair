@@ -1,6 +1,4 @@
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 html, body {
   margin: 0;
@@ -10,32 +8,24 @@ html, body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-a {
-  color: inherit;
-}
+a { color: inherit; }
 
 .page {
   min-height: 100vh;
   padding: 24px;
   background:
-    radial-gradient(circle at top right, rgba(212, 175, 55, 0.12), transparent 35%),
-    linear-gradient(180deg, #080808 0%, #050505 100%);
+    radial-gradient(circle at top right, rgba(212, 175, 55, 0.18), transparent 32%),
+    radial-gradient(circle at bottom left, rgba(0, 220, 255, 0.10), transparent 30%),
+    linear-gradient(180deg, #090909 0%, #050505 100%);
 }
 
-.container {
-  max-width: 1080px;
-  margin: 0 auto;
-}
+.container { max-width: 1180px; margin: 0 auto; }
+.gold { color: #d4af37; }
 
-.gold {
-  color: #d4af37;
-}
+.hero { padding: 56px 0 32px; }
+.compactHero { padding-bottom: 18px; }
 
-.hero {
-  padding: 56px 0 32px;
-}
-
-.hero h1 {
+.hero h1, .groupTitle h2 {
   font-size: clamp(38px, 8vw, 76px);
   line-height: 1;
   margin: 16px 0;
@@ -43,7 +33,7 @@ a {
 }
 
 .hero p {
-  max-width: 720px;
+  max-width: 760px;
   color: #cfcfcf;
   font-size: 18px;
   line-height: 1.6;
@@ -61,20 +51,13 @@ a {
   padding: 22px;
   border: 1px solid #2d2d2d;
   border-radius: 22px;
-  background: linear-gradient(180deg, #141414, #0d0d0d);
+  background: linear-gradient(180deg, rgba(25,25,25,.96), rgba(10,10,10,.96));
   text-decoration: none;
   box-shadow: 0 20px 60px rgba(0,0,0,.35);
 }
 
-.card h2 {
-  margin: 8px 0;
-  font-size: 24px;
-}
-
-.card p {
-  color: #bdbdbd;
-  line-height: 1.5;
-}
+.card h2 { margin: 8px 0; font-size: 24px; }
+.card p { color: #bdbdbd; line-height: 1.5; }
 
 .back {
   display: inline-block;
@@ -83,27 +66,109 @@ a {
   margin-bottom: 24px;
 }
 
-.specs {
-  display: grid;
-  gap: 8px;
-  color: #e8e8e8;
-  margin-top: 12px;
+.categoryNav {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 10px auto 34px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  padding: 12px 0;
+  backdrop-filter: blur(12px);
 }
 
-iframe {
-  width: 100%;
-  height: 650px;
-  border: 1px solid #333;
-  border-radius: 22px;
-  background: #111;
+.categoryNav a, .pill, .radarLink {
+  border: 1px solid rgba(212,175,55,.35);
+  background: rgba(212,175,55,.08);
+  color: #f0d98a;
+  border-radius: 999px;
+  padding: 9px 13px;
+  text-decoration: none;
+  font-size: 14px;
 }
+
+.groupBlock { padding: 32px 0 54px; }
+.groupTitle { margin-bottom: 18px; }
+.groupTitle h2 { font-size: clamp(30px, 5vw, 54px); }
+
+.aircraftGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.aircraftCard {
+  overflow: hidden;
+  border-radius: 26px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: linear-gradient(180deg, rgba(23,23,23,.98), rgba(9,9,9,.98));
+  box-shadow: 0 24px 80px rgba(0,0,0,.38);
+}
+
+.imageBox {
+  height: 210px;
+  background: linear-gradient(135deg, #151515, #2a2a2a);
+  overflow: hidden;
+}
+
+.imageBox img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(1.06) contrast(1.04);
+}
+
+.imageFallback {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: #d4af37;
+  letter-spacing: 2px;
+}
+
+.aircraftBody { padding: 20px; }
+.aircraftBody h3 { margin: 12px 0 8px; font-size: 24px; }
+.aircraftBody p { color: #c6c6c6; line-height: 1.5; }
+
+.specList {
+  display: grid;
+  gap: 7px;
+  margin-top: 14px;
+  color: #e8e8e8;
+  font-size: 14px;
+}
+
+.radarPanel {
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 28px;
+  background: linear-gradient(180deg, rgba(20,20,20,.96), rgba(8,8,8,.96));
+  padding: 24px;
+  box-shadow: 0 24px 80px rgba(0,0,0,.4);
+}
+
+.radarMap {
+  height: 520px;
+  border-radius: 24px;
+  border: 1px solid rgba(212,175,55,.26);
+  background:
+    linear-gradient(rgba(212,175,55,.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212,175,55,.08) 1px, transparent 1px),
+    radial-gradient(circle at center, rgba(0,220,255,.16), transparent 34%),
+    #050505;
+  background-size: 48px 48px, 48px 48px, auto, auto;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 24px;
+}
+
+.radarMap h2 { font-size: clamp(30px, 6vw, 64px); margin: 0 0 12px; }
+.radarActions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
 
 @media (max-width: 600px) {
-  .page {
-    padding: 18px;
-  }
-
-  iframe {
-    height: 520px;
-  }
+  .page { padding: 18px; }
+  .imageBox { height: 190px; }
+  .radarMap { height: 420px; }
 }
