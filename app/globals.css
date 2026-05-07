@@ -80,7 +80,7 @@ button { font-family: inherit; }
   backdrop-filter: blur(12px);
 }
 
-.categoryNav a, .pill, .radarLink, .tabButton, .tabActive, .detailButton {
+.categoryNav a, .pill, .radarLink, .tabButton, .tabActive, .detailButton, .modalClose {
   border: 1px solid rgba(212,175,55,.35);
   background: rgba(212,175,55,.08);
   color: #f0d98a;
@@ -125,18 +125,34 @@ button { font-family: inherit; }
   box-shadow: 0 24px 80px rgba(0,0,0,.38);
 }
 
-.imageBox {
-  height: 210px;
-  background: linear-gradient(135deg, #151515, #2a2a2a);
+.imageBox, .modalHeroImage, .historyImage {
+  background: #050505;
   overflow: hidden;
+  display: grid;
+  place-items: center;
 }
 
-.imageBox img, .historyImage img, .photoGallery img {
+.imageBox { height: 240px; }
+.modalHeroImage { height: min(42vh, 430px); border-radius: 22px; border: 1px solid rgba(255,255,255,.12); }
+.historyImage { height: 190px; margin: -22px -22px 18px; }
+
+.imageButton, .galleryButton {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.imageBox img, .modalHeroImage img, .historyImage img, .photoGallery img, .historyThumbs img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
   display: block;
   filter: saturate(1.06) contrast(1.04);
+  background: #050505;
 }
 
 .imageFallback {
@@ -167,16 +183,17 @@ button { font-family: inherit; }
   border: 1px solid rgba(255,255,255,.10);
 }
 
-.detailPanel h4 {
+.detailPanel h4, .modalSection h4, .detailGrid h4 {
   margin: 0 0 12px;
   color: #d4af37;
   font-size: 20px;
 }
 
-.detailPanel p {
+.detailPanel p, .detailGrid p {
   margin: 9px 0;
   color: #dedede;
   font-size: 14px;
+  line-height: 1.55;
 }
 
 .photoGallery {
@@ -194,9 +211,8 @@ button { font-family: inherit; }
   background: rgba(0,0,0,.25);
 }
 
-.photoGallery img {
-  height: 105px;
-}
+.photoGallery img { height: 120px; }
+.photoGallery .galleryButton { height: 120px; }
 
 .photoGallery figcaption {
   padding: 8px;
@@ -215,10 +231,97 @@ button { font-family: inherit; }
   background: rgba(212,175,55,.06);
 }
 
-.historyImage {
-  height: 160px;
-  margin: -22px -22px 18px;
-  background: linear-gradient(135deg, #151515, #2a2a2a);
+.historyThumbs {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  margin: -8px 0 14px;
+}
+
+.historyThumbs img {
+  height: 54px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.12);
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0,0,0,.78);
+  backdrop-filter: blur(10px);
+  padding: 16px;
+  overflow: auto;
+}
+
+.modalCard {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+  border-radius: 28px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: linear-gradient(180deg, rgba(20,20,20,.98), rgba(5,5,5,.98));
+  box-shadow: 0 30px 120px rgba(0,0,0,.75);
+  padding: 22px;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.modalHeader h2 { font-size: clamp(30px, 6vw, 56px); margin: 4px 0; line-height: 1; }
+.modalHeader p { color: #cfcfcf; margin: 4px 0; }
+.modalClose { flex: 0 0 auto; }
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.detailGrid section, .modalSection {
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.045);
+  border: 1px solid rgba(255,255,255,.10);
+}
+
+.modalSection { margin-top: 16px; }
+.modalActions { margin-top: 16px; }
+
+.lightboxOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(0,0,0,.92);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+
+.lightboxOverlay img {
+  max-width: 100%;
+  max-height: 88vh;
+  object-fit: contain;
+  border-radius: 18px;
+  background: #050505;
+}
+
+.lightboxClose {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 81;
+  border: 1px solid rgba(212,175,55,.45);
+  background: rgba(0,0,0,.72);
+  color: #f0d98a;
+  border-radius: 999px;
+  padding: 10px 14px;
+  cursor: pointer;
 }
 
 .radarPanel {
@@ -250,8 +353,21 @@ button { font-family: inherit; }
 
 @media (max-width: 600px) {
   .page { padding: 18px; }
-  .imageBox { height: 190px; }
+  .imageBox { height: 210px; }
   .radarMap { height: 420px; }
   .categoryNav { position: static; }
   .photoGallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .historyThumbs { grid-template-columns: repeat(3, 1fr); }
+  .modalOverlay { padding: 8px; }
+  .modalCard { border-radius: 22px; padding: 14px; }
+  .modalHeader { flex-direction: column; }
+  .modalClose { width: 100%; }
+  .modalHeroImage { height: 34vh; }
+}
+
+@media (orientation: landscape) and (max-height: 520px) {
+  .modalHeroImage { height: 58vh; }
+  .modalHeader h2 { font-size: 34px; }
+  .modalOverlay { padding: 8px; }
+  .lightboxOverlay img { max-height: 82vh; }
 }
