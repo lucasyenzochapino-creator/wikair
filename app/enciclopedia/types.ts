@@ -1,4 +1,4 @@
-export type AircraftGroup = "Militar" | "Comercial" | "Privada / General" | "Carga" | "Entrenamiento" | "Histórica" | "Experimental";
+export type AircraftGroup = "Militar" | "Comercial" | "Privada / General" | "Carga" | "Entrenamiento" | "Histórica" | "Experimental" | "Hidroaviones" | "Helicópteros" | "Rescate";
 
 export type Aircraft = {
   name: string;
@@ -17,6 +17,9 @@ export type Aircraft = {
   operators: string;
   history: string;
   interior: string;
+  weapons?: string;
+  mission?: string;
+  rescueRole?: string;
 };
 
 export const groups: AircraftGroup[] = [
@@ -26,5 +29,8 @@ export const groups: AircraftGroup[] = [
   "Carga",
   "Entrenamiento",
   "Histórica",
-  "Experimental"
+  "Experimental",
+  "Hidroaviones",
+  "Helicópteros",
+  "Rescate"
 ];
