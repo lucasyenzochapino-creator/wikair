@@ -5,7 +5,20 @@ import { generatedRegistryAircraft } from "./autoRegistry";
 import { getEconomics } from "./costs";
 import { groups, type Aircraft, type AircraftGroup } from "./types";
 
-const allAircraft: Aircraft[] = generatedRegistryAircraft;
+const allAircraft: Aircraft[] = (() => {
+  const seen = new Map<string, number>();
+  return generatedRegistryAircraft.map((plane) => {
+    const base = plane.name.trim();
+    const count = seen.get(base) || 0;
+    seen.set(base, count + 1);
+    if (count === 0) return plane;
+    return {
+      ...plane,
+      name: `${base} · Variante ${count + 1}`,
+      wiki: plane.wiki || base
+    };
+  });
+})();
 
 type WikiImage = { url: string; title: string; mime?: string };
 type Lightbox = { images: WikiImage[]; index: number };
@@ -20,19 +33,50 @@ function isBadImage(item: WikiImage) {
   return banned.some((word) => text.includes(word));
 }
 
+async function findCommonsCover(query: string): Promise<WikiImage | null> {
+  try {
+    const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query + " aircraft photo")}&gsrnamespace=6&gsrlimit=12&prop=imageinfo&iiprop=url|mime&iiurlwidth=1400&format=json&origin=*`;
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const pages = Object.values(data?.query?.pages || {}) as any[];
+    for (const page of pages) {
+      const item = {
+        title: page.title?.replace("File:", "") || query,
+        url: page.imageinfo?.[0]?.thumburl || page.imageinfo?.[0]?.url,
+        mime: page.imageinfo?.[0]?.mime
+      } as WikiImage;
+      if (item.url && !isBadImage(item)) return item;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 function ImageFromWiki({ title, name, onOpen }: { title: string; name: string; onOpen?: (images: WikiImage[], index: number) => void }) {
   const [img, setImg] = useState<WikiImage | null>(null);
 
   useEffect(() => {
     let active = true;
-    fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`)
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (!active || !data) return;
+    async function load() {
+      try {
+        const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`);
+        const data = res.ok ? await res.json() : null;
         const url = data?.originalimage?.source || data?.thumbnail?.source || null;
-        if (url) setImg({ url, title: name });
-      })
-      .catch(() => setImg(null));
+        const candidate = url ? { url, title: name } as WikiImage : null;
+        if (active && candidate && !isBadImage(candidate)) {
+          setImg(candidate);
+          return;
+        }
+        const fallback = await findCommonsCover(title);
+        if (active && fallback) setImg(fallback);
+      } catch {
+        const fallback = await findCommonsCover(title);
+        if (active && fallback) setImg(fallback);
+      }
+    }
+    load();
     return () => { active = false; };
   }, [title, name]);
 
@@ -40,7 +84,7 @@ function ImageFromWiki({ title, name, onOpen }: { title: string; name: string; o
 
   return (
     <button className="imageButton" type="button" onClick={() => onOpen?.([img], 0)}>
-      <img src={img.url} alt={name} onError={() => setImg(null)} />
+      <img src={img.url} alt={name} onError={() => setImg(null)} style={{ objectFit: "contain", objectPosition: "center", background: "#050505" }} />
     </button>
   );
 }
@@ -86,7 +130,7 @@ function GalleryFromCommons({ query, onOpen }: { query: string; onOpen: (images:
       {images.map((image, index) => (
         <figure key={image.url}>
           <button className="galleryButton" type="button" onClick={() => onOpen(images, index)}>
-            <img src={image.url} alt={image.title} />
+            <img src={image.url} alt={image.title} style={{ objectFit: "contain", objectPosition: "center", background: "#050505" }} />
           </button>
           <figcaption>{image.title}</figcaption>
         </figure>
@@ -185,22 +229,56 @@ export default function Explorer() {
   const [active, setActive] = useState<AircraftGroup>("Militar");
   const [selected, setSelected] = useState<Aircraft | null>(null);
   const [lightbox, setLightbox] = useState<Lightbox | null>(null);
+  const [query, setQuery] = useState("");
 
-  const list = useMemo(() => allAircraft.filter((item) => item.group === active), [active]);
+  const normalizedQuery = query.trim().toLowerCase();
+  const list = useMemo(() => {
+    return allAircraft.filter((item) => {
+      const haystack = `${item.name} ${item.maker} ${item.origin} ${item.role} ${item.registryId || ""}`.toLowerCase();
+      if (normalizedQuery) return haystack.includes(normalizedQuery);
+      return item.group === active;
+    });
+  }, [active, normalizedQuery]);
+
+  const suggestions = useMemo(() => {
+    if (!normalizedQuery) return [];
+    return allAircraft
+      .filter((item) => item.name.toLowerCase().includes(normalizedQuery))
+      .slice(0, 8);
+  }, [normalizedQuery]);
+
   const openImages = (images: WikiImage[], index: number) => setLightbox({ images, index });
 
   return (
     <>
       <section className="container categoryNav">
         {groups.map((group) => (
-          <button key={group} onClick={() => { setActive(group); setSelected(null); }} className={active === group ? "tabActive" : "tabButton"}>{group}</button>
+          <button key={group} onClick={() => { setActive(group); setSelected(null); setQuery(""); }} className={active === group ? "tabActive" : "tabButton"}>{group}</button>
         ))}
+      </section>
+
+      <section className="container" style={{ marginBottom: 18, position: "relative" }}>
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Buscar avión por nombre, país, fabricante o código..."
+          style={{ width: "100%", borderRadius: 18, border: "1px solid rgba(212,175,55,.35)", background: "rgba(255,255,255,.06)", color: "white", padding: "14px 16px", fontSize: 16, outline: "none" }}
+        />
+        {suggestions.length > 0 && (
+          <div style={{ position: "absolute", zIndex: 20, left: 0, right: 0, top: 54, background: "rgba(5,5,5,.98)", border: "1px solid rgba(212,175,55,.35)", borderRadius: 18, overflow: "hidden", boxShadow: "0 18px 70px rgba(0,0,0,.55)" }}>
+            {suggestions.map((item) => (
+              <button key={item.registryId || item.name} type="button" onClick={() => { setQuery(item.name); setActive(item.group); }} style={{ display: "block", width: "100%", textAlign: "left", padding: "12px 16px", color: "white", background: "transparent", border: 0, borderBottom: "1px solid rgba(255,255,255,.08)", cursor: "pointer" }}>
+                <b>{item.name}</b><br /><span style={{ color: "#bdbdbd", fontSize: 13 }}>{item.group} · {item.maker} · {item.origin}</span>
+              </button>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="container groupBlock">
         <div className="groupTitle">
           <p className="gold">{list.length} aeronaves cargadas · Total WikiAir: {allAircraft.length}</p>
-          <h2>{active}</h2>
+          <h2>{normalizedQuery ? "Resultados de búsqueda" : active}</h2>
         </div>
 
         <div className="aircraftGrid">
@@ -210,10 +288,11 @@ export default function Explorer() {
               <article className="aircraftCard" key={plane.registryId || plane.name}>
                 <div className="imageBox"><ImageFromWiki title={plane.wiki} name={plane.name} onOpen={openImages} /></div>
                 <div className="aircraftBody">
-                  <span className="pill">{plane.role}</span>
+                  <span className="pill">{plane.group}</span>
                   <h3>{plane.name}</h3>
                   <p>{plane.maker} · {plane.origin}</p>
                   <div className="specList">
+                    <span>Tipo: {plane.role}</span>
                     <span>Motor: {plane.engine}</span>
                     <span>Precio USD: {eco.price}</span>
                     <span>Producción aprox.: {plane.productionApprox?.toLocaleString("es-AR") || "Variable"}</span>
