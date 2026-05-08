@@ -1,13 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { aircraft } from "./data";
-import { extraAircraft } from "./extraData";
-import { specialAviation } from "./specialAviation";
+import { generatedRegistryAircraft } from "./autoRegistry";
 import { getEconomics } from "./costs";
 import { groups, type Aircraft, type AircraftGroup } from "./types";
 
-const allAircraft: Aircraft[] = [...aircraft, ...extraAircraft, ...specialAviation];
+const allAircraft: Aircraft[] = generatedRegistryAircraft;
 
 type WikiImage = { url: string; title: string; mime?: string };
 type Lightbox = { images: WikiImage[]; index: number };
@@ -116,7 +114,6 @@ function LightboxView({ box, onClose, onMove }: { box: Lightbox; onClose: () => 
 
 function DetailModal({ plane, onClose, onImageOpen }: { plane: Aircraft; onClose: () => void; onImageOpen: (images: WikiImage[], index: number) => void }) {
   const eco = getEconomics(plane);
-  const wikiUrl = `https://en.wikipedia.org/wiki/${encodeURIComponent(plane.wiki).replaceAll("%20", "_")}`;
 
   useEffect(() => {
     const prev = document.body.style.overflow;
@@ -129,7 +126,7 @@ function DetailModal({ plane, onClose, onImageOpen }: { plane: Aircraft; onClose
       <div className="modalCard">
         <div className="modalHeader">
           <div>
-            <p className="gold">Ficha completa</p>
+            <p className="gold">Ficha completa · {plane.registryId}</p>
             <h2>{plane.name}</h2>
             <p>{plane.role} · {plane.maker} · {plane.origin}</p>
           </div>
@@ -143,7 +140,7 @@ function DetailModal({ plane, onClose, onImageOpen }: { plane: Aircraft; onClose
         <div className="detailGrid">
           <section>
             <h4>Datos técnicos</h4>
-            <p><b>Primer vuelo:</b> {plane.firstFlight}</p>
+            <p><b>Primer vuelo / época:</b> {plane.firstFlight}</p>
             <p><b>Estado:</b> {plane.status}</p>
             <p><b>Motor:</b> {plane.engine}</p>
             <p><b>Velocidad:</b> {plane.speed}</p>
@@ -156,6 +153,7 @@ function DetailModal({ plane, onClose, onImageOpen }: { plane: Aircraft; onClose
             <h4>Costos y fabricación</h4>
             <p><b>Precio en USD:</b> {eco.price}</p>
             <p><b>Fabricación / entrega:</b> {eco.productionTime}</p>
+            <p><b>Producción aprox.:</b> {plane.productionApprox?.toLocaleString("es-AR") || "Variable"} unidades</p>
             <p><b>Criterio:</b> {eco.note}</p>
           </section>
 
@@ -176,7 +174,6 @@ function DetailModal({ plane, onClose, onImageOpen }: { plane: Aircraft; onClose
         </section>
 
         <div className="radarActions modalActions">
-          <a className="radarLink" href={wikiUrl} target="_blank" rel="noreferrer">Fuente Wikipedia</a>
           <button className="radarLink" type="button" onClick={onClose}>Volver al catálogo</button>
         </div>
       </div>
@@ -210,7 +207,7 @@ export default function Explorer() {
           {list.map((plane) => {
             const eco = getEconomics(plane);
             return (
-              <article className="aircraftCard" key={plane.name}>
+              <article className="aircraftCard" key={plane.registryId || plane.name}>
                 <div className="imageBox"><ImageFromWiki title={plane.wiki} name={plane.name} onOpen={openImages} /></div>
                 <div className="aircraftBody">
                   <span className="pill">{plane.role}</span>
@@ -219,7 +216,7 @@ export default function Explorer() {
                   <div className="specList">
                     <span>Motor: {plane.engine}</span>
                     <span>Precio USD: {eco.price}</span>
-                    <span>Fabricación/entrega: {eco.productionTime}</span>
+                    <span>Producción aprox.: {plane.productionApprox?.toLocaleString("es-AR") || "Variable"}</span>
                     {plane.mission && <span>Misión: {plane.mission}</span>}
                   </div>
                   <button className="detailButton" onClick={() => setSelected(plane)} type="button">Ver ficha completa</button>
