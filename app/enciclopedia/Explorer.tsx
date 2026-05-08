@@ -5,48 +5,49 @@ import { generatedRegistryAircraft } from "./autoRegistry";
 import { getEconomics } from "./costs";
 import { groups, type Aircraft, type AircraftGroup } from "./types";
 
-const allAircraft: Aircraft[] = (() => {
-  const seen = new Map<string, number>();
-  return generatedRegistryAircraft.map((plane) => {
-    const base = plane.name.trim();
-    const count = seen.get(base) || 0;
-    seen.set(base, count + 1);
-    if (count === 0) return plane;
-    return {
-      ...plane,
-      name: `${base} · Variante ${count + 1}`,
-      wiki: plane.wiki || base
-    };
-  });
-})();
+const allAircraft: Aircraft[] = generatedRegistryAircraft;
 
 type WikiImage = { url: string; title: string; mime?: string };
 type Lightbox = { images: WikiImage[]; index: number };
 
-function isBadImage(item: WikiImage) {
+function cleanName(value: string) {
+  return value.replace(/·\s*variante\s*\d+/gi, "").replace(/\s+/g, " ").trim();
+}
+
+function isBadImage(item: WikiImage, expectedName: string) {
   const text = `${item.title} ${item.url} ${item.mime || ""}`.toLowerCase();
+  const expected = cleanName(expectedName).toLowerCase();
   const banned = [
     ".svg", "image/svg", "roundel", "insignia", "emblem", "badge", "logo", "flag", "map",
     "diagram", "silhouette", "drawing", "3-view", "3 view", "blank", "icon", "patch", "tail flash",
     "coat of arms", "seal", "air force logo", "wikimedia-logo"
   ];
-  return banned.some((word) => text.includes(word));
+  if (banned.some((word) => text.includes(word))) return true;
+
+  const strongTokens = expected
+    .split(/[^a-z0-9áéíóúñü-]+/i)
+    .filter((token) => token.length >= 3)
+    .slice(0, 3);
+
+  if (strongTokens.length === 0) return false;
+  return !strongTokens.some((token) => text.includes(token));
 }
 
-async function findCommonsCover(query: string): Promise<WikiImage | null> {
+async function findCommonsCover(query: string, expectedName: string): Promise<WikiImage | null> {
   try {
-    const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query + " aircraft photo")}&gsrnamespace=6&gsrlimit=12&prop=imageinfo&iiprop=url|mime&iiurlwidth=1400&format=json&origin=*`;
+    const exact = cleanName(query);
+    const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(`"${exact}" aircraft photo`)}&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url|mime&iiurlwidth=1400&format=json&origin=*`;
     const res = await fetch(url);
     if (!res.ok) return null;
     const data = await res.json();
     const pages = Object.values(data?.query?.pages || {}) as any[];
     for (const page of pages) {
       const item = {
-        title: page.title?.replace("File:", "") || query,
+        title: page.title?.replace("File:", "") || exact,
         url: page.imageinfo?.[0]?.thumburl || page.imageinfo?.[0]?.url,
         mime: page.imageinfo?.[0]?.mime
       } as WikiImage;
-      if (item.url && !isBadImage(item)) return item;
+      if (item.url && !isBadImage(item, expectedName)) return item;
     }
     return null;
   } catch {
@@ -56,35 +57,45 @@ async function findCommonsCover(query: string): Promise<WikiImage | null> {
 
 function ImageFromWiki({ title, name, onOpen }: { title: string; name: string; onOpen?: (images: WikiImage[], index: number) => void }) {
   const [img, setImg] = useState<WikiImage | null>(null);
+  const [done, setDone] = useState(false);
 
   useEffect(() => {
     let active = true;
     async function load() {
+      const exactName = cleanName(name);
+      const exactTitle = cleanName(title || name);
       try {
-        const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`);
+        const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(exactTitle)}`);
         const data = res.ok ? await res.json() : null;
         const url = data?.originalimage?.source || data?.thumbnail?.source || null;
-        const candidate = url ? { url, title: name } as WikiImage : null;
-        if (active && candidate && !isBadImage(candidate)) {
+        const candidate = url ? { url, title: data?.title || exactName } as WikiImage : null;
+        if (active && candidate && !isBadImage(candidate, exactName)) {
           setImg(candidate);
+          setDone(true);
           return;
         }
-        const fallback = await findCommonsCover(title);
+        const fallback = await findCommonsCover(exactName, exactName);
         if (active && fallback) setImg(fallback);
       } catch {
-        const fallback = await findCommonsCover(title);
+        const fallback = await findCommonsCover(exactName, exactName);
         if (active && fallback) setImg(fallback);
+      } finally {
+        if (active) setDone(true);
       }
     }
+    setImg(null);
+    setDone(false);
     load();
     return () => { active = false; };
   }, [title, name]);
 
-  if (!img || isBadImage(img)) return <div className="imageFallback">WikiAir</div>;
+  if (!img || isBadImage(img, name)) {
+    return <div className="imageFallback">{done ? "Foto no verificada" : "Buscando foto..."}</div>;
+  }
 
   return (
     <button className="imageButton" type="button" onClick={() => onOpen?.([img], 0)}>
-      <img src={img.url} alt={name} onError={() => setImg(null)} style={{ objectFit: "contain", objectPosition: "center", background: "#050505" }} />
+      <img src={img.url} alt={name} onError={() => setImg(null)} />
     </button>
   );
 }
@@ -94,35 +105,29 @@ function GalleryFromCommons({ query, onOpen }: { query: string; onOpen: (images:
 
   useEffect(() => {
     let active = true;
-    const searches = [
-      `${query} aircraft photo`,
-      `${query} airplane photo`,
-      `${query} cockpit photo`,
-      `${query} interior aircraft photo`,
-      `${query} aviation photo`
-    ];
+    const exact = cleanName(query);
+    const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(`"${exact}" aircraft photo`)}&gsrnamespace=6&gsrlimit=12&prop=imageinfo&iiprop=url|mime&iiurlwidth=1400&format=json&origin=*`;
 
-    Promise.all(searches.map((text) => {
-      const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(text)}&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url|mime&iiurlwidth=1400&format=json&origin=*`;
-      return fetch(url).then((res) => (res.ok ? res.json() : null)).catch(() => null);
-    })).then((results) => {
-      if (!active) return;
-      const found = results
-        .flatMap((data) => Object.values(data?.query?.pages || {}) as any[])
-        .map((page: any) => ({
-          title: page.title?.replace("File:", "") || "Imagen",
-          url: page.imageinfo?.[0]?.thumburl || page.imageinfo?.[0]?.url,
-          mime: page.imageinfo?.[0]?.mime
-        }))
-        .filter((item: WikiImage) => Boolean(item.url) && !isBadImage(item));
-      setImages(Array.from(new Map(found.map((item) => [item.url, item])).values()).slice(0, 12));
-    }).catch(() => setImages([]));
+    fetch(url)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!active) return;
+        const found = (Object.values(data?.query?.pages || {}) as any[])
+          .map((page: any) => ({
+            title: page.title?.replace("File:", "") || "Imagen",
+            url: page.imageinfo?.[0]?.thumburl || page.imageinfo?.[0]?.url,
+            mime: page.imageinfo?.[0]?.mime
+          }))
+          .filter((item: WikiImage) => Boolean(item.url) && !isBadImage(item, exact));
+        setImages(Array.from(new Map(found.map((item) => [item.url, item])).values()).slice(0, 8));
+      })
+      .catch(() => setImages([]));
 
     return () => { active = false; };
   }, [query]);
 
   if (!images.length) {
-    return <div className="galleryEmpty">Sin fotos reales útiles por ahora. Se ocultaron logos, mapas, diagramas o imágenes vacías.</div>;
+    return <div className="galleryEmpty">Sin fotos verificadas por ahora. Se evita mostrar imágenes incorrectas.</div>;
   }
 
   return (
@@ -130,7 +135,7 @@ function GalleryFromCommons({ query, onOpen }: { query: string; onOpen: (images:
       {images.map((image, index) => (
         <figure key={image.url}>
           <button className="galleryButton" type="button" onClick={() => onOpen(images, index)}>
-            <img src={image.url} alt={image.title} style={{ objectFit: "contain", objectPosition: "center", background: "#050505" }} />
+            <img src={image.url} alt={image.title} />
           </button>
           <figcaption>{image.title}</figcaption>
         </figure>
@@ -172,7 +177,7 @@ function DetailModal({ plane, onClose, onImageOpen }: { plane: Aircraft; onClose
           <div>
             <p className="gold">Ficha completa · {plane.registryId}</p>
             <h2>{plane.name}</h2>
-            <p>{plane.role} · {plane.maker} · {plane.origin}</p>
+            <p>{plane.group} · {plane.role} · {plane.maker} · {plane.origin}</p>
           </div>
           <button className="modalClose" type="button" onClick={onClose}>Cerrar</button>
         </div>
@@ -197,7 +202,7 @@ function DetailModal({ plane, onClose, onImageOpen }: { plane: Aircraft; onClose
             <h4>Costos y fabricación</h4>
             <p><b>Precio en USD:</b> {eco.price}</p>
             <p><b>Fabricación / entrega:</b> {eco.productionTime}</p>
-            <p><b>Producción aprox.:</b> {plane.productionApprox?.toLocaleString("es-AR") || "Variable"} unidades</p>
+            <p><b>Producción aprox.:</b> {plane.productionApprox?.toLocaleString("es-AR") || "Variable"}</p>
             <p><b>Criterio:</b> {eco.note}</p>
           </section>
 
@@ -206,9 +211,7 @@ function DetailModal({ plane, onClose, onImageOpen }: { plane: Aircraft; onClose
             <p><b>Operadores / países:</b> {plane.operators}</p>
             <p><b>Interior / cabina:</b> {plane.interior}</p>
             <p><b>Historia:</b> {plane.history}</p>
-            {plane.weapons && <p><b>Armamento / poder de fuego:</b> {plane.weapons}</p>}
             {plane.mission && <p><b>Objetivos de misión:</b> {plane.mission}</p>}
-            {plane.rescueRole && <p><b>Rol de rescate:</b> {plane.rescueRole}</p>}
           </section>
         </div>
 
@@ -234,7 +237,7 @@ export default function Explorer() {
   const normalizedQuery = query.trim().toLowerCase();
   const list = useMemo(() => {
     return allAircraft.filter((item) => {
-      const haystack = `${item.name} ${item.maker} ${item.origin} ${item.role} ${item.registryId || ""}`.toLowerCase();
+      const haystack = `${item.name} ${item.maker} ${item.origin} ${item.role} ${item.group} ${item.registryId || ""}`.toLowerCase();
       if (normalizedQuery) return haystack.includes(normalizedQuery);
       return item.group === active;
     });
@@ -243,7 +246,7 @@ export default function Explorer() {
   const suggestions = useMemo(() => {
     if (!normalizedQuery) return [];
     return allAircraft
-      .filter((item) => item.name.toLowerCase().includes(normalizedQuery))
+      .filter((item) => `${item.name} ${item.maker} ${item.origin} ${item.group}`.toLowerCase().includes(normalizedQuery))
       .slice(0, 8);
   }, [normalizedQuery]);
 
@@ -295,8 +298,7 @@ export default function Explorer() {
                     <span>Tipo: {plane.role}</span>
                     <span>Motor: {plane.engine}</span>
                     <span>Precio USD: {eco.price}</span>
-                    <span>Producción aprox.: {plane.productionApprox?.toLocaleString("es-AR") || "Variable"}</span>
-                    {plane.mission && <span>Misión: {plane.mission}</span>}
+                    <span>Misión: {plane.mission}</span>
                   </div>
                   <button className="detailButton" onClick={() => setSelected(plane)} type="button">Ver ficha completa</button>
                 </div>
