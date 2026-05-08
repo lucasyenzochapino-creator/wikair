@@ -35,16 +35,37 @@ function isBadImage(item: WikiImage, expectedName: string) {
     "coat of arms", "seal", "air force logo", "wikimedia-logo"
   ];
   if (banned.some((word) => text.includes(word))) return true;
-  const tokens = expected.split(/[^a-z0-9áéíóúñü-]+/i).filter((token) => token.length >= 3).slice(0, 3);
+
+  const tokens = expected
+    .split(/[^a-z0-9áéíóúñü-]+/i)
+    .filter((token) => token.length >= 3)
+    .slice(0, 3);
+
   return tokens.length ? !tokens.some((token) => text.includes(token)) : false;
+}
+
+async function findWikipediaImage(query: string): Promise<WikiImage | null> {
+  const exact = cleanName(query);
+  try {
+    const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(exact)}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const url = data?.originalimage?.source || data?.thumbnail?.source || null;
+    const item = url ? ({ url, title: data?.title || exact, mime: "image" } as WikiImage) : null;
+    if (item && !isBadImage(item, exact)) return item;
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 async function findCommonsImages(query: string): Promise<WikiImage[]> {
   const exact = cleanName(query);
   const searches = [
     `"${exact}" aircraft photo`,
-    `"${exact}" airplane`,
-    `"${exact}" aviation`
+    `${exact} aircraft`,
+    `${exact} airplane`,
+    `${exact} aviation`
   ];
 
   const results = await Promise.all(searches.map(async (search) => {
@@ -73,13 +94,22 @@ async function findCommonsImages(query: string): Promise<WikiImage[]> {
   );
 }
 
+async function findBestImages(query: string): Promise<WikiImage[]> {
+  const primary = await findWikipediaImage(query);
+  const commons = await findCommonsImages(query);
+  const combined = primary ? [primary, ...commons] : commons;
+  return Array.from(new Map(combined.map((item) => [item.url, item])).values());
+}
+
 function AircraftVisual({ plane }: { plane: Aircraft }) {
   return (
-    <div className="aircraftVisual">
-      <div className="visualLogo">WikiAir</div>
-      <div className="visualIcon">✈</div>
-      <div className="visualName">{cleanName(plane.name)}</div>
-      <div className="visualMeta">{plane.group} · ficha técnica</div>
+    <div style={{ width: "100%", height: "100%", display: "grid", placeItems: "center", background: "#050505", color: "white", textAlign: "center", padding: 20 }}>
+      <div>
+        <div style={{ color: "#d4af37", fontSize: 16, marginBottom: 8 }}>WikiAir</div>
+        <div style={{ fontSize: 26, marginBottom: 8 }}>✈</div>
+        <div style={{ fontSize: 20, fontWeight: 800 }}>{cleanName(plane.name)}</div>
+        <div style={{ color: "#cfcfcf", marginTop: 6 }}>{plane.group} · ficha técnica</div>
+      </div>
     </div>
   );
 }
@@ -92,9 +122,9 @@ function CardImage({ plane, onOpen }: { plane: Aircraft; onOpen: (images: WikiIm
     let active = true;
     setImages([]);
     setDone(false);
-    findCommonsImages(plane.wiki || plane.name)
+    findBestImages(plane.wiki || plane.name)
       .then((found) => {
-        if (active) setImages(found.slice(0, 4));
+        if (active) setImages(found.slice(0, 5));
       })
       .catch(() => {
         if (active) setImages([]);
@@ -105,18 +135,37 @@ function CardImage({ plane, onOpen }: { plane: Aircraft; onOpen: (images: WikiIm
     return () => { active = false; };
   }, [plane.wiki, plane.name]);
 
+  const frameStyle = {
+    width: "100%",
+    height: "100%",
+    minHeight: 280,
+    padding: 10,
+    margin: 0,
+    border: 0,
+    display: "grid",
+    placeItems: "center",
+    overflow: "hidden",
+    background: "#050505",
+    cursor: images.length ? "zoom-in" : "default"
+  } as const;
+
   if (!images.length) {
     return (
-      <div className="realImageFrame noPhoto">
-        {done ? <AircraftVisual plane={plane} /> : <span>Buscando imagen...</span>}
+      <div style={frameStyle}>
+        {done ? <AircraftVisual plane={plane} /> : <span style={{ color: "#d4af37" }}>Buscando imagen...</span>}
       </div>
     );
   }
 
   const image = images[0];
   return (
-    <button className="realImageFrame" type="button" onClick={() => onOpen(images, 0)}>
-      <img src={image.url} alt={plane.name} onError={() => setImages(images.slice(1))} />
+    <button style={frameStyle} type="button" onClick={() => onOpen(images, 0)}>
+      <img
+        src={image.url}
+        alt={plane.name}
+        onError={() => setImages(images.slice(1))}
+        style={{ width: "auto", height: "auto", maxWidth: "100%", maxHeight: "100%", objectFit: "contain", objectPosition: "center", display: "block", background: "#050505" }}
+      />
     </button>
   );
 }
@@ -129,7 +178,7 @@ function GalleryFromCommons({ query, onOpen }: { query: string; onOpen: (images:
     let active = true;
     setImages([]);
     setDone(false);
-    findCommonsImages(query)
+    findBestImages(query)
       .then((found) => { if (active) setImages(found.slice(0, 8)); })
       .catch(() => { if (active) setImages([]); })
       .finally(() => { if (active) setDone(true); });
@@ -145,7 +194,7 @@ function GalleryFromCommons({ query, onOpen }: { query: string; onOpen: (images:
       {images.map((image, index) => (
         <figure key={image.url}>
           <button className="galleryButton" type="button" onClick={() => onOpen(images, index)}>
-            <img src={image.url} alt={image.title} />
+            <img src={image.url} alt={image.title} style={{ objectFit: "contain" }} />
           </button>
           <figcaption>{image.title}</figcaption>
         </figure>
@@ -192,7 +241,7 @@ function DetailModal({ plane, onClose, onImageOpen }: { plane: Aircraft; onClose
           <button className="modalClose" type="button" onClick={onClose}>Cerrar</button>
         </div>
 
-        <div className="modalHeroImage">
+        <div className="modalHeroImage" style={{ minHeight: 320 }}>
           <CardImage plane={plane} onOpen={onImageOpen} />
         </div>
 
@@ -312,9 +361,11 @@ export default function Explorer() {
           {list.map((plane) => {
             const eco = getEconomics(plane);
             return (
-              <article className="aircraftCard" key={plane.registryId || plane.name}>
-                <div className="imageBox"><CardImage plane={plane} onOpen={openImages} /></div>
-                <div className="aircraftBody">
+              <article className="aircraftCard" key={plane.registryId || plane.name} style={{ display: "flex", flexDirection: "column" }}>
+                <div className="imageBox" style={{ height: "clamp(290px, 52vw, 430px)", flex: "0 0 auto", overflow: "hidden", background: "#050505" }}>
+                  <CardImage plane={plane} onOpen={openImages} />
+                </div>
+                <div className="aircraftBody" style={{ flex: "0 0 auto" }}>
                   <span className="pill">{plane.group}</span>
                   <h3>{plane.name}</h3>
                   <p>{plane.maker} · {plane.origin}</p>
