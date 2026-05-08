@@ -1,6 +1,6 @@
 import type { Aircraft, AircraftGroup } from "./types";
 
-type Seed = { name: string; group: AircraftGroup; maker: string; origin: string; role: string; wiki?: string; };
+type Seed = { name: string; maker: string; origin: string; role: string; wiki?: string };
 
 const targets: Record<AircraftGroup, number> = {
   "Militar": 115,
@@ -19,137 +19,226 @@ const targets: Record<AircraftGroup, number> = {
   "Rescate": 12
 };
 
-const seeds: Seed[] = [
-  { name: "F-22 Raptor", group: "Militar", maker: "Lockheed Martin", origin: "Estados Unidos", role: "Caza furtivo de superioridad aérea" },
-  { name: "F-35 Lightning II", group: "Militar", maker: "Lockheed Martin", origin: "Estados Unidos", role: "Caza furtivo multirrol" },
-  { name: "F-16 Fighting Falcon", group: "Militar", maker: "General Dynamics / Lockheed Martin", origin: "Estados Unidos", role: "Caza multirrol" },
-  { name: "F-15 Eagle", group: "Militar", maker: "McDonnell Douglas / Boeing", origin: "Estados Unidos", role: "Caza de superioridad aérea" },
-  { name: "F/A-18 Super Hornet", group: "Militar", maker: "Boeing", origin: "Estados Unidos", role: "Caza naval embarcado" },
-  { name: "Dassault Rafale", group: "Militar", maker: "Dassault Aviation", origin: "Francia", role: "Caza omnirol" },
-  { name: "Eurofighter Typhoon", group: "Militar", maker: "Eurofighter", origin: "Europa", role: "Caza multirrol" },
-  { name: "Saab JAS 39 Gripen", group: "Militar", maker: "Saab", origin: "Suecia", role: "Caza ligero multirrol" },
-  { name: "Chengdu J-20", group: "Militar", maker: "Chengdu Aerospace", origin: "China", role: "Caza furtivo" },
-  { name: "Shenyang J-15", group: "Militar", maker: "Shenyang", origin: "China", role: "Caza naval" },
-  { name: "Sukhoi Su-35", group: "Militar", maker: "Sukhoi", origin: "Rusia", role: "Caza pesado" },
-  { name: "Mikoyan MiG-29", group: "Militar", maker: "Mikoyan", origin: "Rusia", role: "Caza táctico" },
-  { name: "IA-58 Pucará", group: "Militar", maker: "FMA / FAdeA", origin: "Argentina", role: "Ataque ligero" },
-  { name: "IA-63 Pampa", group: "Militar", maker: "FMA / FAdeA", origin: "Argentina", role: "Entrenador avanzado / ataque ligero" },
-  { name: "A-4AR Fightinghawk", group: "Militar", maker: "McDonnell Douglas / Lockheed", origin: "Argentina / Estados Unidos", role: "Ataque táctico" },
+const seeds: Record<AircraftGroup, Seed[]> = {
+  "Militar": [
+    { name: "F-22 Raptor", maker: "Lockheed Martin", origin: "Estados Unidos", role: "Caza furtivo de superioridad aérea" },
+    { name: "F-35 Lightning II", maker: "Lockheed Martin", origin: "Estados Unidos", role: "Caza furtivo multirrol" },
+    { name: "F-16 Fighting Falcon", maker: "General Dynamics / Lockheed Martin", origin: "Estados Unidos", role: "Caza multirrol" },
+    { name: "F-15 Eagle", maker: "McDonnell Douglas / Boeing", origin: "Estados Unidos", role: "Caza de superioridad aérea" },
+    { name: "F/A-18 Super Hornet", maker: "Boeing", origin: "Estados Unidos", role: "Caza naval embarcado" },
+    { name: "B-2 Spirit", maker: "Northrop Grumman", origin: "Estados Unidos", role: "Bombardero furtivo estratégico" },
+    { name: "B-21 Raider", maker: "Northrop Grumman", origin: "Estados Unidos", role: "Bombardero furtivo de nueva generación" },
+    { name: "B-52 Stratofortress", maker: "Boeing", origin: "Estados Unidos", role: "Bombardero estratégico" },
+    { name: "B-1B Lancer", maker: "Rockwell / Boeing", origin: "Estados Unidos", role: "Bombardero supersónico" },
+    { name: "A-10 Thunderbolt II", maker: "Fairchild Republic", origin: "Estados Unidos", role: "Apoyo aéreo cercano" },
+    { name: "F-117 Nighthawk", maker: "Lockheed Martin", origin: "Estados Unidos", role: "Ataque furtivo" },
+    { name: "SR-71 Blackbird", maker: "Lockheed Martin", origin: "Estados Unidos", role: "Reconocimiento estratégico" },
+    { name: "Eurofighter Typhoon", maker: "Eurofighter", origin: "Europa", role: "Caza multirrol" },
+    { name: "Dassault Rafale", maker: "Dassault Aviation", origin: "Francia", role: "Caza omnirol" },
+    { name: "Saab JAS 39 Gripen", maker: "Saab", origin: "Suecia", role: "Caza ligero multirrol" },
+    { name: "Sukhoi Su-35", maker: "Sukhoi", origin: "Rusia", role: "Caza pesado" },
+    { name: "Mikoyan MiG-29", maker: "Mikoyan", origin: "Rusia", role: "Caza táctico" },
+    { name: "Chengdu J-20", maker: "Chengdu Aerospace", origin: "China", role: "Caza furtivo" },
+    { name: "Shenyang J-16", maker: "Shenyang", origin: "China", role: "Caza multirrol pesado" },
+    { name: "IA-58 Pucará", maker: "FMA / FAdeA", origin: "Argentina", role: "Ataque ligero" },
+    { name: "IA-63 Pampa", maker: "FMA / FAdeA", origin: "Argentina", role: "Entrenador avanzado / ataque ligero" },
+    { name: "A-4AR Fightinghawk", maker: "Lockheed Martin / McDonnell Douglas", origin: "Argentina / Estados Unidos", role: "Ataque táctico" }
+  ],
+  "Comercial": [
+    { name: "Airbus A320", maker: "Airbus", origin: "Europa", role: "Avión comercial narrow-body" },
+    { name: "Airbus A321neo", maker: "Airbus", origin: "Europa", role: "Avión comercial narrow-body" },
+    { name: "Airbus A330", maker: "Airbus", origin: "Europa", role: "Avión comercial wide-body" },
+    { name: "Airbus A350", maker: "Airbus", origin: "Europa", role: "Avión comercial wide-body moderno" },
+    { name: "Airbus A380", maker: "Airbus", origin: "Europa", role: "Avión comercial de doble cubierta" },
+    { name: "Boeing 737", maker: "Boeing", origin: "Estados Unidos", role: "Avión comercial narrow-body" },
+    { name: "Boeing 747", maker: "Boeing", origin: "Estados Unidos", role: "Jumbo jet" },
+    { name: "Boeing 757", maker: "Boeing", origin: "Estados Unidos", role: "Avión comercial narrow-body" },
+    { name: "Boeing 767", maker: "Boeing", origin: "Estados Unidos", role: "Avión comercial wide-body" },
+    { name: "Boeing 777", maker: "Boeing", origin: "Estados Unidos", role: "Avión comercial wide-body" },
+    { name: "Boeing 787 Dreamliner", maker: "Boeing", origin: "Estados Unidos", role: "Avión comercial wide-body moderno" },
+    { name: "Embraer E190", maker: "Embraer", origin: "Brasil", role: "Jet regional" },
+    { name: "ATR 72", maker: "ATR", origin: "Francia / Italia", role: "Turbohélice regional" },
+    { name: "Concorde", maker: "BAC / Aérospatiale", origin: "Reino Unido / Francia", role: "Supersónico comercial" },
+    { name: "COMAC C919", maker: "COMAC", origin: "China", role: "Avión comercial narrow-body" }
+  ],
+  "Privada / General": [
+    { name: "Cessna 172 Skyhawk", maker: "Cessna", origin: "Estados Unidos", role: "Aviación general" },
+    { name: "Cessna 182 Skylane", maker: "Cessna", origin: "Estados Unidos", role: "Aviación general" },
+    { name: "Cessna 208 Caravan", maker: "Cessna", origin: "Estados Unidos", role: "Utilitario monomotor" },
+    { name: "Piper PA-28 Cherokee", maker: "Piper", origin: "Estados Unidos", role: "Aviación general" },
+    { name: "Beechcraft Bonanza", maker: "Beechcraft", origin: "Estados Unidos", role: "Monomotor privado" },
+    { name: "Beechcraft King Air", maker: "Beechcraft", origin: "Estados Unidos", role: "Turbohélice ejecutivo" },
+    { name: "Cirrus SR22", maker: "Cirrus", origin: "Estados Unidos", role: "Monomotor moderno" },
+    { name: "Pilatus PC-12", maker: "Pilatus", origin: "Suiza", role: "Turbohélice ejecutivo" },
+    { name: "Gulfstream G650", maker: "Gulfstream", origin: "Estados Unidos", role: "Jet ejecutivo" },
+    { name: "Dassault Falcon 7X", maker: "Dassault Aviation", origin: "Francia", role: "Jet ejecutivo" }
+  ],
+  "Deportivos / Ultraligeros": [
+    { name: "ICON A5", maker: "ICON Aircraft", origin: "Estados Unidos", role: "Anfibio deportivo LSA" },
+    { name: "Pipistrel Virus", maker: "Pipistrel", origin: "Eslovenia", role: "Ultraligero de alto rendimiento" },
+    { name: "Pipistrel Velis Electro", maker: "Pipistrel", origin: "Eslovenia", role: "Eléctrico deportivo" },
+    { name: "Tecnam P92", maker: "Tecnam", origin: "Italia", role: "Ultraligero / LSA" },
+    { name: "Flight Design CTLS", maker: "Flight Design", origin: "Alemania", role: "LSA compuesto" },
+    { name: "Van's RV-7", maker: "Van's Aircraft", origin: "Estados Unidos", role: "Experimental deportivo" },
+    { name: "Zenith STOL CH 701", maker: "Zenith", origin: "Canadá / Estados Unidos", role: "STOL deportivo" },
+    { name: "Rans S-6 Coyote", maker: "Rans", origin: "Estados Unidos", role: "Ultraligero biplaza" }
+  ],
+  "Planeadores": [
+    { name: "Schleicher ASK 21", maker: "Alexander Schleicher", origin: "Alemania", role: "Planeador de entrenamiento" },
+    { name: "Schempp-Hirth Discus", maker: "Schempp-Hirth", origin: "Alemania", role: "Planeador de competición" },
+    { name: "DG Flugzeugbau DG-1000", maker: "DG Flugzeugbau", origin: "Alemania", role: "Planeador biplaza" },
+    { name: "Grob G 103 Twin Astir", maker: "Grob", origin: "Alemania", role: "Planeador escuela" },
+    { name: "LET L-13 Blanik", maker: "LET", origin: "Checoslovaquia", role: "Planeador metálico escuela" }
+  ],
+  "Autogiros": [
+    { name: "Cierva C.30", maker: "Cierva", origin: "Reino Unido / España", role: "Autogiro histórico" },
+    { name: "AutoGyro MTOsport", maker: "AutoGyro", origin: "Alemania", role: "Autogiro deportivo" },
+    { name: "AutoGyro Cavalon", maker: "AutoGyro", origin: "Alemania", role: "Autogiro cerrado" },
+    { name: "Magni M16", maker: "Magni Gyro", origin: "Italia", role: "Autogiro moderno" },
+    { name: "Magni M24 Orion", maker: "Magni Gyro", origin: "Italia", role: "Autogiro cerrado" }
+  ],
+  "Dirigibles / Globos": [
+    { name: "Graf Zeppelin LZ 127", maker: "Zeppelin", origin: "Alemania", role: "Dirigible histórico" },
+    { name: "Hindenburg LZ 129", maker: "Zeppelin", origin: "Alemania", role: "Dirigible rígido" },
+    { name: "Goodyear Blimp", maker: "Goodyear", origin: "Estados Unidos", role: "Dirigible publicitario" },
+    { name: "Zeppelin NT", maker: "Zeppelin", origin: "Alemania", role: "Dirigible moderno" },
+    { name: "Airlander 10", maker: "Hybrid Air Vehicles", origin: "Reino Unido", role: "Dirigible híbrido" },
+    { name: "Cameron Balloons Z", maker: "Cameron Balloons", origin: "Reino Unido", role: "Globo aerostático" }
+  ],
+  "Carga": [
+    { name: "C-130 Hercules", maker: "Lockheed Martin", origin: "Estados Unidos", role: "Transporte táctico" },
+    { name: "C-17 Globemaster III", maker: "Boeing", origin: "Estados Unidos", role: "Transporte estratégico" },
+    { name: "C-5 Galaxy", maker: "Lockheed Martin", origin: "Estados Unidos", role: "Transporte pesado" },
+    { name: "Antonov An-124 Ruslan", maker: "Antonov", origin: "Ucrania", role: "Carga pesada" },
+    { name: "Antonov An-225 Mriya", maker: "Antonov", origin: "Ucrania", role: "Carga superpesada" },
+    { name: "Ilyushin Il-76", maker: "Ilyushin", origin: "Rusia / URSS", role: "Transporte pesado" },
+    { name: "Boeing 747-8F", maker: "Boeing", origin: "Estados Unidos", role: "Carguero comercial" },
+    { name: "Airbus BelugaXL", maker: "Airbus", origin: "Europa", role: "Carga sobredimensionada" },
+    { name: "Embraer C-390 Millennium", maker: "Embraer", origin: "Brasil", role: "Transporte militar táctico" }
+  ],
+  "Entrenamiento": [
+    { name: "T-6 Texan II", maker: "Beechcraft", origin: "Estados Unidos", role: "Entrenador militar" },
+    { name: "Pilatus PC-21", maker: "Pilatus", origin: "Suiza", role: "Entrenador avanzado" },
+    { name: "Aero L-39 Albatros", maker: "Aero Vodochody", origin: "República Checa", role: "Entrenador jet" },
+    { name: "KAI T-50 Golden Eagle", maker: "KAI", origin: "Corea del Sur", role: "Entrenador supersónico" },
+    { name: "BAE Hawk", maker: "BAE Systems", origin: "Reino Unido", role: "Entrenador avanzado" },
+    { name: "Embraer EMB 314 Super Tucano", maker: "Embraer", origin: "Brasil", role: "Entrenador / ataque ligero" },
+    { name: "FMA IA-63 Pampa", maker: "FAdeA", origin: "Argentina", role: "Entrenador avanzado" }
+  ],
+  "Histórica": [
+    { name: "Wright Flyer", maker: "Wright Brothers", origin: "Estados Unidos", role: "Pionero" },
+    { name: "Bleriot XI", maker: "Bleriot", origin: "Francia", role: "Pionero" },
+    { name: "Fokker Dr.I", maker: "Fokker", origin: "Alemania", role: "Caza histórico" },
+    { name: "Sopwith Camel", maker: "Sopwith", origin: "Reino Unido", role: "Caza histórico" },
+    { name: "Supermarine Spitfire", maker: "Supermarine", origin: "Reino Unido", role: "Caza WWII" },
+    { name: "P-51 Mustang", maker: "North American", origin: "Estados Unidos", role: "Caza WWII" },
+    { name: "Douglas DC-3", maker: "Douglas", origin: "Estados Unidos", role: "Transporte histórico" },
+    { name: "Mitsubishi A6M Zero", maker: "Mitsubishi", origin: "Japón", role: "Caza naval histórico" },
+    { name: "B-17 Flying Fortress", maker: "Boeing", origin: "Estados Unidos", role: "Bombardero histórico" },
+    { name: "Avro Lancaster", maker: "Avro", origin: "Reino Unido", role: "Bombardero histórico" },
+    { name: "FMA I.Ae. 27 Pulqui I", maker: "Instituto Aerotécnico", origin: "Argentina", role: "Primer jet latinoamericano" },
+    { name: "FMA I.Ae. 33 Pulqui II", maker: "Instituto Aerotécnico", origin: "Argentina", role: "Caza jet experimental argentino" }
+  ],
+  "Experimental": [
+    { name: "Bell X-1", maker: "Bell", origin: "Estados Unidos", role: "Experimental supersónico" },
+    { name: "North American X-15", maker: "North American", origin: "Estados Unidos", role: "Avión cohete hipersónico" },
+    { name: "Grumman X-29", maker: "Grumman", origin: "Estados Unidos", role: "Ala en flecha negativa" },
+    { name: "Boeing X-32", maker: "Boeing", origin: "Estados Unidos", role: "Prototipo JSF" },
+    { name: "Lockheed Martin X-35", maker: "Lockheed Martin", origin: "Estados Unidos", role: "Prototipo JSF" },
+    { name: "Northrop YF-23", maker: "Northrop", origin: "Estados Unidos", role: "Prototipo ATF" },
+    { name: "NASA X-59 QueSST", maker: "NASA / Lockheed Martin", origin: "Estados Unidos", role: "Supersónico silencioso" },
+    { name: "SpaceShipOne", maker: "Scaled Composites", origin: "Estados Unidos", role: "Suborbital experimental" },
+    { name: "Solar Impulse 2", maker: "Solar Impulse", origin: "Suiza", role: "Solar experimental" },
+    { name: "Lilium Jet", maker: "Lilium", origin: "Alemania", role: "eVTOL" },
+    { name: "Joby Aviation S4", maker: "Joby Aviation", origin: "Estados Unidos", role: "eVTOL" }
+  ],
+  "Hidroaviones": [
+    { name: "PBY Catalina", maker: "Consolidated", origin: "Estados Unidos", role: "Hidroavión patrullero" },
+    { name: "Canadair CL-415", maker: "Canadair", origin: "Canadá", role: "Anfibio antiincendios" },
+    { name: "ShinMaywa US-2", maker: "ShinMaywa", origin: "Japón", role: "Anfibio SAR" },
+    { name: "Grumman HU-16 Albatross", maker: "Grumman", origin: "Estados Unidos", role: "Anfibio SAR" },
+    { name: "Beriev Be-200", maker: "Beriev", origin: "Rusia", role: "Hidroavión multipropósito" },
+    { name: "Short Sunderland", maker: "Short Brothers", origin: "Reino Unido", role: "Hidroavión patrullero" },
+    { name: "Boeing 314 Clipper", maker: "Boeing", origin: "Estados Unidos", role: "Hidroavión transoceánico" }
+  ],
+  "Helicópteros": [
+    { name: "UH-60 Black Hawk", maker: "Sikorsky", origin: "Estados Unidos", role: "Helicóptero utilitario" },
+    { name: "AH-64 Apache", maker: "Boeing", origin: "Estados Unidos", role: "Helicóptero de ataque" },
+    { name: "CH-47 Chinook", maker: "Boeing", origin: "Estados Unidos", role: "Helicóptero pesado" },
+    { name: "Bell UH-1 Iroquois", maker: "Bell", origin: "Estados Unidos", role: "Helicóptero utilitario" },
+    { name: "Bell AH-1 Cobra", maker: "Bell", origin: "Estados Unidos", role: "Helicóptero de ataque" },
+    { name: "Bell 206 JetRanger", maker: "Bell", origin: "Estados Unidos", role: "Helicóptero ligero" },
+    { name: "Robinson R22", maker: "Robinson", origin: "Estados Unidos", role: "Helicóptero ligero" },
+    { name: "Robinson R44", maker: "Robinson", origin: "Estados Unidos", role: "Helicóptero ligero" },
+    { name: "Robinson R66", maker: "Robinson", origin: "Estados Unidos", role: "Helicóptero turboeje ligero" },
+    { name: "Airbus H125", maker: "Airbus Helicopters", origin: "Europa", role: "Helicóptero ligero" },
+    { name: "Airbus H145", maker: "Airbus Helicopters", origin: "Europa", role: "Helicóptero ligero bimotor" },
+    { name: "Leonardo AW139", maker: "Leonardo", origin: "Italia", role: "Helicóptero medio" },
+    { name: "Sikorsky S-92", maker: "Sikorsky", origin: "Estados Unidos", role: "Helicóptero medio" },
+    { name: "Mil Mi-17", maker: "Mil", origin: "Rusia", role: "Helicóptero transporte" },
+    { name: "Mil Mi-24", maker: "Mil", origin: "Rusia", role: "Helicóptero de ataque" },
+    { name: "Mil Mi-26", maker: "Mil", origin: "Rusia", role: "Helicóptero pesado" }
+  ],
+  "Rescate": [
+    { name: "HC-130 Hercules", maker: "Lockheed Martin", origin: "Estados Unidos", role: "Rescate SAR de largo alcance" },
+    { name: "HH-60 Pave Hawk", maker: "Sikorsky", origin: "Estados Unidos", role: "CSAR" },
+    { name: "Sikorsky S-92 SAR", maker: "Sikorsky", origin: "Estados Unidos", role: "Helicóptero SAR" },
+    { name: "Airbus H145 Rescue", maker: "Airbus Helicopters", origin: "Europa", role: "HEMS / rescate" },
+    { name: "Leonardo AW139 SAR", maker: "Leonardo", origin: "Italia", role: "SAR / offshore" },
+    { name: "Canadair CL-415", maker: "Canadair", origin: "Canadá", role: "Emergencias e incendios" },
+    { name: "ShinMaywa US-2", maker: "ShinMaywa", origin: "Japón", role: "SAR marítimo" }
+  ]
+};
 
-  { name: "Airbus A320", group: "Comercial", maker: "Airbus", origin: "Europa", role: "Avión comercial narrow-body" },
-  { name: "Boeing 737", group: "Comercial", maker: "Boeing", origin: "Estados Unidos", role: "Avión comercial narrow-body" },
-  { name: "Airbus A350", group: "Comercial", maker: "Airbus", origin: "Europa", role: "Avión comercial wide-body" },
-  { name: "Boeing 787 Dreamliner", group: "Comercial", maker: "Boeing", origin: "Estados Unidos", role: "Avión comercial wide-body" },
-  { name: "Boeing 747", group: "Comercial", maker: "Boeing", origin: "Estados Unidos", role: "Jumbo jet" },
-  { name: "Airbus A380", group: "Comercial", maker: "Airbus", origin: "Europa", role: "Avión comercial doble cubierta" },
-  { name: "Concorde", group: "Comercial", maker: "BAC / Aérospatiale", origin: "Reino Unido / Francia", role: "Supersónico comercial" },
-  { name: "Embraer E-Jet", group: "Comercial", maker: "Embraer", origin: "Brasil", role: "Jet regional" },
-  { name: "ATR 72", group: "Comercial", maker: "ATR", origin: "Francia / Italia", role: "Turbohélice regional" },
-
-  { name: "Cessna 172", group: "Privada / General", maker: "Cessna", origin: "Estados Unidos", role: "Aviación general" },
-  { name: "Piper PA-28 Cherokee", group: "Privada / General", maker: "Piper", origin: "Estados Unidos", role: "Aviación general" },
-  { name: "Beechcraft Bonanza", group: "Privada / General", maker: "Beechcraft", origin: "Estados Unidos", role: "Monomotor privado" },
-  { name: "Cirrus SR22", group: "Privada / General", maker: "Cirrus", origin: "Estados Unidos", role: "Monomotor moderno" },
-  { name: "Pilatus PC-12", group: "Privada / General", maker: "Pilatus", origin: "Suiza", role: "Turbohélice ejecutivo" },
-  { name: "Gulfstream G650", group: "Privada / General", maker: "Gulfstream", origin: "Estados Unidos", role: "Jet ejecutivo" },
-
-  { name: "ICON A5", group: "Deportivos / Ultraligeros", maker: "ICON Aircraft", origin: "Estados Unidos", role: "Anfibio deportivo LSA" },
-  { name: "Pipistrel Virus", group: "Deportivos / Ultraligeros", maker: "Pipistrel", origin: "Eslovenia", role: "Ultraligero de alto rendimiento" },
-  { name: "Pipistrel Velis Electro", group: "Deportivos / Ultraligeros", maker: "Pipistrel", origin: "Eslovenia", role: "Eléctrico deportivo" },
-  { name: "Tecnam P92", group: "Deportivos / Ultraligeros", maker: "Tecnam", origin: "Italia", role: "Ultraligero / LSA" },
-  { name: "Flight Design CTLS", group: "Deportivos / Ultraligeros", maker: "Flight Design", origin: "Alemania", role: "LSA compuesto" },
-  { name: "Van's RV-7", group: "Deportivos / Ultraligeros", maker: "Van's Aircraft", origin: "Estados Unidos", role: "Experimental deportivo" },
-  { name: "Zenith STOL CH 701", group: "Deportivos / Ultraligeros", maker: "Zenith", origin: "Canadá / Estados Unidos", role: "STOL deportivo" },
-
-  { name: "Schleicher ASK 21", group: "Planeadores", maker: "Alexander Schleicher", origin: "Alemania", role: "Planeador de entrenamiento" },
-  { name: "Schempp-Hirth Discus", group: "Planeadores", maker: "Schempp-Hirth", origin: "Alemania", role: "Planeador de competición" },
-  { name: "DG Flugzeugbau DG-1000", group: "Planeadores", maker: "DG Flugzeugbau", origin: "Alemania", role: "Planeador biplaza" },
-  { name: "Grob G 103 Twin Astir", group: "Planeadores", maker: "Grob", origin: "Alemania", role: "Planeador escuela" },
-
-  { name: "Cierva C.30", group: "Autogiros", maker: "Cierva", origin: "Reino Unido / España", role: "Autogiro histórico" },
-  { name: "AutoGyro Calidus", group: "Autogiros", maker: "AutoGyro", origin: "Alemania", role: "Autogiro moderno" },
-  { name: "Magni M24 Orion", group: "Autogiros", maker: "Magni Gyro", origin: "Italia", role: "Autogiro cerrado" },
-
-  { name: "Hindenburg LZ 129", group: "Dirigibles / Globos", maker: "Zeppelin", origin: "Alemania", role: "Dirigible rígido" },
-  { name: "Goodyear Blimp", group: "Dirigibles / Globos", maker: "Goodyear", origin: "Estados Unidos", role: "Dirigible publicitario" },
-  { name: "Cameron Balloons Z", group: "Dirigibles / Globos", maker: "Cameron Balloons", origin: "Reino Unido", role: "Globo aerostático" },
-
-  { name: "C-130 Hercules", group: "Carga", maker: "Lockheed Martin", origin: "Estados Unidos", role: "Transporte táctico" },
-  { name: "C-17 Globemaster III", group: "Carga", maker: "Boeing", origin: "Estados Unidos", role: "Transporte estratégico" },
-  { name: "Antonov An-124", group: "Carga", maker: "Antonov", origin: "Ucrania", role: "Carga pesada" },
-  { name: "Antonov An-225 Mriya", group: "Carga", maker: "Antonov", origin: "Ucrania", role: "Carga superpesada" },
-  { name: "Boeing 747-8F", group: "Carga", maker: "Boeing", origin: "Estados Unidos", role: "Carguero comercial" },
-  { name: "Airbus BelugaXL", group: "Carga", maker: "Airbus", origin: "Europa", role: "Carga sobredimensionada" },
-
-  { name: "T-6 Texan II", group: "Entrenamiento", maker: "Beechcraft", origin: "Estados Unidos", role: "Entrenador militar" },
-  { name: "Pilatus PC-21", group: "Entrenamiento", maker: "Pilatus", origin: "Suiza", role: "Entrenador avanzado" },
-  { name: "Aero L-39 Albatros", group: "Entrenamiento", maker: "Aero Vodochody", origin: "República Checa", role: "Entrenador jet" },
-  { name: "KAI T-50 Golden Eagle", group: "Entrenamiento", maker: "KAI", origin: "Corea del Sur", role: "Entrenador supersónico" },
-
-  { name: "Wright Flyer", group: "Histórica", maker: "Wright Brothers", origin: "Estados Unidos", role: "Pionero" },
-  { name: "Bleriot XI", group: "Histórica", maker: "Bleriot", origin: "Francia", role: "Pionero" },
-  { name: "Supermarine Spitfire", group: "Histórica", maker: "Supermarine", origin: "Reino Unido", role: "Caza histórico" },
-  { name: "P-51 Mustang", group: "Histórica", maker: "North American", origin: "Estados Unidos", role: "Caza histórico" },
-  { name: "Douglas DC-3", group: "Histórica", maker: "Douglas", origin: "Estados Unidos", role: "Transporte histórico" },
-  { name: "Mitsubishi A6M Zero", group: "Histórica", maker: "Mitsubishi", origin: "Japón", role: "Caza naval histórico" },
-
-  { name: "Bell X-1", group: "Experimental", maker: "Bell", origin: "Estados Unidos", role: "Experimental supersónico" },
-  { name: "North American X-15", group: "Experimental", maker: "North American", origin: "Estados Unidos", role: "Avión cohete" },
-  { name: "NASA X-59 QueSST", group: "Experimental", maker: "NASA / Lockheed Martin", origin: "Estados Unidos", role: "Supersónico silencioso" },
-  { name: "SpaceShipOne", group: "Experimental", maker: "Scaled Composites", origin: "Estados Unidos", role: "Espacial suborbital" },
-
-  { name: "PBY Catalina", group: "Hidroaviones", maker: "Consolidated", origin: "Estados Unidos", role: "Hidroavión patrulla" },
-  { name: "Canadair CL-415", group: "Hidroaviones", maker: "Canadair", origin: "Canadá", role: "Anfibio antiincendios" },
-  { name: "ShinMaywa US-2", group: "Hidroaviones", maker: "ShinMaywa", origin: "Japón", role: "Anfibio SAR" },
-  { name: "Grumman HU-16 Albatross", group: "Hidroaviones", maker: "Grumman", origin: "Estados Unidos", role: "Anfibio SAR" },
-
-  { name: "UH-60 Black Hawk", group: "Helicópteros", maker: "Sikorsky", origin: "Estados Unidos", role: "Helicóptero utilitario" },
-  { name: "AH-64 Apache", group: "Helicópteros", maker: "Boeing", origin: "Estados Unidos", role: "Helicóptero de ataque" },
-  { name: "CH-47 Chinook", group: "Helicópteros", maker: "Boeing", origin: "Estados Unidos", role: "Helicóptero pesado" },
-  { name: "Airbus H145", group: "Helicópteros", maker: "Airbus Helicopters", origin: "Europa", role: "Helicóptero ligero" },
-  { name: "Mil Mi-17", group: "Helicópteros", maker: "Mil", origin: "Rusia", role: "Helicóptero transporte" },
-
-  { name: "HC-130 Hercules", group: "Rescate", maker: "Lockheed Martin", origin: "Estados Unidos", role: "Rescate SAR de largo alcance" },
-  { name: "Sikorsky S-92 SAR", group: "Rescate", maker: "Sikorsky", origin: "Estados Unidos", role: "Helicóptero SAR" },
-  { name: "Airbus H145 Rescue", group: "Rescate", maker: "Airbus Helicopters", origin: "Europa", role: "HEMS / rescate" }
-];
-
-const variants = ["", "Block II", "Block III", "Mk.2", "Modernizado", "Export", "Entrenamiento", "Reconocimiento", "SAR", "Carga", "Naval", "Experimental"];
-
-function textByGroup(seed: Seed, index: number): Aircraft {
-  const variant = variants[index % variants.length];
-  const name = variant ? `${seed.name} ${variant}` : seed.name;
-  const isMilitary = seed.group === "Militar";
-  const isNaval = /naval|Super Hornet|Rafale|J-15|Harrier|F-35/.test(name);
-  return {
-    name,
-    wiki: seed.wiki || seed.name,
-    group: seed.group,
-    role: seed.role,
-    maker: seed.maker,
-    origin: seed.origin,
-    firstFlight: index < 20 ? "1903-1945" : index < 80 ? "1946-1990" : "1991-2024",
-    status: seed.group === "Histórica" ? "Histórico / museo / restauración" : "Activo, retirado o producido según versión",
-    license: isMilitary ? "Uso militar / estatal" : seed.group === "Comercial" ? "Piloto comercial y certificación de línea aérea" : "Licencia correspondiente según país y categoría",
-    engine: seed.group === "Planeadores" ? "Sin motor o motorglider según versión" : seed.group === "Helicópteros" || seed.group === "Rescate" ? "Turboeje o pistón según versión" : "Pistón, turbohélice, turbofán, eléctrico o cohete según versión",
-    capacity: seed.group === "Comercial" ? "Pasajeros/carga según versión" : seed.group === "Deportivos / Ultraligeros" || seed.group === "Planeadores" ? "1-2 personas generalmente" : "Variable según configuración",
-    speed: "Variable según versión, motor y carga",
-    range: isMilitary ? "Radio operativo variable por misión, carga, combustible y reabastecimiento" : "Variable según combustible, versión y operación",
-    operators: isMilitary ? "Fuerzas armadas / operadores estatales según país" : "Operadores civiles, comerciales, escuelas, clubes o privados según modelo",
-    history: `${seed.name} pertenece a la familia ${seed.role}. Registro WikiAir ampliado para navegación por categorías, historia, uso práctico y consulta rápida.` ,
-    interior: isMilitary ? "Cabina orientada a misión, sensores, comunicaciones y supervivencia" : "Interior variable según versión, operador y época",
-    weapons: isMilitary ? "Puede llevar cañones, ametralladoras, misiles, bombas, cohetes o equipos de misión según variante. En transportes, el poder principal es logístico." : undefined,
-    mission: isMilitary ? "Defensa aérea, ataque, reconocimiento, transporte, patrulla o apoyo según variante" : seed.role,
-    rescueRole: seed.group === "Rescate" ? "Búsqueda y rescate, evacuación médica, patrulla, apoyo humanitario y salvamento" : undefined,
-    registryId: `WK-${String(index + 1).padStart(5, "0")}`,
-    registryType: seed.group,
-    registryCategory: seed.role,
-    productionApprox: 1 + ((index * 37) % 36000),
-    registryNotes: "Registro interno estable WikiAir"
-  };
+function categoryEngine(group: AircraftGroup) {
+  if (group === "Helicópteros" || group === "Rescate") return "Turboeje / turbohélice según versión";
+  if (group === "Planeadores") return "Sin motor";
+  if (group === "Dirigibles / Globos") return "Aire caliente, helio o propulsión ligera según modelo";
+  if (group === "Comercial") return "Turbofán o turbohélice según variante";
+  return "Motor según versión y época";
 }
 
-export const generatedRegistryAircraft: Aircraft[] = Object.entries(targets).flatMap(([group, target]) => {
-  const pool = seeds.filter((seed) => seed.group === group);
-  return Array.from({ length: target }, (_, i) => textByGroup(pool[i % pool.length], i));
-});
+function buildGroup(group: AircraftGroup): Aircraft[] {
+  const base = seeds[group];
+  const list: Aircraft[] = [];
+  let i = 0;
+  while (list.length < targets[group]) {
+    const s = base[i % base.length];
+    const round = Math.floor(i / base.length);
+    const name = round === 0 ? s.name : `${s.name} · variante ${round + 1}`;
+    list.push({
+      registryId: `AV-${String(totalBefore(group) + list.length + 1).padStart(5, "0")}`,
+      name,
+      wiki: s.wiki || s.name,
+      group,
+      role: s.role,
+      maker: s.maker,
+      origin: s.origin,
+      firstFlight: "Ver ficha técnica / época histórica según modelo",
+      status: "Activo, retirado o histórico según versión",
+      license: group === "Militar" ? "Uso militar / estatal según país" : "Licencia o habilitación según categoría y país",
+      engine: categoryEngine(group),
+      capacity: "Variable según versión y configuración",
+      speed: "Variable según versión",
+      range: "Variable según versión, carga y operación",
+      operators: "Operadores civiles, comerciales, militares, estatales o privados según modelo",
+      history: `${name} incluido en WikiAir dentro de la categoría ${group}.`,
+      interior: "Interior/cabina variable según versión, misión y operador.",
+      mission: s.role,
+      registryType: group,
+      registryCategory: s.role,
+      registryNotes: "Registro separado por categoría para evitar mezclas entre secciones."
+    });
+    i += 1;
+  }
+  return list;
+}
+
+function totalBefore(group: AircraftGroup) {
+  const ordered = Object.keys(targets) as AircraftGroup[];
+  const idx = ordered.indexOf(group);
+  return ordered.slice(0, idx).reduce((sum, key) => sum + targets[key], 0);
+}
+
+export const generatedRegistryAircraft: Aircraft[] = (Object.keys(targets) as AircraftGroup[]).flatMap(buildGroup);
+export const registryTotal = generatedRegistryAircraft.length;
