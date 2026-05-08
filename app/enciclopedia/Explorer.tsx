@@ -36,7 +36,7 @@ function isBadImage(item: WikiImage, expectedName: string) {
 async function findCommonsCover(query: string, expectedName: string): Promise<WikiImage | null> {
   try {
     const exact = cleanName(query);
-    const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(`"${exact}" aircraft photo`)}&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url|mime&iiurlwidth=1400&format=json&origin=*`;
+    const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(`"${exact}" aircraft full view side view photo`)}&gsrnamespace=6&gsrlimit=12&prop=imageinfo&iiprop=url|mime&iiurlwidth=1600&format=json&origin=*`;
     const res = await fetch(url);
     if (!res.ok) return null;
     const data = await res.json();
@@ -65,6 +65,13 @@ function ImageFromWiki({ title, name, onOpen }: { title: string; name: string; o
       const exactName = cleanName(name);
       const exactTitle = cleanName(title || name);
       try {
+        const fallback = await findCommonsCover(exactName, exactName);
+        if (active && fallback) {
+          setImg(fallback);
+          setDone(true);
+          return;
+        }
+
         const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(exactTitle)}`);
         const data = res.ok ? await res.json() : null;
         const url = data?.originalimage?.source || data?.thumbnail?.source || null;
@@ -74,8 +81,6 @@ function ImageFromWiki({ title, name, onOpen }: { title: string; name: string; o
           setDone(true);
           return;
         }
-        const fallback = await findCommonsCover(exactName, exactName);
-        if (active && fallback) setImg(fallback);
       } catch {
         const fallback = await findCommonsCover(exactName, exactName);
         if (active && fallback) setImg(fallback);
@@ -94,8 +99,18 @@ function ImageFromWiki({ title, name, onOpen }: { title: string; name: string; o
   }
 
   return (
-    <button className="imageButton" type="button" onClick={() => onOpen?.([img], 0)}>
-      <img src={img.url} alt={name} onError={() => setImg(null)} />
+    <button
+      className="imageButton"
+      type="button"
+      onClick={() => onOpen?.([img], 0)}
+      style={{ display: "grid", placeItems: "center", overflow: "hidden" }}
+    >
+      <img
+        src={img.url}
+        alt={name}
+        onError={() => setImg(null)}
+        style={{ width: "auto", height: "auto", maxWidth: "96%", maxHeight: "96%", objectFit: "scale-down", objectPosition: "center", background: "#050505" }}
+      />
     </button>
   );
 }
@@ -134,8 +149,8 @@ function GalleryFromCommons({ query, onOpen }: { query: string; onOpen: (images:
     <div className="photoGallery">
       {images.map((image, index) => (
         <figure key={image.url}>
-          <button className="galleryButton" type="button" onClick={() => onOpen(images, index)}>
-            <img src={image.url} alt={image.title} />
+          <button className="galleryButton" type="button" onClick={() => onOpen(images, index)} style={{ display: "grid", placeItems: "center" }}>
+            <img src={image.url} alt={image.title} style={{ width: "auto", height: "auto", maxWidth: "96%", maxHeight: "96%", objectFit: "scale-down" }} />
           </button>
           <figcaption>{image.title}</figcaption>
         </figure>
@@ -182,7 +197,7 @@ function DetailModal({ plane, onClose, onImageOpen }: { plane: Aircraft; onClose
           <button className="modalClose" type="button" onClick={onClose}>Cerrar</button>
         </div>
 
-        <div className="modalHeroImage">
+        <div className="modalHeroImage" style={{ minHeight: 300 }}>
           <ImageFromWiki title={plane.wiki} name={plane.name} onOpen={onImageOpen} />
         </div>
 
@@ -233,6 +248,7 @@ export default function Explorer() {
   const [selected, setSelected] = useState<Aircraft | null>(null);
   const [lightbox, setLightbox] = useState<Lightbox | null>(null);
   const [query, setQuery] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const normalizedQuery = query.trim().toLowerCase();
   const list = useMemo(() => {
@@ -244,33 +260,40 @@ export default function Explorer() {
   }, [active, normalizedQuery]);
 
   const suggestions = useMemo(() => {
-    if (!normalizedQuery) return [];
+    if (!normalizedQuery || !showSuggestions) return [];
     return allAircraft
       .filter((item) => `${item.name} ${item.maker} ${item.origin} ${item.group}`.toLowerCase().includes(normalizedQuery))
       .slice(0, 8);
-  }, [normalizedQuery]);
+  }, [normalizedQuery, showSuggestions]);
 
   const openImages = (images: WikiImage[], index: number) => setLightbox({ images, index });
+  const chooseSuggestion = (item: Aircraft) => {
+    setQuery(item.name);
+    setActive(item.group);
+    setShowSuggestions(false);
+    setSelected(item);
+  };
 
   return (
     <>
       <section className="container categoryNav">
         {groups.map((group) => (
-          <button key={group} onClick={() => { setActive(group); setSelected(null); setQuery(""); }} className={active === group ? "tabActive" : "tabButton"}>{group}</button>
+          <button key={group} onClick={() => { setActive(group); setSelected(null); setQuery(""); setShowSuggestions(false); }} className={active === group ? "tabActive" : "tabButton"}>{group}</button>
         ))}
       </section>
 
       <section className="container" style={{ marginBottom: 18, position: "relative" }}>
         <input
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => { setQuery(e.target.value); setShowSuggestions(true); }}
+          onFocus={() => { if (query.trim()) setShowSuggestions(true); }}
           placeholder="Buscar avión por nombre, país, fabricante o código..."
           style={{ width: "100%", borderRadius: 18, border: "1px solid rgba(212,175,55,.35)", background: "rgba(255,255,255,.06)", color: "white", padding: "14px 16px", fontSize: 16, outline: "none" }}
         />
         {suggestions.length > 0 && (
           <div style={{ position: "absolute", zIndex: 20, left: 0, right: 0, top: 54, background: "rgba(5,5,5,.98)", border: "1px solid rgba(212,175,55,.35)", borderRadius: 18, overflow: "hidden", boxShadow: "0 18px 70px rgba(0,0,0,.55)" }}>
             {suggestions.map((item) => (
-              <button key={item.registryId || item.name} type="button" onClick={() => { setQuery(item.name); setActive(item.group); }} style={{ display: "block", width: "100%", textAlign: "left", padding: "12px 16px", color: "white", background: "transparent", border: 0, borderBottom: "1px solid rgba(255,255,255,.08)", cursor: "pointer" }}>
+              <button key={item.registryId || item.name} type="button" onMouseDown={(e) => { e.preventDefault(); chooseSuggestion(item); }} style={{ display: "block", width: "100%", textAlign: "left", padding: "12px 16px", color: "white", background: "transparent", border: 0, borderBottom: "1px solid rgba(255,255,255,.08)", cursor: "pointer" }}>
                 <b>{item.name}</b><br /><span style={{ color: "#bdbdbd", fontSize: 13 }}>{item.group} · {item.maker} · {item.origin}</span>
               </button>
             ))}
@@ -289,7 +312,7 @@ export default function Explorer() {
             const eco = getEconomics(plane);
             return (
               <article className="aircraftCard" key={plane.registryId || plane.name}>
-                <div className="imageBox"><ImageFromWiki title={plane.wiki} name={plane.name} onOpen={openImages} /></div>
+                <div className="imageBox" style={{ height: "clamp(300px, 48vw, 430px)", padding: 10 }}><ImageFromWiki title={plane.wiki} name={plane.name} onOpen={openImages} /></div>
                 <div className="aircraftBody">
                   <span className="pill">{plane.group}</span>
                   <h3>{plane.name}</h3>
