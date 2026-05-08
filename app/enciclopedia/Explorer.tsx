@@ -39,6 +39,40 @@ function isBadImage(item: WikiImage, expectedName: string) {
   return tokens.length ? !tokens.some((token) => text.includes(token)) : false;
 }
 
+async function findCommonsImages(query: string): Promise<WikiImage[]> {
+  const exact = cleanName(query);
+  const searches = [
+    `"${exact}" aircraft photo`,
+    `"${exact}" airplane`,
+    `"${exact}" aviation`
+  ];
+
+  const results = await Promise.all(searches.map(async (search) => {
+    const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(search)}&gsrnamespace=6&gsrlimit=10&prop=imageinfo&iiprop=url|mime&iiurlwidth=1600&format=json&origin=*`;
+    try {
+      const res = await fetch(url);
+      if (!res.ok) return [] as WikiImage[];
+      const data = await res.json();
+      return (Object.values(data?.query?.pages || {}) as any[]).map((page: any) => ({
+        title: page.title?.replace("File:", "") || exact,
+        url: page.imageinfo?.[0]?.thumburl || page.imageinfo?.[0]?.url,
+        mime: page.imageinfo?.[0]?.mime
+      })) as WikiImage[];
+    } catch {
+      return [] as WikiImage[];
+    }
+  }));
+
+  return Array.from(
+    new Map(
+      results
+        .flat()
+        .filter((item) => item.url && !isBadImage(item, exact))
+        .map((item) => [item.url, item])
+    ).values()
+  );
+}
+
 function AircraftVisual({ plane }: { plane: Aircraft }) {
   return (
     <div className="aircraftVisual">
@@ -50,38 +84,60 @@ function AircraftVisual({ plane }: { plane: Aircraft }) {
   );
 }
 
+function CardImage({ plane, onOpen }: { plane: Aircraft; onOpen: (images: WikiImage[], index: number) => void }) {
+  const [images, setImages] = useState<WikiImage[]>([]);
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    setImages([]);
+    setDone(false);
+    findCommonsImages(plane.wiki || plane.name)
+      .then((found) => {
+        if (active) setImages(found.slice(0, 4));
+      })
+      .catch(() => {
+        if (active) setImages([]);
+      })
+      .finally(() => {
+        if (active) setDone(true);
+      });
+    return () => { active = false; };
+  }, [plane.wiki, plane.name]);
+
+  if (!images.length) {
+    return (
+      <div className="realImageFrame noPhoto">
+        {done ? <AircraftVisual plane={plane} /> : <span>Buscando imagen...</span>}
+      </div>
+    );
+  }
+
+  const image = images[0];
+  return (
+    <button className="realImageFrame" type="button" onClick={() => onOpen(images, 0)}>
+      <img src={image.url} alt={plane.name} onError={() => setImages(images.slice(1))} />
+    </button>
+  );
+}
+
 function GalleryFromCommons({ query, onOpen }: { query: string; onOpen: (images: WikiImage[], index: number) => void }) {
   const [images, setImages] = useState<WikiImage[]>([]);
   const [done, setDone] = useState(false);
 
   useEffect(() => {
     let active = true;
-    const exact = cleanName(query);
-    const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(`"${exact}" aircraft photo`)}&gsrnamespace=6&gsrlimit=12&prop=imageinfo&iiprop=url|mime&iiurlwidth=1400&format=json&origin=*`;
-
     setImages([]);
     setDone(false);
-    fetch(url)
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (!active) return;
-        const found = (Object.values(data?.query?.pages || {}) as any[])
-          .map((page: any) => ({
-            title: page.title?.replace("File:", "") || "Imagen",
-            url: page.imageinfo?.[0]?.thumburl || page.imageinfo?.[0]?.url,
-            mime: page.imageinfo?.[0]?.mime
-          }))
-          .filter((item: WikiImage) => Boolean(item.url) && !isBadImage(item, exact));
-        setImages(Array.from(new Map(found.map((item) => [item.url, item])).values()).slice(0, 8));
-      })
-      .catch(() => setImages([]))
+    findCommonsImages(query)
+      .then((found) => { if (active) setImages(found.slice(0, 8)); })
+      .catch(() => { if (active) setImages([]); })
       .finally(() => { if (active) setDone(true); });
-
     return () => { active = false; };
   }, [query]);
 
   if (!images.length) {
-    return <div className="galleryEmpty">{done ? "Sin fotos verificadas por ahora. Se evita mostrar imágenes recortadas o incorrectas." : "Buscando fotos verificadas..."}</div>;
+    return <div className="galleryEmpty">{done ? "Sin fotos verificadas por ahora." : "Buscando fotos verificadas..."}</div>;
   }
 
   return (
@@ -137,7 +193,7 @@ function DetailModal({ plane, onClose, onImageOpen }: { plane: Aircraft; onClose
         </div>
 
         <div className="modalHeroImage">
-          <AircraftVisual plane={plane} />
+          <CardImage plane={plane} onOpen={onImageOpen} />
         </div>
 
         <div className="detailGrid">
@@ -257,7 +313,7 @@ export default function Explorer() {
             const eco = getEconomics(plane);
             return (
               <article className="aircraftCard" key={plane.registryId || plane.name}>
-                <div className="imageBox"><AircraftVisual plane={plane} /></div>
+                <div className="imageBox"><CardImage plane={plane} onOpen={openImages} /></div>
                 <div className="aircraftBody">
                   <span className="pill">{plane.group}</span>
                   <h3>{plane.name}</h3>
