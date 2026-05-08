@@ -14,6 +14,18 @@ function cleanName(value: string) {
   return value.replace(/·\s*variante\s*\d+/gi, "").replace(/\s+/g, " ").trim();
 }
 
+function dedupeAircraft(items: Aircraft[]) {
+  const seen = new Set<string>();
+  const result: Aircraft[] = [];
+  for (const item of items) {
+    const key = cleanName(item.name).toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    result.push(item);
+  }
+  return result;
+}
+
 function isBadImage(item: WikiImage, expectedName: string) {
   const text = `${item.title} ${item.url} ${item.mime || ""}`.toLowerCase();
   const expected = cleanName(expectedName).toLowerCase();
@@ -23,106 +35,32 @@ function isBadImage(item: WikiImage, expectedName: string) {
     "coat of arms", "seal", "air force logo", "wikimedia-logo"
   ];
   if (banned.some((word) => text.includes(word))) return true;
-
-  const strongTokens = expected
-    .split(/[^a-z0-9áéíóúñü-]+/i)
-    .filter((token) => token.length >= 3)
-    .slice(0, 3);
-
-  if (strongTokens.length === 0) return false;
-  return !strongTokens.some((token) => text.includes(token));
+  const tokens = expected.split(/[^a-z0-9áéíóúñü-]+/i).filter((token) => token.length >= 3).slice(0, 3);
+  return tokens.length ? !tokens.some((token) => text.includes(token)) : false;
 }
 
-async function findCommonsCover(query: string, expectedName: string): Promise<WikiImage | null> {
-  try {
-    const exact = cleanName(query);
-    const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(`"${exact}" aircraft full view side view photo`)}&gsrnamespace=6&gsrlimit=12&prop=imageinfo&iiprop=url|mime&iiurlwidth=1600&format=json&origin=*`;
-    const res = await fetch(url);
-    if (!res.ok) return null;
-    const data = await res.json();
-    const pages = Object.values(data?.query?.pages || {}) as any[];
-    for (const page of pages) {
-      const item = {
-        title: page.title?.replace("File:", "") || exact,
-        url: page.imageinfo?.[0]?.thumburl || page.imageinfo?.[0]?.url,
-        mime: page.imageinfo?.[0]?.mime
-      } as WikiImage;
-      if (item.url && !isBadImage(item, expectedName)) return item;
-    }
-    return null;
-  } catch {
-    return null;
-  }
-}
-
-function ImageFromWiki({ title, name, onOpen }: { title: string; name: string; onOpen?: (images: WikiImage[], index: number) => void }) {
-  const [img, setImg] = useState<WikiImage | null>(null);
-  const [done, setDone] = useState(false);
-
-  useEffect(() => {
-    let active = true;
-    async function load() {
-      const exactName = cleanName(name);
-      const exactTitle = cleanName(title || name);
-      try {
-        const fallback = await findCommonsCover(exactName, exactName);
-        if (active && fallback) {
-          setImg(fallback);
-          setDone(true);
-          return;
-        }
-
-        const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(exactTitle)}`);
-        const data = res.ok ? await res.json() : null;
-        const url = data?.originalimage?.source || data?.thumbnail?.source || null;
-        const candidate = url ? { url, title: data?.title || exactName } as WikiImage : null;
-        if (active && candidate && !isBadImage(candidate, exactName)) {
-          setImg(candidate);
-          setDone(true);
-          return;
-        }
-      } catch {
-        const fallback = await findCommonsCover(exactName, exactName);
-        if (active && fallback) setImg(fallback);
-      } finally {
-        if (active) setDone(true);
-      }
-    }
-    setImg(null);
-    setDone(false);
-    load();
-    return () => { active = false; };
-  }, [title, name]);
-
-  if (!img || isBadImage(img, name)) {
-    return <div className="imageFallback">{done ? "Foto no verificada" : "Buscando foto..."}</div>;
-  }
-
+function AircraftVisual({ plane }: { plane: Aircraft }) {
   return (
-    <button
-      className="imageButton"
-      type="button"
-      onClick={() => onOpen?.([img], 0)}
-      style={{ display: "grid", placeItems: "center", overflow: "hidden" }}
-    >
-      <img
-        src={img.url}
-        alt={name}
-        onError={() => setImg(null)}
-        style={{ width: "auto", height: "auto", maxWidth: "96%", maxHeight: "96%", objectFit: "scale-down", objectPosition: "center", background: "#050505" }}
-      />
-    </button>
+    <div className="aircraftVisual">
+      <div className="visualLogo">WikiAir</div>
+      <div className="visualIcon">✈</div>
+      <div className="visualName">{cleanName(plane.name)}</div>
+      <div className="visualMeta">{plane.group} · ficha técnica</div>
+    </div>
   );
 }
 
 function GalleryFromCommons({ query, onOpen }: { query: string; onOpen: (images: WikiImage[], index: number) => void }) {
   const [images, setImages] = useState<WikiImage[]>([]);
+  const [done, setDone] = useState(false);
 
   useEffect(() => {
     let active = true;
     const exact = cleanName(query);
     const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(`"${exact}" aircraft photo`)}&gsrnamespace=6&gsrlimit=12&prop=imageinfo&iiprop=url|mime&iiurlwidth=1400&format=json&origin=*`;
 
+    setImages([]);
+    setDone(false);
     fetch(url)
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
@@ -136,21 +74,22 @@ function GalleryFromCommons({ query, onOpen }: { query: string; onOpen: (images:
           .filter((item: WikiImage) => Boolean(item.url) && !isBadImage(item, exact));
         setImages(Array.from(new Map(found.map((item) => [item.url, item])).values()).slice(0, 8));
       })
-      .catch(() => setImages([]));
+      .catch(() => setImages([]))
+      .finally(() => { if (active) setDone(true); });
 
     return () => { active = false; };
   }, [query]);
 
   if (!images.length) {
-    return <div className="galleryEmpty">Sin fotos verificadas por ahora. Se evita mostrar imágenes incorrectas.</div>;
+    return <div className="galleryEmpty">{done ? "Sin fotos verificadas por ahora. Se evita mostrar imágenes recortadas o incorrectas." : "Buscando fotos verificadas..."}</div>;
   }
 
   return (
     <div className="photoGallery">
       {images.map((image, index) => (
         <figure key={image.url}>
-          <button className="galleryButton" type="button" onClick={() => onOpen(images, index)} style={{ display: "grid", placeItems: "center" }}>
-            <img src={image.url} alt={image.title} style={{ width: "auto", height: "auto", maxWidth: "96%", maxHeight: "96%", objectFit: "scale-down" }} />
+          <button className="galleryButton" type="button" onClick={() => onOpen(images, index)}>
+            <img src={image.url} alt={image.title} />
           </button>
           <figcaption>{image.title}</figcaption>
         </figure>
@@ -197,8 +136,8 @@ function DetailModal({ plane, onClose, onImageOpen }: { plane: Aircraft; onClose
           <button className="modalClose" type="button" onClick={onClose}>Cerrar</button>
         </div>
 
-        <div className="modalHeroImage" style={{ minHeight: 300 }}>
-          <ImageFromWiki title={plane.wiki} name={plane.name} onOpen={onImageOpen} />
+        <div className="modalHeroImage">
+          <AircraftVisual plane={plane} />
         </div>
 
         <div className="detailGrid">
@@ -261,9 +200,9 @@ export default function Explorer() {
 
   const suggestions = useMemo(() => {
     if (!normalizedQuery || !showSuggestions) return [];
-    return allAircraft
-      .filter((item) => `${item.name} ${item.maker} ${item.origin} ${item.group}`.toLowerCase().includes(normalizedQuery))
-      .slice(0, 8);
+    return dedupeAircraft(
+      allAircraft.filter((item) => `${item.name} ${item.maker} ${item.origin} ${item.group}`.toLowerCase().includes(normalizedQuery))
+    ).slice(0, 6);
   }, [normalizedQuery, showSuggestions]);
 
   const openImages = (images: WikiImage[], index: number) => setLightbox({ images, index });
@@ -291,9 +230,15 @@ export default function Explorer() {
           style={{ width: "100%", borderRadius: 18, border: "1px solid rgba(212,175,55,.35)", background: "rgba(255,255,255,.06)", color: "white", padding: "14px 16px", fontSize: 16, outline: "none" }}
         />
         {suggestions.length > 0 && (
-          <div style={{ position: "absolute", zIndex: 20, left: 0, right: 0, top: 54, background: "rgba(5,5,5,.98)", border: "1px solid rgba(212,175,55,.35)", borderRadius: 18, overflow: "hidden", boxShadow: "0 18px 70px rgba(0,0,0,.55)" }}>
+          <div style={{ position: "absolute", zIndex: 200, left: 0, right: 0, top: 54, background: "rgba(5,5,5,.98)", border: "1px solid rgba(212,175,55,.35)", borderRadius: 18, overflow: "hidden", boxShadow: "0 18px 70px rgba(0,0,0,.55)" }}>
             {suggestions.map((item) => (
-              <button key={item.registryId || item.name} type="button" onMouseDown={(e) => { e.preventDefault(); chooseSuggestion(item); }} style={{ display: "block", width: "100%", textAlign: "left", padding: "12px 16px", color: "white", background: "transparent", border: 0, borderBottom: "1px solid rgba(255,255,255,.08)", cursor: "pointer" }}>
+              <button
+                key={item.registryId || item.name}
+                type="button"
+                onPointerDown={(e) => { e.preventDefault(); chooseSuggestion(item); }}
+                onClick={(e) => { e.preventDefault(); chooseSuggestion(item); }}
+                style={{ display: "block", width: "100%", textAlign: "left", padding: "12px 16px", color: "white", background: "transparent", border: 0, borderBottom: "1px solid rgba(255,255,255,.08)", cursor: "pointer" }}
+              >
                 <b>{item.name}</b><br /><span style={{ color: "#bdbdbd", fontSize: 13 }}>{item.group} · {item.maker} · {item.origin}</span>
               </button>
             ))}
@@ -312,7 +257,7 @@ export default function Explorer() {
             const eco = getEconomics(plane);
             return (
               <article className="aircraftCard" key={plane.registryId || plane.name}>
-                <div className="imageBox" style={{ height: "clamp(300px, 48vw, 430px)", padding: 10 }}><ImageFromWiki title={plane.wiki} name={plane.name} onOpen={openImages} /></div>
+                <div className="imageBox"><AircraftVisual plane={plane} /></div>
                 <div className="aircraftBody">
                   <span className="pill">{plane.group}</span>
                   <h3>{plane.name}</h3>
