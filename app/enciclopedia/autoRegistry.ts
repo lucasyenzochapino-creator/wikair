@@ -3,20 +3,20 @@ import type { Aircraft, AircraftGroup } from "./types";
 type Seed = { name: string; maker: string; origin: string; role: string; wiki?: string };
 
 const targets: Record<AircraftGroup, number> = {
-  "Militar": 115,
-  "Comercial": 55,
-  "Privada / General": 40,
-  "Deportivos / Ultraligeros": 40,
-  "Planeadores": 25,
-  "Autogiros": 12,
-  "Dirigibles / Globos": 12,
-  "Carga": 30,
-  "Entrenamiento": 30,
-  "Histórica": 50,
-  "Experimental": 30,
-  "Hidroaviones": 22,
-  "Helicópteros": 30,
-  "Rescate": 12
+  "Militar": 230,
+  "Comercial": 110,
+  "Privada / General": 80,
+  "Deportivos / Ultraligeros": 80,
+  "Planeadores": 50,
+  "Autogiros": 24,
+  "Dirigibles / Globos": 24,
+  "Carga": 60,
+  "Entrenamiento": 60,
+  "Histórica": 100,
+  "Experimental": 60,
+  "Hidroaviones": 44,
+  "Helicópteros": 60,
+  "Rescate": 24
 };
 
 const seeds: Record<AircraftGroup, Seed[]> = {
