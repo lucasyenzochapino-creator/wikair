@@ -35,13 +35,7 @@ function isBadImage(item: WikiImage, expectedName: string) {
     "coat of arms", "seal", "air force logo", "wikimedia-logo"
   ];
   if (banned.some((word) => text.includes(word))) return true;
-
-  const tokens = expected
-    .split(/[^a-z0-9áéíóúñü-]+/i)
-    .filter((token) => token.length >= 3)
-    .slice(0, 3);
-
-  return tokens.length ? !tokens.some((token) => text.includes(token)) : false;
+  return false;
 }
 
 async function findWikipediaImage(query: string): Promise<WikiImage | null> {
@@ -59,14 +53,21 @@ async function findWikipediaImage(query: string): Promise<WikiImage | null> {
   }
 }
 
-async function findCommonsImages(query: string): Promise<WikiImage[]> {
+function buildSearchTerms(query: string, group?: string): string[] {
   const exact = cleanName(query);
-  const searches = [
-    `"${exact}" aircraft photo`,
-    `${exact} aircraft`,
-    `${exact} airplane`,
-    `${exact} aviation`
-  ];
+  const g = (group || "").toLowerCase();
+  const base = [`"${exact}"`, exact];
+  if (g.includes("helic")) return base.flatMap(q => [`${q} helicopter`, `${q} rotorcraft`, `${q}`]);
+  if (g.includes("planeador") || g.includes("glider")) return base.flatMap(q => [`${q} glider`, `${q} sailplane`, `${q}`]);
+  if (g.includes("dirigib") || g.includes("globo")) return base.flatMap(q => [`${q} airship`, `${q} zeppelin`, `${q} blimp`, `${q} balloon`, `${q}`]);
+  if (g.includes("hidro")) return base.flatMap(q => [`${q} seaplane`, `${q} flying boat`, `${q} amphibian`, `${q}`]);
+  if (g.includes("autogir") || g.includes("autogyro")) return base.flatMap(q => [`${q} autogyro`, `${q} gyrocopter`, `${q}`]);
+  return base.flatMap(q => [`${q} aircraft photo`, `${q} airplane`, `${q} aviation`, `${q}`]);
+}
+
+async function findCommonsImages(query: string, group?: string): Promise<WikiImage[]> {
+  const exact = cleanName(query);
+  const searches = buildSearchTerms(query, group);
 
   const results = await Promise.all(searches.map(async (search) => {
     const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(search)}&gsrnamespace=6&gsrlimit=10&prop=imageinfo&iiprop=url|mime&iiurlwidth=1600&format=json&origin=*`;
@@ -94,10 +95,28 @@ async function findCommonsImages(query: string): Promise<WikiImage[]> {
   );
 }
 
-async function findBestImages(query: string): Promise<WikiImage[]> {
-  const primary = await findWikipediaImage(query);
-  const commons = await findCommonsImages(query);
-  const combined = primary ? [primary, ...commons] : commons;
+async function findWikipediaImageEs(query: string): Promise<WikiImage | null> {
+  const exact = cleanName(query);
+  try {
+    const res = await fetch(`https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(exact)}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const url = data?.originalimage?.source || data?.thumbnail?.source || null;
+    const item = url ? ({ url, title: data?.title || exact, mime: "image" } as WikiImage) : null;
+    if (item && !isBadImage(item, exact)) return item;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+async function findBestImages(query: string, group?: string): Promise<WikiImage[]> {
+  const [primary, primaryEs, commons] = await Promise.all([
+    findWikipediaImage(query),
+    findWikipediaImageEs(query),
+    findCommonsImages(query, group)
+  ]);
+  const combined = [primary, primaryEs, ...commons].filter(Boolean) as WikiImage[];
   return Array.from(new Map(combined.map((item) => [item.url, item])).values());
 }
 
@@ -122,9 +141,9 @@ function CardImage({ plane, onOpen }: { plane: Aircraft; onOpen: (images: WikiIm
     let active = true;
     setImages([]);
     setDone(false);
-    findBestImages(plane.wiki || plane.name)
+    findBestImages(plane.wiki || plane.name, plane.group)
       .then((found) => {
-        if (active) setImages(found.slice(0, 5));
+        if (active) setImages(found.slice(0, 10));
       })
       .catch(() => {
         if (active) setImages([]);
@@ -170,7 +189,7 @@ function CardImage({ plane, onOpen }: { plane: Aircraft; onOpen: (images: WikiIm
   );
 }
 
-function GalleryFromCommons({ query, onOpen }: { query: string; onOpen: (images: WikiImage[], index: number) => void }) {
+function GalleryFromCommons({ query, group, onOpen }: { query: string; group?: string; onOpen: (images: WikiImage[], index: number) => void }) {
   const [images, setImages] = useState<WikiImage[]>([]);
   const [done, setDone] = useState(false);
 
@@ -178,8 +197,8 @@ function GalleryFromCommons({ query, onOpen }: { query: string; onOpen: (images:
     let active = true;
     setImages([]);
     setDone(false);
-    findBestImages(query)
-      .then((found) => { if (active) setImages(found.slice(0, 8)); })
+    findBestImages(query, group)
+      .then((found) => { if (active) setImages(found.slice(0, 12)); })
       .catch(() => { if (active) setImages([]); })
       .finally(() => { if (active) setDone(true); });
     return () => { active = false; };
@@ -276,7 +295,7 @@ function DetailModal({ plane, onClose, onImageOpen }: { plane: Aircraft; onClose
 
         <section className="modalSection">
           <h4>Galería dentro de WikiAir</h4>
-          <GalleryFromCommons query={plane.wiki} onOpen={onImageOpen} />
+          <GalleryFromCommons query={plane.wiki} group={plane.group} onOpen={onImageOpen} />
         </section>
 
         <div className="radarActions modalActions">
