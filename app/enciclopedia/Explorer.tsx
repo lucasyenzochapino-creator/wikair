@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { aircraft as dataAircraft } from "./data";
 import { getEconomics } from "./costs";
 import { groups, type Aircraft, type AircraftGroup } from "./types";
@@ -122,15 +122,31 @@ async function fetchCommonsGallery(query: string, group?: string): Promise<WikiI
   ).slice(0, 12);
 }
 
-/* ── 3-stage card image resolver: EN Wiki → ES Wiki → Commons ── */
+/* ── Module-level image cache — survives category switches ── */
+const _imgCache = new Map<string, WikiImage | null>();
+
+/* ── 4-stage card image resolver ── */
 async function resolveCardImage(plane: Aircraft): Promise<WikiImage | null> {
-  const wiki = cleanName(plane.wiki || plane.name);
+  const key = plane.wiki || plane.name;
+  if (_imgCache.has(key)) return _imgCache.get(key) ?? null;
+
+  const wiki = cleanName(key);
+
   const en = await getWikiSummaryImage(wiki);
-  if (en) return en;
+  if (en) { _imgCache.set(key, en); return en; }
+
   const es = await getWikiSummaryImageEs(wiki);
-  if (es) return es;
+  if (es) { _imgCache.set(key, es); return es; }
+
+  if (wiki !== cleanName(plane.name)) {
+    const byName = await getWikiSummaryImage(cleanName(plane.name));
+    if (byName) { _imgCache.set(key, byName); return byName; }
+  }
+
   const commons = await fetchCommonsGallery(wiki, plane.group);
-  return commons[0] ?? null;
+  const result = commons[0] ?? null;
+  _imgCache.set(key, result);
+  return result;
 }
 
 /* ────────────────────────── CardImage ────────────────────────── */
@@ -141,24 +157,42 @@ function CardImage({
   plane: Aircraft;
   onOpen: (images: WikiImage[], index: number) => void;
 }) {
-  const [image, setImage] = useState<WikiImage | null>(null);
-  const [done, setDone] = useState(false);
+  const [image, setImage] = useState<WikiImage | null | undefined>(() => {
+    const key = plane.wiki || plane.name;
+    return _imgCache.has(key) ? (_imgCache.get(key) ?? null) : undefined;
+  });
+  const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const key = plane.wiki || plane.name;
+    if (_imgCache.has(key)) {
+      setImage(_imgCache.get(key) ?? null);
+      return;
+    }
+
+    const el = rootRef.current;
+    if (!el) return;
     let active = true;
-    setImage(null);
-    setDone(false);
-    resolveCardImage(plane)
-      .then((img) => { if (active) { setImage(img); setDone(true); } })
-      .catch(() => { if (active) setDone(true); });
-    return () => { active = false; };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0].isIntersecting) return;
+        observer.disconnect();
+        resolveCardImage(plane)
+          .then((img) => { if (active) setImage(img); })
+          .catch(() => { if (active) setImage(null); });
+      },
+      { rootMargin: "300px" }
+    );
+    observer.observe(el);
+    return () => { active = false; observer.disconnect(); };
   }, [plane.wiki, plane.name]);
 
-  if (!done) return <div className="imgSkeleton" />;
+  if (image === undefined) return <div className="imgSkeleton" ref={rootRef} />;
 
   if (!image) {
     return (
-      <div className="imgFallback">
+      <div className="imgFallback" ref={rootRef}>
         <span className="fallbackName">{cleanName(plane.name)}</span>
         <span className="fallbackTag">{plane.role}</span>
         <span className="fallbackSub">Foto no disponible</span>
@@ -167,18 +201,20 @@ function CardImage({
   }
 
   return (
-    <button
-      style={{ width: "100%", height: "100%", border: 0, padding: 0, display: "block", cursor: "zoom-in", background: "none" }}
-      type="button"
-      onClick={() => onOpen([image], 0)}
-    >
-      <img
-        src={image.url}
-        alt={plane.name}
-        onError={() => setImage(null)}
-        style={{ width: "100%", height: "100%", display: "block", objectFit: "cover" }}
-      />
-    </button>
+    <div ref={rootRef} style={{ width: "100%", height: "100%" }}>
+      <button
+        style={{ width: "100%", height: "100%", border: 0, padding: 0, display: "block", cursor: "zoom-in", background: "none" }}
+        type="button"
+        onClick={() => onOpen([image], 0)}
+      >
+        <img
+          src={image.url}
+          alt={plane.name}
+          onError={() => setImage(null)}
+          style={{ width: "100%", height: "100%", display: "block", objectFit: "cover" }}
+        />
+      </button>
+    </div>
   );
 }
 
