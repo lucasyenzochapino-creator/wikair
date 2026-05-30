@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Explorer from "./Explorer";
 import { aircraft } from "./data";
 
@@ -12,7 +13,9 @@ export default function EnciclopediaPage() {
           {aircraft.length}+ aeronaves con fichas completas. Las categorías no se mezclan: tocá una pestaña y abrí la ficha de cada aeronave.
         </p>
       </section>
-      <Explorer />
+      <Suspense>
+        <Explorer />
+      </Suspense>
     </main>
   );
 }

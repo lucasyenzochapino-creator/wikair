@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { aircraft as dataAircraft } from "./data";
 import { getEconomics } from "./costs";
 import { groups, type Aircraft, type AircraftGroup } from "./types";
@@ -466,6 +467,20 @@ export default function Explorer() {
   const [lightbox, setLightbox] = useState<Lightbox | null>(null);
   const [query, setQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const open = searchParams.get("open");
+    if (!open) return;
+    const target = dedupeAircraft(allAircraft).find(
+      (a) => cleanName(a.name).toLowerCase() === open.toLowerCase() ||
+             cleanName(a.wiki || "").toLowerCase() === open.toLowerCase()
+    );
+    if (target) {
+      setActive(target.group);
+      setSelected(target);
+    }
+  }, [searchParams]);
 
   const normalizedQuery = query.trim().toLowerCase();
 

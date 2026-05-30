@@ -104,7 +104,7 @@ export default async function HomePage() {
           </div>
           <div className="featuredGrid">
             {featuredWithImages.map((item) => (
-              <Link className="featuredCard" key={item.name} href="/enciclopedia">
+              <Link className="featuredCard" key={item.name} href={`/enciclopedia?open=${encodeURIComponent(item.name)}`}>
                 {item.image ? (
                   <img src={item.image} alt={item.name} />
                 ) : (
