@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { generatedRegistryAircraft } from "./autoRegistry";
+import { aircraft as dataAircraft } from "./data";
 import { getEconomics } from "./costs";
 import { groups, type Aircraft, type AircraftGroup } from "./types";
 
-const allAircraft: Aircraft[] = generatedRegistryAircraft;
+const allAircraft: Aircraft[] = dataAircraft;
 
 type WikiImage = { url: string; title: string; mime?: string };
 type Lightbox = { images: WikiImage[]; index: number };
@@ -28,7 +28,6 @@ function dedupeAircraft(items: Aircraft[]) {
 
 function isBadImage(item: WikiImage, expectedName: string) {
   const text = `${item.title} ${item.url} ${item.mime || ""}`.toLowerCase();
-  const expected = cleanName(expectedName).toLowerCase();
   const banned = [
     ".svg", "image/svg", "roundel", "insignia", "emblem", "badge", "logo", "flag", "map",
     "diagram", "silhouette", "drawing", "3-view", "3 view", "blank", "icon", "patch", "tail flash",
@@ -68,7 +67,6 @@ function buildSearchTerms(query: string, group?: string): string[] {
 async function findCommonsImages(query: string, group?: string): Promise<WikiImage[]> {
   const exact = cleanName(query);
   const searches = buildSearchTerms(query, group);
-
   const results = await Promise.all(searches.map(async (search) => {
     const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(search)}&gsrnamespace=6&gsrlimit=10&prop=imageinfo&iiprop=url|mime&iiurlwidth=1600&format=json&origin=*`;
     try {
@@ -84,13 +82,9 @@ async function findCommonsImages(query: string, group?: string): Promise<WikiIma
       return [] as WikiImage[];
     }
   }));
-
   return Array.from(
     new Map(
-      results
-        .flat()
-        .filter((item) => item.url && !isBadImage(item, exact))
-        .map((item) => [item.url, item])
+      results.flat().filter((item) => item.url && !isBadImage(item, exact)).map((item) => [item.url, item])
     ).values()
   );
 }
@@ -120,19 +114,6 @@ async function findBestImages(query: string, group?: string): Promise<WikiImage[
   return Array.from(new Map(combined.map((item) => [item.url, item])).values());
 }
 
-function AircraftVisual({ plane }: { plane: Aircraft }) {
-  return (
-    <div style={{ width: "100%", height: "100%", display: "grid", placeItems: "center", background: "#050505", color: "white", textAlign: "center", padding: 20 }}>
-      <div>
-        <div style={{ color: "#d4af37", fontSize: 16, marginBottom: 8 }}>WikiAir</div>
-        <div style={{ fontSize: 26, marginBottom: 8 }}>✈</div>
-        <div style={{ fontSize: 20, fontWeight: 800 }}>{cleanName(plane.name)}</div>
-        <div style={{ color: "#cfcfcf", marginTop: 6 }}>{plane.group} · ficha técnica</div>
-      </div>
-    </div>
-  );
-}
-
 function CardImage({ plane, onOpen }: { plane: Aircraft; onOpen: (images: WikiImage[], index: number) => void }) {
   const [images, setImages] = useState<WikiImage[]>([]);
   const [done, setDone] = useState(false);
@@ -142,48 +123,38 @@ function CardImage({ plane, onOpen }: { plane: Aircraft; onOpen: (images: WikiIm
     setImages([]);
     setDone(false);
     findBestImages(plane.wiki || plane.name, plane.group)
-      .then((found) => {
-        if (active) setImages(found.slice(0, 10));
-      })
-      .catch(() => {
-        if (active) setImages([]);
-      })
-      .finally(() => {
-        if (active) setDone(true);
-      });
+      .then((found) => { if (active) setImages(found.slice(0, 10)); })
+      .catch(() => { if (active) setImages([]); })
+      .finally(() => { if (active) setDone(true); });
     return () => { active = false; };
   }, [plane.wiki, plane.name]);
 
-  const frameStyle = {
-    width: "100%",
-    height: "100%",
-    minHeight: 280,
-    padding: 10,
-    margin: 0,
-    border: 0,
-    display: "grid",
-    placeItems: "center",
-    overflow: "hidden",
-    background: "#050505",
-    cursor: images.length ? "zoom-in" : "default"
-  } as const;
+  if (!done && !images.length) {
+    return <div className="imgSkeleton" />;
+  }
 
   if (!images.length) {
     return (
-      <div style={frameStyle}>
-        {done ? <AircraftVisual plane={plane} /> : <span style={{ color: "#d4af37" }}>Buscando imagen...</span>}
+      <div className="imgFallback">
+        <span className="fallbackIcon">✈</span>
+        <span className="fallbackName">{cleanName(plane.name)}</span>
+        <span className="fallbackTag">{plane.group}</span>
       </div>
     );
   }
 
   const image = images[0];
   return (
-    <button style={frameStyle} type="button" onClick={() => onOpen(images, 0)}>
+    <button
+      style={{ width: "100%", height: "100%", border: 0, padding: 0, display: "block", cursor: "zoom-in", background: "none" }}
+      type="button"
+      onClick={() => onOpen(images, 0)}
+    >
       <img
         src={image.url}
         alt={plane.name}
         onError={() => setImages(images.slice(1))}
-        style={{ width: "auto", height: "auto", maxWidth: "100%", maxHeight: "100%", objectFit: "contain", objectPosition: "center", display: "block", background: "#050505" }}
+        style={{ width: "100%", height: "100%", display: "block" }}
       />
     </button>
   );
@@ -213,7 +184,7 @@ function GalleryFromCommons({ query, group, onOpen }: { query: string; group?: s
       {images.map((image, index) => (
         <figure key={image.url}>
           <button className="galleryButton" type="button" onClick={() => onOpen(images, index)}>
-            <img src={image.url} alt={image.title} style={{ objectFit: "contain" }} />
+            <img src={image.url} alt={image.title} style={{ objectFit: "cover" }} />
           </button>
           <figcaption>{image.title}</figcaption>
         </figure>
@@ -253,9 +224,11 @@ function DetailModal({ plane, onClose, onImageOpen }: { plane: Aircraft; onClose
       <div className="modalCard">
         <div className="modalHeader">
           <div>
-            <p className="gold">Ficha completa · {plane.registryId}</p>
+            <p className="gold" style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+              Ficha completa · {plane.registryId}
+            </p>
             <h2>{plane.name}</h2>
-            <p>{plane.group} · {plane.role} · {plane.maker} · {plane.origin}</p>
+            <p className="headerSub">{plane.group} · {plane.role} · {plane.maker} · {plane.origin}</p>
           </div>
           <button className="modalClose" type="button" onClick={onClose}>Cerrar</button>
         </div>
@@ -275,7 +248,6 @@ function DetailModal({ plane, onClose, onImageOpen }: { plane: Aircraft; onClose
             <p><b>Capacidad:</b> {plane.capacity}</p>
             <p><b>Licencia:</b> {plane.license}</p>
           </section>
-
           <section>
             <h4>Costos y fabricación</h4>
             <p><b>Precio en USD:</b> {eco.price}</p>
@@ -283,7 +255,6 @@ function DetailModal({ plane, onClose, onImageOpen }: { plane: Aircraft; onClose
             <p><b>Producción aprox.:</b> {plane.productionApprox?.toLocaleString("es-AR") || "Variable"}</p>
             <p><b>Criterio:</b> {eco.note}</p>
           </section>
-
           <section>
             <h4>Uso práctico</h4>
             <p><b>Operadores / países:</b> {plane.operators}</p>
@@ -298,7 +269,7 @@ function DetailModal({ plane, onClose, onImageOpen }: { plane: Aircraft; onClose
           <GalleryFromCommons query={plane.wiki} group={plane.group} onOpen={onImageOpen} />
         </section>
 
-        <div className="radarActions modalActions">
+        <div className="modalActions">
           <button className="radarLink" type="button" onClick={onClose}>Volver al catálogo</button>
         </div>
       </div>
@@ -339,40 +310,51 @@ export default function Explorer() {
 
   return (
     <>
-      <section className="container categoryNav">
-        {groups.map((group) => (
-          <button key={group} onClick={() => { setActive(group); setSelected(null); setQuery(""); setShowSuggestions(false); }} className={active === group ? "tabActive" : "tabButton"}>{group}</button>
-        ))}
-      </section>
+      <nav className="categoryNav">
+        <div className="categoryNavInner">
+          {groups.map((group) => (
+            <button
+              key={group}
+              onClick={() => { setActive(group); setSelected(null); setQuery(""); setShowSuggestions(false); }}
+              className={active === group ? "tabActive" : "tabButton"}
+            >
+              {group}
+            </button>
+          ))}
+        </div>
+      </nav>
 
-      <section className="container" style={{ marginBottom: 18, position: "relative" }}>
-        <input
-          value={query}
-          onChange={(e) => { setQuery(e.target.value); setShowSuggestions(true); }}
-          onFocus={() => { if (query.trim()) setShowSuggestions(true); }}
-          placeholder="Buscar avión por nombre, país, fabricante o código..."
-          style={{ width: "100%", borderRadius: 18, border: "1px solid rgba(212,175,55,.35)", background: "rgba(255,255,255,.06)", color: "white", padding: "14px 16px", fontSize: 16, outline: "none" }}
-        />
-        {suggestions.length > 0 && (
-          <div style={{ position: "absolute", zIndex: 200, left: 0, right: 0, top: 54, background: "rgba(5,5,5,.98)", border: "1px solid rgba(212,175,55,.35)", borderRadius: 18, overflow: "hidden", boxShadow: "0 18px 70px rgba(0,0,0,.55)" }}>
-            {suggestions.map((item) => (
-              <button
-                key={item.registryId || item.name}
-                type="button"
-                onPointerDown={(e) => { e.preventDefault(); chooseSuggestion(item); }}
-                onClick={(e) => { e.preventDefault(); chooseSuggestion(item); }}
-                style={{ display: "block", width: "100%", textAlign: "left", padding: "12px 16px", color: "white", background: "transparent", border: 0, borderBottom: "1px solid rgba(255,255,255,.08)", cursor: "pointer" }}
-              >
-                <b>{item.name}</b><br /><span style={{ color: "#bdbdbd", fontSize: 13 }}>{item.group} · {item.maker} · {item.origin}</span>
-              </button>
-            ))}
-          </div>
-        )}
-      </section>
+      <div className="groupBlock">
+        <div className="searchWrap">
+          <input
+            className="searchInput"
+            value={query}
+            onChange={(e) => { setQuery(e.target.value); setShowSuggestions(true); }}
+            onFocus={() => { if (query.trim()) setShowSuggestions(true); }}
+            placeholder="Buscar avión por nombre, país, fabricante o código..."
+          />
+          {suggestions.length > 0 && (
+            <div className="suggestions">
+              {suggestions.map((item) => (
+                <button
+                  key={item.registryId || item.name}
+                  className="suggestionItem"
+                  type="button"
+                  onPointerDown={(e) => { e.preventDefault(); chooseSuggestion(item); }}
+                  onClick={(e) => { e.preventDefault(); chooseSuggestion(item); }}
+                >
+                  <b>{item.name}</b><br />
+                  <span>{item.group} · {item.maker} · {item.origin}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
 
-      <section className="container groupBlock">
         <div className="groupTitle">
-          <p className="gold">{list.length} aeronaves cargadas · Total WikiAir: {allAircraft.length}</p>
+          <p className="gold" style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 6 }}>
+            {list.length} aeronaves · Total WikiAir: {allAircraft.length}
+          </p>
           <h2>{normalizedQuery ? "Resultados de búsqueda" : active}</h2>
         </div>
 
@@ -380,11 +362,11 @@ export default function Explorer() {
           {list.map((plane) => {
             const eco = getEconomics(plane);
             return (
-              <article className="aircraftCard" key={plane.registryId || plane.name} style={{ display: "flex", flexDirection: "column" }}>
-                <div className="imageBox" style={{ height: "clamp(290px, 52vw, 430px)", flex: "0 0 auto", overflow: "hidden", background: "#050505" }}>
+              <article className="aircraftCard" key={plane.registryId || plane.name}>
+                <div className="imageBox" style={{ height: "clamp(200px, 36vw, 300px)" }}>
                   <CardImage plane={plane} onOpen={openImages} />
                 </div>
-                <div className="aircraftBody" style={{ flex: "0 0 auto" }}>
+                <div className="aircraftBody">
                   <span className="pill">{plane.group}</span>
                   <h3>{plane.name}</h3>
                   <p>{plane.maker} · {plane.origin}</p>
@@ -392,18 +374,32 @@ export default function Explorer() {
                     <span>Tipo: {plane.role}</span>
                     <span>Motor: {plane.engine}</span>
                     <span>Precio USD: {eco.price}</span>
-                    <span>Misión: {plane.mission}</span>
+                    {plane.mission && <span>Misión: {plane.mission}</span>}
                   </div>
-                  <button className="detailButton" onClick={() => setSelected(plane)} type="button">Ver ficha completa</button>
+                  <button className="detailButton" onClick={() => setSelected(plane)} type="button">
+                    Ver ficha completa
+                  </button>
                 </div>
               </article>
             );
           })}
         </div>
-      </section>
+      </div>
 
-      {selected && <DetailModal plane={selected} onClose={() => setSelected(null)} onImageOpen={openImages} />}
-      {lightbox && <LightboxView box={lightbox} onClose={() => setLightbox(null)} onMove={(index) => setLightbox({ ...lightbox, index })} />}
+      {selected && (
+        <DetailModal
+          plane={selected}
+          onClose={() => setSelected(null)}
+          onImageOpen={openImages}
+        />
+      )}
+      {lightbox && (
+        <LightboxView
+          box={lightbox}
+          onClose={() => setLightbox(null)}
+          onMove={(index) => setLightbox({ ...lightbox, index })}
+        />
+      )}
     </>
   );
 }

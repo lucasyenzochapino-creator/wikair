@@ -1,5 +1,5 @@
 import Explorer from "./Explorer";
-import data from "./registry.json";
+import { aircraft } from "./data";
 
 export default function EnciclopediaPage() {
   return (
@@ -9,7 +9,7 @@ export default function EnciclopediaPage() {
         <p className="gold">WIKIAIR · ENCICLOPEDIA</p>
         <h1>Aeronaves por tipo de uso</h1>
         <p>
-          Registro v2 con {data.total} aeronaves. Las categorías no se mezclan: tocá una pestaña y abrí la ficha completa de cada aeronave.
+          {aircraft.length}+ aeronaves con fichas completas. Las categorías no se mezclan: tocá una pestaña y abrí la ficha de cada aeronave.
         </p>
       </section>
       <Explorer />
