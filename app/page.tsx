@@ -35,7 +35,7 @@ export default async function HomePage() {
       {/* HERO */}
       <section className="hero">
         <div className="container">
-          <div className="heroLabel">✈ WIKIAIR · ENCICLOPEDIA DE AVIACIÓN</div>
+          <div className="heroLabel">WIKIAIR · ENCICLOPEDIA DE AVIACIÓN</div>
           <h1 className="heroTitle">
             Todo sobre<br />
             <span>aviación</span>
@@ -108,7 +108,7 @@ export default async function HomePage() {
                 {item.image ? (
                   <img src={item.image} alt={item.name} />
                 ) : (
-                  <div className="featuredCardFallback"><span>{item.name}</span></div>
+                  <div className="featuredCardFallback"><span className="fallbackName">{item.name}</span></div>
                 )}
                 <div className="featuredCardOverlay">
                   <p>{item.group} · {item.role}</p>

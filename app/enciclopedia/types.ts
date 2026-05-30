@@ -16,7 +16,7 @@ export type Aircraft = {
   range: string;
   operators: string;
   history: string;
-  interior: string;
+  interior?: string;
   weapons?: string;
   mission?: string;
   rescueRole?: string;

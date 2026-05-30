@@ -7,5 +7,6 @@ import { aircraft2c } from "./data2c";
 import { aircraft3a } from "./data3a";
 import { aircraft3b } from "./data3b";
 import { aircraft3c } from "./data3c";
+import { aircraft4 } from "./data4";
 
-export const aircraft = [...aircraft1a, ...aircraft1b, ...aircraft1c, ...aircraft2a, ...aircraft2b, ...aircraft2c, ...aircraft3a, ...aircraft3b, ...aircraft3c];
+export const aircraft = [...aircraft1a, ...aircraft1b, ...aircraft1c, ...aircraft2a, ...aircraft2b, ...aircraft2c, ...aircraft3a, ...aircraft3b, ...aircraft3c, ...aircraft4];
