@@ -1,18 +1,5 @@
 import Link from "next/link";
-
-async function getWikiImage(title: string): Promise<string | null> {
-  try {
-    const res = await fetch(
-      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`,
-      { next: { revalidate: 86400 } }
-    );
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data?.originalimage?.source || data?.thumbnail?.source || null;
-  } catch {
-    return null;
-  }
-}
+import RecordImg from "./RecordImg";
 
 type RecordEntry = {
   badge: string;
@@ -247,38 +234,19 @@ const historicRecords: RecordEntry[] = [
   },
 ];
 
-function RecordCard({ entry, img }: { entry: RecordEntry; img: string | null }) {
+function RecordCard({ entry }: { entry: RecordEntry }) {
   return (
     <div className="recordCard">
-      {img && (
-        <div className="recordCardImg">
-          <img src={img} alt={entry.name} />
-        </div>
-      )}
+      <RecordImg wiki={entry.wiki} alt={entry.name} />
       <span className="recordBadge">{entry.badge}</span>
       <h3>{entry.name}</h3>
-      <p style={{ color: "#d4af37", fontSize: 24, fontWeight: 800, margin: "8px 0" }}>{entry.stat}</p>
+      <p style={{ color: "var(--gold)", fontSize: 22, fontWeight: 800, margin: "8px 0", fontFamily: "var(--mono)" }}>{entry.stat}</p>
       <p>{entry.desc}</p>
     </div>
   );
 }
 
-export default async function RecordsPage() {
-  const allEntries = [
-    ...speedRecords,
-    ...sizeRecords,
-    ...productionRecords,
-    ...altitudeRecords,
-    ...historicRecords,
-  ];
-
-  const images = await Promise.all(allEntries.map((e) => getWikiImage(e.wiki)));
-  let idx = 0;
-  const imgMap: Record<string, string | null> = {};
-  for (const entry of allEntries) {
-    imgMap[entry.wiki] = images[idx++];
-  }
-
+export default function RecordsPage() {
   const funFacts = [
     {
       wiki: "Airbus A350 XWB",
@@ -312,8 +280,6 @@ export default async function RecordsPage() {
     },
   ];
 
-  const funImages = await Promise.all(funFacts.map((f) => getWikiImage(f.wiki)));
-
   return (
     <main className="page">
       <section className="container hero compactHero">
@@ -330,7 +296,7 @@ export default async function RecordsPage() {
         <p className="gold">LOS MÁS RÁPIDOS</p>
         <h2 style={{ fontSize: "clamp(28px, 5vw, 48px)", margin: "8px 0 24px", letterSpacing: -1 }}>Velocidad máxima</h2>
         <div className="statsGrid">
-          {speedRecords.map((e) => <RecordCard key={e.wiki} entry={e} img={imgMap[e.wiki] ?? null} />)}
+          {speedRecords.map((e) => <RecordCard key={e.wiki} entry={e} />)}
         </div>
       </section>
 
@@ -338,7 +304,7 @@ export default async function RecordsPage() {
         <p className="gold">LOS MÁS GRANDES</p>
         <h2 style={{ fontSize: "clamp(28px, 5vw, 48px)", margin: "8px 0 24px", letterSpacing: -1 }}>Dimensiones extremas</h2>
         <div className="statsGrid">
-          {sizeRecords.map((e) => <RecordCard key={e.wiki} entry={e} img={imgMap[e.wiki] ?? null} />)}
+          {sizeRecords.map((e) => <RecordCard key={e.wiki} entry={e} />)}
         </div>
       </section>
 
@@ -346,7 +312,7 @@ export default async function RecordsPage() {
         <p className="gold">LOS MÁS PRODUCIDOS</p>
         <h2 style={{ fontSize: "clamp(28px, 5vw, 48px)", margin: "8px 0 24px", letterSpacing: -1 }}>De las fábricas al cielo</h2>
         <div className="statsGrid">
-          {productionRecords.map((e) => <RecordCard key={e.wiki} entry={e} img={imgMap[e.wiki] ?? null} />)}
+          {productionRecords.map((e) => <RecordCard key={e.wiki} entry={e} />)}
         </div>
       </section>
 
@@ -354,7 +320,7 @@ export default async function RecordsPage() {
         <p className="gold">RÉCORDS DE ALTITUD</p>
         <h2 style={{ fontSize: "clamp(28px, 5vw, 48px)", margin: "8px 0 24px", letterSpacing: -1 }}>Más cerca del espacio</h2>
         <div className="statsGrid">
-          {altitudeRecords.map((e) => <RecordCard key={e.wiki} entry={e} img={imgMap[e.wiki] ?? null} />)}
+          {altitudeRecords.map((e) => <RecordCard key={e.wiki} entry={e} />)}
         </div>
       </section>
 
@@ -362,7 +328,7 @@ export default async function RecordsPage() {
         <p className="gold">LOS MÁS HISTÓRICOS</p>
         <h2 style={{ fontSize: "clamp(28px, 5vw, 48px)", margin: "8px 0 24px", letterSpacing: -1 }}>Que cambiaron el mundo</h2>
         <div className="statsGrid">
-          {historicRecords.map((e) => <RecordCard key={e.wiki} entry={e} img={imgMap[e.wiki] ?? null} />)}
+          {historicRecords.map((e) => <RecordCard key={e.wiki} entry={e} />)}
         </div>
       </section>
 
@@ -370,15 +336,11 @@ export default async function RecordsPage() {
         <p className="gold">SABÍAS QUE</p>
         <h2 style={{ fontSize: "clamp(28px, 5vw, 48px)", margin: "8px 0 24px", letterSpacing: -1 }}>Datos que te van a volar la cabeza</h2>
         <div className="statsGrid">
-          {funFacts.map((f, i) => (
+          {funFacts.map((f) => (
             <div className="recordCard" key={f.wiki}>
-              {funImages[i] && (
-                <div className="recordCardImg">
-                  <img src={funImages[i]!} alt={f.title} />
-                </div>
-              )}
+              <RecordImg wiki={f.wiki} alt={f.title} />
               <h3>{f.title}</h3>
-              <p style={{ color: "#bdbdbd", fontSize: 14, marginTop: 8 }}>{f.desc}</p>
+              <p style={{ color: "var(--muted2)", fontSize: 14, marginTop: 8 }}>{f.desc}</p>
             </div>
           ))}
         </div>
