@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
+import Script from "next/script";
 import "./globals.css";
 import Footer from "@/components/Footer";
 
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#07080f",
+  themeColor: "#000608",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1
@@ -53,6 +54,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </nav>
         {children}
         <Footer />
+        <Script id="sw-register" strategy="afterInteractive">{`
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js');
+          }
+        `}</Script>
       </body>
     </html>
   );

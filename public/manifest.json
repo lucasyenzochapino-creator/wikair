@@ -1,31 +1,55 @@
 {
-  "name": "WikiAir",
+  "name": "WikiAir – Enciclopedia de Aviación",
   "short_name": "WikiAir",
-  "description": "Enciclopedia premium de aviación con radar en vivo.",
+  "description": "648 aeronaves con fichas técnicas completas. Radar en vivo, récords y quiz interactivo.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#050505",
-  "theme_color": "#050505",
+  "orientation": "any",
+  "background_color": "#000608",
+  "theme_color": "#000608",
+  "lang": "es",
+  "dir": "ltr",
+  "categories": ["education", "reference", "travel"],
   "icons": [
     {
       "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "WikiAir – Enciclopedia de Aviación"
     }
   ]
 }
