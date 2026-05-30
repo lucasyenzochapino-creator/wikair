@@ -45,8 +45,8 @@ export default async function HomePage() {
             helicópteros, planeadores y más. Imágenes reales, radar en vivo y récords mundiales.
           </p>
           <div className="heroCta">
-            <Link className="btnPrimary" href="/enciclopedia">📖 Explorar enciclopedia</Link>
-            <Link className="btnOutline" href="/radar">📡 Radar en vivo</Link>
+            <Link className="btnPrimary" href="/enciclopedia">Explorar enciclopedia</Link>
+            <Link className="btnOutline" href="/radar">Radar en vivo</Link>
           </div>
 
           <div className="statsBar">
@@ -67,31 +67,26 @@ export default async function HomePage() {
           </div>
           <div className="navGrid">
             <Link className="navCard" href="/enciclopedia">
-              <span className="navCardIcon">📖</span>
               <h2>Enciclopedia</h2>
               <p>648 aeronaves organizadas por tipo. Militares, comerciales, históricas, helicópteros y más. Fichas técnicas completas.</p>
               <span className="cardArrow">Explorar →</span>
             </Link>
             <Link className="navCard" href="/records">
-              <span className="navCardIcon">🏆</span>
               <h2>Récords</h2>
               <p>Los más rápidos, los más grandes, los más históricos. Los extremos de la aviación mundial.</p>
               <span className="cardArrow">Ver récords →</span>
             </Link>
             <Link className="navCard" href="/quiz">
-              <span className="navCardIcon">🎯</span>
               <h2>Quiz</h2>
               <p>Ponete a prueba con 20 preguntas sobre aviones, récords, historia y curiosidades. ¿Qué tanto sabés?</p>
               <span className="cardArrow">Jugar →</span>
             </Link>
             <Link className="navCard" href="/radar">
-              <span className="navCardIcon">📡</span>
               <h2>Radar en vivo</h2>
               <p>Tráfico aéreo en tiempo real. Seguí vuelos, altitudes y trayectorias en todo el mundo.</p>
               <span className="cardArrow">Ver radar →</span>
             </Link>
             <Link className="navCard" href="/historia">
-              <span className="navCardIcon">📜</span>
               <h2>Historia</h2>
               <p>Desde los hermanos Wright hasta la era de los drones. La historia completa de la aviación.</p>
               <span className="cardArrow">Ver historia →</span>
@@ -113,7 +108,7 @@ export default async function HomePage() {
                 {item.image ? (
                   <img src={item.image} alt={item.name} />
                 ) : (
-                  <div className="featuredCardFallback"><span>✈</span></div>
+                  <div className="featuredCardFallback"><span>{item.name}</span></div>
                 )}
                 <div className="featuredCardOverlay">
                   <p>{item.group} · {item.role}</p>

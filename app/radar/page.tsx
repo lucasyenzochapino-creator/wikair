@@ -14,7 +14,7 @@ type Region = {
 
 const regions: Region[] = [
   {
-    label: "🇦🇷 Argentina",
+    label: "Argentina",
     lat: -34.6,
     lon: -58.4,
     zoom: 7,
@@ -23,7 +23,7 @@ const regions: Region[] = [
     airports: "AEP (Aeroparque), EZE (Ezeiza), COR (Córdoba), MDZ (Mendoza), BRC (Bariloche)"
   },
   {
-    label: "🌍 Europa",
+    label: "Europa",
     lat: 51.5,
     lon: 0.0,
     zoom: 6,
@@ -32,16 +32,16 @@ const regions: Region[] = [
     airports: "LHR (Londres), CDG (París), FRA (Frankfurt), AMS (Amsterdam), MAD (Madrid)"
   },
   {
-    label: "🇺🇸 Estados Unidos",
+    label: "Estados Unidos",
     lat: 40.7,
     lon: -74.0,
     zoom: 5,
     name: "Costa Este de EE.UU.",
-    description: "El espacio aéreo de EE.UU. es el más transitado del mundo. El centro de control de tráfico aéreo de Atlanta maneja más vuelos que ninguno otro.",
+    description: "El espacio aéreo de EE.UU. es el más transitado del mundo. El centro de control de Atlanta maneja más vuelos que ningún otro.",
     airports: "JFK, LAX, ORD (Chicago), ATL (Atlanta), DFW (Dallas)"
   },
   {
-    label: "🌐 Global",
+    label: "Global",
     lat: 20.0,
     lon: 0.0,
     zoom: 3,
@@ -64,7 +64,7 @@ export default function RadarPage() {
         <p className="gold">WIKIAIR · RADAR EN VIVO</p>
         <h1>Radar aéreo global</h1>
         <p>
-          Tráfico aéreo en tiempo real usando tecnología ADS-B. Selección de región y apertura en radar externo para ver vuelos, matrículas y altitudes en vivo.
+          Tráfico aéreo en tiempo real usando tecnología ADS-B. Seleccioná la región y abrí el radar externo para ver vuelos, matrículas y altitudes en vivo.
         </p>
       </section>
 
@@ -93,13 +93,13 @@ export default function RadarPage() {
             </p>
             <div className="radarActions" style={{ justifyContent: "center" }}>
               <a className="radarLink" href={fr24url} target="_blank" rel="noreferrer">
-                📡 Abrir Flightradar24
+                Abrir Flightradar24
               </a>
               <a className="radarLink" href={adsburl} target="_blank" rel="noreferrer">
-                🛩️ Abrir ADS-B Exchange
+                Abrir ADS-B Exchange
               </a>
               <a className="radarLink" href="https://opensky-network.org/network/explorer" target="_blank" rel="noreferrer">
-                🌐 Abrir OpenSky
+                Abrir OpenSky
               </a>
             </div>
           </div>
@@ -107,46 +107,46 @@ export default function RadarPage() {
       </section>
 
       <section className="container" style={{ paddingBottom: 32 }}>
-        <p className="gold">📡 ¿CÓMO FUNCIONA EL RADAR?</p>
+        <p className="gold">COMO FUNCIONA EL RADAR</p>
         <h2 style={{ fontSize: "clamp(26px, 5vw, 44px)", margin: "8px 0 24px", letterSpacing: -1 }}>La tecnología ADS-B explicada</h2>
         <div className="statsGrid" style={{ marginTop: 0 }}>
           <div className="recordCard">
-            <span style={{ fontSize: 28 }}>📡</span>
-            <h3>ADS-B: Qué es</h3>
+            <span className="recordBadge">ADS-B</span>
+            <h3>Qué es ADS-B</h3>
             <p style={{ color: "#bdbdbd", fontSize: 14, marginTop: 8 }}>
               ADS-B (Automatic Dependent Surveillance–Broadcast) es un sistema donde cada avión transmite su posición GPS, altitud, velocidad e identificación de forma automática cada segundo.
             </p>
           </div>
           <div className="recordCard">
-            <span style={{ fontSize: 28 }}>🛰️</span>
+            <span className="recordBadge">POSICIONAMIENTO</span>
             <h3>GPS y satélites</h3>
             <p style={{ color: "#bdbdbd", fontSize: 14, marginTop: 8 }}>
-              El avión determina su posición exacta usando GPS y la transmite en 1090 MHz. Las antenas en tierra (y satélites en SpaceX Starlink para zonas oceánicas) la reciben.
+              El avión determina su posición exacta usando GPS y la transmite en 1090 MHz. Las antenas en tierra (y satélites Starlink para zonas oceánicas) la reciben.
             </p>
           </div>
           <div className="recordCard">
-            <span style={{ fontSize: 28 }}>🌐</span>
+            <span className="recordBadge">COBERTURA</span>
             <h3>Red colaborativa</h3>
             <p style={{ color: "#bdbdbd", fontSize: 14, marginTop: 8 }}>
               Flightradar24 y ADS-B Exchange tienen miles de antenas receptoras operadas por voluntarios en todo el mundo que envían los datos en tiempo real a servidores centrales.
             </p>
           </div>
           <div className="recordCard">
-            <span style={{ fontSize: 28 }}>🔢</span>
-            <h3>Números asombrosos</h3>
+            <span className="recordBadge">CIFRAS</span>
+            <h3>Números globales</h3>
             <p style={{ color: "#bdbdbd", fontSize: 14, marginTop: 8 }}>
               En un día normal hay <strong style={{ color: "#d4af37" }}>100.000+ vuelos</strong> y <strong style={{ color: "#d4af37" }}>15.000 aviones simultáneos</strong> en el aire. El espacio aéreo de EE.UU. es el más transitado.
             </p>
           </div>
           <div className="recordCard">
-            <span style={{ fontSize: 28 }}>🏔️</span>
-            <h3>Zonas ciegas</h3>
+            <span className="recordBadge">LIMITACIONES</span>
+            <h3>Zonas sin cobertura</h3>
             <p style={{ color: "#bdbdbd", fontSize: 14, marginTop: 8 }}>
               Sobre los océanos y zonas remotas no hay antenas ADS-B en tierra. Para esas rutas se usan satélites o el sistema ACARS de reportes posicionales cada 30 minutos.
             </p>
           </div>
           <div className="recordCard">
-            <span style={{ fontSize: 28 }}>🔒</span>
+            <span className="recordBadge">MILITAR</span>
             <h3>Aviones militares</h3>
             <p style={{ color: "#bdbdbd", fontSize: 14, marginTop: 8 }}>
               Los aviones militares pueden apagar sus transponders ADS-B durante misiones sensibles. El SR-71 y el B-2 nunca aparecen en radares civiles.
@@ -156,7 +156,7 @@ export default function RadarPage() {
       </section>
 
       <section className="container" style={{ paddingBottom: 60 }}>
-        <p className="gold">✈️ DATOS DE TRÁFICO AÉREO</p>
+        <p className="gold">TRÁFICO AÉREO MUNDIAL</p>
         <h2 style={{ fontSize: "clamp(24px, 4vw, 40px)", margin: "8px 0 24px", letterSpacing: -1 }}>El mundo desde el cielo</h2>
         <div className="statsGrid" style={{ marginTop: 0 }}>
           <div className="statBox"><h3>100k+</h3><p>vuelos diarios en el mundo</p></div>

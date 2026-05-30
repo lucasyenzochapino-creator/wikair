@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <nav className="mainNav">
           <div className="navInner">
-            <Link className="navLogo" href="/">✈ WikiAir</Link>
+            <Link className="navLogo" href="/">WikiAir</Link>
             <div className="navLinks">
               <Link href="/enciclopedia">Enciclopedia</Link>
               <Link href="/historia">Historia</Link>

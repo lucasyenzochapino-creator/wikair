@@ -305,6 +305,70 @@ img { display: block; max-width: 100%; }
   font-size: 10.5px; color: var(--muted); text-transform: uppercase;
   letter-spacing: 0.06em; font-weight: 600;
 }
+.imgFallback .fallbackSub {
+  font-size: 10px; color: var(--muted); opacity: 0.55; margin-top: 2px;
+}
+
+/* Card image caption overlay */
+.cardImageCaption {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 20px 14px 10px;
+  background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%);
+  pointer-events: none;
+}
+.captionRole {
+  display: block; font-size: 11.5px; font-weight: 700; color: var(--gold);
+  letter-spacing: 0.03em; line-height: 1.3;
+}
+.captionOrigin {
+  display: block; font-size: 10.5px; color: rgba(255,255,255,0.55);
+  margin-top: 1px;
+}
+
+/* Category info block under section title */
+.catInfoBlock { margin-top: 10px; max-width: 700px; }
+.catDescription {
+  font-size: 15px; color: var(--text); font-weight: 600; line-height: 1.5;
+  margin-bottom: 6px;
+}
+.catDetail {
+  font-size: 13.5px; color: var(--muted2); line-height: 1.7;
+}
+
+/* Stat badges (speed / range) on cards */
+.statBadge {
+  display: inline-block; font-size: 11px; font-weight: 600;
+  color: var(--muted2); background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: 3px 9px; letter-spacing: -0.1px;
+}
+
+/* Modal hero image caption */
+.modalImageCaption {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 24px 20px 12px;
+  background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%);
+  display: flex; justify-content: space-between; align-items: flex-end;
+  pointer-events: none;
+}
+.modalImageCaption span { font-size: 13px; color: rgba(255,255,255,0.85); font-weight: 600; }
+
+/* Lightbox caption bar (replaces lightboxCount) */
+.lightboxCaption {
+  position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+  background: var(--surface2); border: 1px solid var(--border); color: var(--muted2);
+  padding: 8px 18px; border-radius: 999px; font-size: 12.5px; z-index: 201;
+  display: flex; gap: 16px; align-items: center; max-width: 80vw;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Record card image */
+.recordCardImg {
+  width: calc(100% + 44px); margin: -22px -22px 16px;
+  height: 190px; overflow: hidden;
+  border-radius: var(--rXL) var(--rXL) 0 0;
+}
+.recordCardImg img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 /* Card body */
 .aircraftBody { padding: 18px 20px 20px; flex: 1; display: flex; flex-direction: column; gap: 6px; position: relative; z-index: 1; }
