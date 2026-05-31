@@ -12,33 +12,20 @@ interface ExpandableCardProps {
   className?: string;
 }
 
+const BAD = ["flag", "map", "diagram", "icon", "logo", "badge", "emblem", "coat", "seal", "blank", "silhouette", ".svg"];
+
+function isGoodImg(url: string) {
+  const low = url.toLowerCase();
+  return !BAD.some((b) => low.includes(b));
+}
+
 async function fetchWikiImages(wiki: string): Promise<string[]> {
   try {
-    const res = await fetch(
-      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wiki)}`
-    );
+    // Call our own API proxy (runs on Vercel, always has internet access)
+    const res = await fetch(`/api/wiki-images?q=${encodeURIComponent(wiki)}`);
     if (!res.ok) return [];
-    const data = await res.json();
-    const main = data?.originalimage?.source || data?.thumbnail?.source;
-
-    const res2 = await fetch(
-      `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(wiki)}&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url|mime&format=json&origin=*`
-    );
-    const data2 = res2.ok ? await res2.json() : null;
-    const commons: string[] = [];
-    if (data2?.query?.pages) {
-      for (const page of Object.values(data2.query.pages) as any[]) {
-        const url: string = page?.imageinfo?.[0]?.url ?? "";
-        const mime: string = page?.imageinfo?.[0]?.mime ?? "";
-        if (url && mime.startsWith("image/") && !mime.includes("svg")) {
-          const low = url.toLowerCase();
-          const bad = ["flag", "map", "diagram", "icon", "logo", "badge", "emblem", "coat", "seal", "blank", "silhouette"];
-          if (!bad.some((b) => low.includes(b))) commons.push(url);
-        }
-      }
-    }
-    const all = [main, ...commons].filter(Boolean) as string[];
-    return [...new Set(all)].slice(0, 8);
+    const imgs = await res.json();
+    return Array.isArray(imgs) ? imgs.filter((u: string) => u && isGoodImg(u)) : [];
   } catch {
     return [];
   }
