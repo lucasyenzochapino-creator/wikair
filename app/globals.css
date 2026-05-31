@@ -694,6 +694,9 @@ img { display: block; max-width: 100%; }
 @media (max-width: 600px) {
   .hero { padding: 64px 0 52px; }
   .heroTitle { letter-spacing: -2px; }
+  .heroSub { max-width: 100%; }
+  .heroCta { gap: 10px; }
+  .heroCta a, .heroCta button { width: 100%; justify-content: center; }
   .statsBar { grid-template-columns: repeat(2, 1fr); }
   .featuredGrid { grid-template-columns: 1fr; }
   .footerGrid { grid-template-columns: 1fr; }
@@ -702,6 +705,22 @@ img { display: block; max-width: 100%; }
   .photoGallery { grid-template-columns: repeat(2, 1fr); }
   .aircraftGrid { grid-template-columns: 1fr; }
   .radarActions { flex-direction: column; align-items: stretch; }
+  /* Records: specs 2-col is fine on phone but compareBar needs to scroll */
+  .compareBar { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; gap: 10px; }
+  /* Category nav on mobile: scroll horizontally instead of wrapping */
+  .categoryNavInner { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: 8px 16px; }
+  .categoryNavInner::-webkit-scrollbar { display: none; }
+  /* Container padding tighter on small screens */
+  .container { padding: 0 14px; }
+  .groupBlock { padding: 24px 14px 48px; }
+  /* Modal full-screen on mobile */
+  .modalOverlay { padding: 0; align-items: flex-end; }
+  .modalCard { border-radius: var(--rXL) var(--rXL) 0 0; max-height: 95vh; overflow-y: auto; }
+  /* Quiz full width */
+  .quizBox { padding: 22px 16px; }
+  .navGrid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .statsGrid { grid-template-columns: 1fr 1fr; }
+  .recordsGrid { grid-template-columns: 1fr; }
 }
 
 /* ── ANIMATIONS ─────────────────────────────────────────────── */
