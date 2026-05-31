@@ -12,33 +12,43 @@ interface ExpandableCardProps {
   className?: string;
 }
 
+const BAD = ["flag", "map", "diagram", "icon", "logo", "badge", "emblem", "coat", "seal", "blank", "silhouette", ".svg"];
+
+function isGoodImg(url: string) {
+  const low = url.toLowerCase();
+  return !BAD.some((b) => low.includes(b));
+}
+
 async function fetchWikiImages(wiki: string): Promise<string[]> {
   try {
-    const res = await fetch(
-      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wiki)}`
-    );
-    if (!res.ok) return [];
-    const data = await res.json();
-    const main = data?.originalimage?.source || data?.thumbnail?.source;
+    const [summaryRes, mediaRes] = await Promise.allSettled([
+      fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wiki)}`),
+      fetch(`https://en.wikipedia.org/api/rest_v1/page/media-list/${encodeURIComponent(wiki)}`),
+    ]);
 
-    const res2 = await fetch(
-      `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(wiki)}&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url|mime&format=json&origin=*`
-    );
-    const data2 = res2.ok ? await res2.json() : null;
-    const commons: string[] = [];
-    if (data2?.query?.pages) {
-      for (const page of Object.values(data2.query.pages) as any[]) {
-        const url: string = page?.imageinfo?.[0]?.url ?? "";
-        const mime: string = page?.imageinfo?.[0]?.mime ?? "";
-        if (url && mime.startsWith("image/") && !mime.includes("svg")) {
-          const low = url.toLowerCase();
-          const bad = ["flag", "map", "diagram", "icon", "logo", "badge", "emblem", "coat", "seal", "blank", "silhouette"];
-          if (!bad.some((b) => low.includes(b))) commons.push(url);
-        }
+    // Primary image from summary
+    let thumb: string | null = null;
+    if (summaryRes.status === "fulfilled" && summaryRes.value.ok) {
+      const d = await summaryRes.value.json();
+      thumb = d?.originalimage?.source || d?.thumbnail?.source || null;
+    }
+
+    // Gallery images from media-list (all images in the Wikipedia article)
+    const mediaImgs: string[] = [];
+    if (mediaRes.status === "fulfilled" && mediaRes.value.ok) {
+      const d = await mediaRes.value.json();
+      for (const item of (d?.items ?? []) as any[]) {
+        if (item.type !== "image") continue;
+        // Pick the largest srcset variant
+        const srcset: any[] = item.srcset ?? [];
+        const best = srcset[srcset.length - 1]?.src ?? item.thumbnail?.source ?? "";
+        const url = best.startsWith("//") ? `https:${best}` : best;
+        if (url && isGoodImg(url)) mediaImgs.push(url);
       }
     }
-    const all = [main, ...commons].filter(Boolean) as string[];
-    return [...new Set(all)].slice(0, 8);
+
+    const all = [thumb, ...mediaImgs].filter(Boolean) as string[];
+    return [...new Set(all)].slice(0, 10);
   } catch {
     return [];
   }
