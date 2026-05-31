@@ -1,4 +1,4 @@
-const CACHE = "wikair-v1";
+const CACHE = "wikair-v3";
 const STATIC = ["/", "/enciclopedia", "/records", "/quiz", "/radar", "/historia", "/manifest.json"];
 
 self.addEventListener("install", (e) => {
@@ -19,13 +19,16 @@ self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET") return;
   const url = new URL(e.request.url);
   if (url.origin !== location.origin) return;
+  // Network-first: intenta red, cae a caché si offline
   e.respondWith(
-    caches.match(e.request).then((cached) => {
-      const fresh = fetch(e.request).then((res) => {
-        if (res.ok) caches.open(CACHE).then((c) => c.put(e.request, res.clone()));
+    fetch(e.request)
+      .then((res) => {
+        if (res.ok) {
+          const clone = res.clone();
+          caches.open(CACHE).then((c) => c.put(e.request, clone));
+        }
         return res;
-      });
-      return cached || fresh;
-    })
+      })
+      .catch(() => caches.match(e.request))
   );
 });

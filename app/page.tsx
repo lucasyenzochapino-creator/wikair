@@ -35,7 +35,7 @@ export default async function HomePage() {
       {/* HERO */}
       <section className="hero">
         <div className="container">
-          <div className="heroLabel">WIKIAIR · ESCUELA DE VUELO Y ENCICLOPEDIA</div>
+          <div className="heroLabel">ENCICLOPEDIA · ESCUELA DE VUELO</div>
           <h1 className="heroTitle">
             Aprendé<br />
             <span>a volar</span>
@@ -67,21 +67,25 @@ export default async function HomePage() {
           </div>
           <div className="navGrid">
             <Link className="navCard" href="/vuelo">
+              <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.15em", color: "var(--sky)", opacity: 0.7, textTransform: "uppercase" }}>MÓDULO 01</span>
               <h2>¿Cómo vuela un avión?</h2>
               <p>Las 4 fuerzas, las partes del avión y las 7 fases de cada vuelo. El fundamento de todo.</p>
               <span className="cardArrow">Módulo 1 →</span>
             </Link>
             <Link className="navCard" href="/instrumentos">
+              <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.15em", color: "var(--sky)", opacity: 0.7, textTransform: "uppercase" }}>MÓDULO 02</span>
               <h2>Instrumentos de vuelo</h2>
               <p>Los 6 básicos del cockpit, glass cockpit moderno, alertas y alarmas. Lo que leen los pilotos.</p>
               <span className="cardArrow">Módulo 2 →</span>
             </Link>
             <Link className="navCard" href="/glosario">
+              <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.15em", color: "var(--sky)", opacity: 0.7, textTransform: "uppercase" }}>MÓDULO 03</span>
               <h2>Glosario de aviación</h2>
               <p>60+ términos explicados: ATC, IFR, VFR, METAR, ILS, ETOPS, squawk y todo lo que necesitás saber.</p>
               <span className="cardArrow">Módulo 3 →</span>
             </Link>
             <Link className="navCard" href="/licencias">
+              <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.15em", color: "var(--sky)", opacity: 0.7, textTransform: "uppercase" }}>MÓDULO 04</span>
               <h2>Licencias de piloto</h2>
               <p>De PPL a ATPL: requisitos, horas y costos reales. El camino de cero a capitán de aerolínea en Argentina.</p>
               <span className="cardArrow">Módulo 4 →</span>
