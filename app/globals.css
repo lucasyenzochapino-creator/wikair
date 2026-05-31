@@ -671,19 +671,19 @@ img { display: block; max-width: 100%; }
   background: linear-gradient(135deg, var(--sky-bright), var(--sky));
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
-.footerBrand p { font-size: 13px; color: var(--muted); max-width: 260px; line-height: 1.7; }
+.footerBrand p { font-size: 13px; color: var(--muted2); max-width: 260px; line-height: 1.7; }
 .footerCol h4 {
   font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
-  color: var(--muted2); margin-bottom: 14px;
+  color: rgba(255,255,255,0.4); margin-bottom: 14px;
 }
 .footerCol ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
-.footerCol a { font-size: 13.5px; color: var(--muted); transition: color 0.15s; }
+.footerCol a { font-size: 13.5px; color: var(--muted2); transition: color 0.15s; }
 .footerCol a:hover { color: var(--text); }
 .footerDivider { height: 1px; background: var(--border); margin: 0 0 24px; }
 .footerBottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
-.footerBottom p { font-size: 12.5px; color: var(--muted); }
+.footerBottom p { font-size: 12.5px; color: var(--muted2); }
 .footerLegalLinks { display: flex; gap: 18px; }
-.footerLegalLinks a { font-size: 12.5px; color: var(--muted); transition: color 0.15s; }
+.footerLegalLinks a { font-size: 12.5px; color: var(--muted2); transition: color 0.15s; }
 .footerLegalLinks a:hover { color: var(--text); }
 
 /* ── HISTORIA ────────────────────────────────────────────── */
