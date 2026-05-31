@@ -985,6 +985,77 @@ img { display: block; max-width: 100%; }
   padding: 4px 12px; border-radius: 6px;
 }
 
+/* ── ExpandableCard ─────────────────────────────────────────── */
+.expandCard {
+  display: flex; flex-direction: column;
+  background: var(--glass); border: 1px solid var(--border);
+  border-radius: var(--rXL); overflow: hidden;
+  cursor: pointer; text-align: left; color: inherit;
+  transition: border-color 0.18s, transform 0.18s;
+  padding: 0; width: 100%;
+}
+.expandCard:hover { border-color: var(--border-a); transform: translateY(-2px); }
+.expandCard:active { transform: scale(0.98); }
+.expandCardImg { position: relative; height: 180px; overflow: hidden; background: #0A0A0A; }
+.expandCardImg img { width: 100%; height: 100%; object-fit: cover; }
+.expandCardImgOverlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 55%); }
+.expandCardImgPlaceholder { height: 180px; background: var(--glass2); }
+.expandCardBadge {
+  display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+  color: var(--sky); text-transform: uppercase; padding: 12px 16px 0; line-height: 1;
+}
+.expandCardBody { padding: 10px 16px 18px; flex: 1; }
+.expandCardBody h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+.expandCardBody p { font-size: 13.5px; color: var(--muted2); line-height: 1.6; }
+.expandCardCta { display: inline-block; margin-top: 10px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: var(--sky); }
+
+.expandOverlay {
+  position: fixed; inset: 0; z-index: 900;
+  background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+  display: flex; align-items: flex-end; justify-content: center;
+}
+.expandSheet {
+  position: relative; width: 100%; max-width: 680px; max-height: 92vh;
+  background: var(--bg2); border-radius: var(--rXL) var(--rXL) 0 0;
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+  border-top: 1px solid var(--border);
+  animation: sheetUp 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+}
+@keyframes sheetUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.expandSheetHandle {
+  width: 36px; height: 4px; border-radius: 2px;
+  background: var(--border); margin: 12px auto 0; flex-shrink: 0;
+}
+.expandSheetClose {
+  position: absolute; top: 12px; right: 16px; z-index: 2;
+  background: var(--glass2); border: 1px solid var(--border); border-radius: 8px;
+  color: var(--muted2); font-size: 12px; font-weight: 600; padding: 6px 14px; cursor: pointer;
+}
+.expandSheetClose:hover { color: var(--text); border-color: var(--border-a); }
+.expandSheetHero {
+  display: block; width: 100%; height: 240px; position: relative; overflow: hidden;
+  background: #0A0A0A; padding: 0; border: none; margin-top: 12px;
+}
+.expandSheetHero img { width: 100%; height: 100%; object-fit: cover; }
+.expandSheetHeroOverlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,10,10,0.6) 0%, transparent 60%); }
+.expandSheetZoomHint {
+  position: absolute; bottom: 12px; right: 14px; font-size: 11px; font-weight: 600;
+  color: rgba(255,255,255,0.6); background: rgba(0,0,0,0.5); padding: 4px 10px; border-radius: 6px;
+}
+.expandSheetContent { padding: 20px 24px 40px; }
+.expandSheetContent h2 { font-size: 22px; font-weight: 800; margin: 8px 0 14px; }
+.expandSheetContent p { color: var(--muted2); font-size: 14.5px; line-height: 1.7; }
+.expandSheetGallery {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; margin-top: 20px;
+}
+.expandSheetThumb {
+  background: none; border: 1px solid var(--border); border-radius: var(--r);
+  overflow: hidden; padding: 0; cursor: zoom-in; aspect-ratio: 4/3;
+  transition: border-color 0.15s;
+}
+.expandSheetThumb:hover { border-color: var(--border-a); }
+.expandSheetThumb img { width: 100%; height: 100%; object-fit: cover; }
+
 @media (max-width: 600px) {
   .moduleHero { height: 280px; }
   .moduleHeroContent { padding-top: 120px; }
