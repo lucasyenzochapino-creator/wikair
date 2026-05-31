@@ -65,7 +65,76 @@ const questions: Question[] = [
   { question: "¿Cuál es el avión más silencioso de la historia según NASA?", options: ["Airbus A220", "Boeing 787", "NASA X-59 QueSST", "Bombardier CRJ-900"], correct: 2, explanation: "El NASA X-59 QueSST (Quiet SuperSonic Technology) está diseñado para crear solo un 'thump' suave en lugar de una explosión sónica, abriendo la puerta a vuelos supersónicos sobre tierra." },
 ];
 
-type Phase = "intro" | "playing" | "result";
+type Phase = "intro" | "study" | "playing" | "result";
+
+const studySections = [
+  {
+    icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z",
+    title: "Hitos históricos",
+    facts: [
+      { label: "Primer vuelo de la historia", value: "17 dic 1903 · Kitty Hawk · 12 segundos · 37 metros · Hermanos Wright" },
+      { label: "Primer cruce del Atlántico sin escala", value: "Alcock & Brown (1919) en Vickers Vimy — 8 años antes que Lindbergh, que fue el primero EN SOLITARIO" },
+      { label: "Barrera del sonido rota", value: "Bell X-1 · Chuck Yeager · 14 oct 1947 · Mach 1 superado por primera vez" },
+      { label: "Primer vuelo a reacción de Argentina", value: "FMA I.Ae. 27 Pulqui I (1947) — luego el Pulqui II (1950), 4° caza jet del mundo" },
+      { label: "Primer jet operativo en combate", value: "Messerschmitt Me 262 (1944) — 150 km/h más rápido que cualquier avión aliado" },
+      { label: "Primer supersónico comercial en volar", value: "Tupolev Tu-144 soviético (31 dic 1968) — antes que el Concorde" },
+      { label: "Vuelta al mundo sin escalas ni repostaje", value: "Rutan Voyager · Dick Rutan y Jeana Yeager · 9 días 3 min 44 seg · Dic 1986" },
+    ]
+  },
+  {
+    icon: "M5 3l14 9-14 9V3z",
+    title: "Récords de velocidad y altitud",
+    facts: [
+      { label: "Avión más rápido tripulado (absoluto)", value: "NASA X-15 · Mach 6.72 · 7.274 km/h · 3 oct 1967 · William Knight" },
+      { label: "Avión militar más rápido operativo", value: "SR-71 Blackbird · Mach 3.3 · >3.500 km/h · 85.000 pies de techo" },
+      { label: "Concorde: velocidad de crucero", value: "Mach 2.04 · Cruza el Atlántico NY-Londres en ~3h 30min vs 7-8h convencional" },
+      { label: "Mach 1 a nivel del mar", value: "~1.225 km/h a 15°C · A 12.000m baja a ~1.062 km/h (depende de temperatura)" },
+      { label: "Temperatura exterior a 12.000m", value: "-56°C · Por eso los aviones tienen presurización y calefacción de cabina" },
+      { label: "Aeropuerto más alto del mundo", value: "Daocheng Yading (China) · 4.411 m sobre el nivel del mar" },
+      { label: "Pista más larga del mundo", value: "Qamdo Bamda (Tíbet) · 5.500 metros · necesaria por altitud de 4.334 m" },
+    ]
+  },
+  {
+    icon: "M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z",
+    title: "Aeronaves icónicas — datos clave",
+    facts: [
+      { label: "Avión más producido de la historia", value: "Cessna 172 Skyhawk · +44.000 unidades desde 1956 · sigue fabricándose" },
+      { label: "Boeing 737: el más vendido en comercial", value: "+10.500 pedidos · en producción desde 1967 · versión actual: 737 MAX" },
+      { label: "Airbus A380: capacidad máxima", value: "853 pasajeros en config. máxima densidad · 4 motores · doble cubierta completa" },
+      { label: "A380: consumo de combustible", value: "~10.000 litros/hora · pero solo ~2,75 L/100km por pasajero" },
+      { label: "Boeing 747: partes individuales", value: "~6 millones de piezas · fabricadas por +4.500 proveedores de 70 países" },
+      { label: "Boeing 747: peso vacío y máximo", value: "~178 ton vacío · hasta 412 ton al máximo de despegue" },
+      { label: "F-15 Eagle: récord invicto", value: "104 victorias aéreas · 0 derrotas en dogfight · el único con récord perfecto en combate" },
+      { label: "Avión militar más caro por unidad", value: "B-2 Spirit · ~USD 2.100 millones · solo 21 ejemplares construidos" },
+      { label: "Spitfire: ala elíptica", value: "Considerado el avión más bello de la historia · diseñado por R.J. Mitchell" },
+    ]
+  },
+  {
+    icon: "M12 2a10 10 0 100 20 10 10 0 000-20zm0 0v10m0 0l4-4m-4 4l-4-4",
+    title: "Conceptos técnicos esenciales",
+    facts: [
+      { label: "VFR vs IFR", value: "VFR = Visual Flight Rules (vuelo a vista) · IFR = Instrument Flight Rules (vuelo por instrumentos, sin visibilidad)" },
+      { label: "ILS", value: "Instrument Landing System · guía automática para aterrizaje con baja visibilidad usando señales de radio" },
+      { label: "ETOPS-330", value: "El avión puede alejarse 330 min de un aeropuerto con un motor inactivo · permite rutas transoceánicas directas" },
+      { label: "Turbofan vs turbohélice", value: "Turbohélice: hélice exterior visible · Turbofan: fan interno — más eficiente a alta velocidad" },
+      { label: "Cajas negras: ¿de qué color son?", value: "NARANJA brillante (no negras) · para localizarlas · resisten 3.400 G y 1.100°C" },
+      { label: "Boeing 787: motor Rolls-Royce Trent 1000", value: "~4.800 kg de peso · empuje 250-340 kN · uno de los más eficientes del mundo" },
+      { label: "Tráfico aéreo global", value: "+100.000 vuelos/día · récord: 134.386 vuelos en un solo día (2023) · ~15.000 en el aire simultáneamente" },
+    ]
+  },
+  {
+    icon: "M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z",
+    title: "Licencias de piloto (ANAC / ICAO)",
+    facts: [
+      { label: "PPL (Piloto Privado de Avión)", value: "Mínimo 40 horas · 17 años · Examen médico clase 2 · No se puede cobrar por volar" },
+      { label: "CPL (Piloto Comercial)", value: "Mínimo 200 horas totales · 18 años · Examen médico clase 1 · Puede ejercer como instructora o taxi aéreo" },
+      { label: "ATPL (Línea Aérea)", value: "Mínimo 1.500 horas (ICAO) · 21 años · Requerida para ser comandante de aerolínea" },
+      { label: "Costo estimado PPL en Argentina", value: "USD 8.000–12.000 (escuela + horas de vuelo + certificaciones)" },
+      { label: "Vuelo inaugural del Boeing 747", value: "Pan Am · 22 ene 1970 · Nueva York – Londres · inicio de la era de vuelos masivos" },
+      { label: "Pirmer A380 en servicio comercial", value: "Singapore Airlines · octubre 2007 · vuelo inaugural en 2005 en Toulouse" },
+    ]
+  },
+];
 const SAVE_KEY = "wq";
 const TIMER_SECS = 30;
 
@@ -155,6 +224,46 @@ export default function QuizPage() {
     return { title: "A seguir aprendiendo", sub: "La enciclopedia WikiAir tiene todo lo que necesitás para mejorar tu puntaje." };
   }
 
+  if (phase === "study") {
+    return (
+      <main className="page">
+        <section className="container hero compactHero">
+          <a className="back" onClick={() => setPhase("intro")} href="#" style={{ cursor: "pointer" }}>← Volver al inicio</a>
+          <p className="gold">WIKIAIR · QUIZ · GUÍA DE ESTUDIO</p>
+          <h1>Estudiá antes de jugar</h1>
+          <p>Todos los temas que cubre el quiz. Leé, incorporá y después comprobá cuánto recordás.</p>
+        </section>
+        <section className="container" style={{ paddingBottom: 80 }}>
+          {studySections.map((sec) => (
+            <div key={sec.title} style={{ marginBottom: 48 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 10, background: "var(--sky-dim)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="var(--sky)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d={sec.icon} />
+                  </svg>
+                </div>
+                <h2 style={{ fontSize: "clamp(18px, 3vw, 24px)", fontWeight: 800, letterSpacing: "-0.5px" }}>{sec.title}</h2>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {sec.facts.map((f) => (
+                  <div key={f.label} style={{ background: "var(--glass)", border: "1px solid var(--border)", borderRadius: 12, padding: "14px 18px", display: "flex", flexDirection: "column", gap: 4 }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: "var(--sky)", textTransform: "uppercase", letterSpacing: "0.08em" }}>{f.label}</span>
+                    <span style={{ fontSize: 14, color: "var(--text)", lineHeight: 1.55 }}>{f.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+          <div style={{ textAlign: "center", paddingTop: 16 }}>
+            <button onClick={() => setPhase("playing")} className="btnPrimary" style={{ fontSize: 16, padding: "14px 40px" }}>
+              Ya estudié — empezar el Quiz
+            </button>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
   if (phase === "intro") {
     return (
       <main className="page">
@@ -162,19 +271,25 @@ export default function QuizPage() {
           <a className="back" href="/">← Volver</a>
           <p className="gold">WIKIAIR · QUIZ</p>
           <h1>Quiz de Aviación</h1>
-          <p>{questions.length} preguntas sobre aviones, récords, historia y curiosidades. Tenés 30 segundos por pregunta. ¿Cuánto sabés?</p>
+          <p>{questions.length} preguntas sobre aviones, récords, historia y curiosidades. Tenés 30 segundos por pregunta.</p>
         </section>
         <section className="container" style={{ paddingBottom: 60 }}>
           <div className="quizWrap">
             <div className="statsGrid" style={{ marginBottom: 40 }}>
               <div className="statBox"><h3>{questions.length}</h3><p>Preguntas</p></div>
               <div className="statBox"><h3>30s</h3><p>Por pregunta</p></div>
-              <div className="statBox"><h3>14</h3><p>Temas de aviación</p></div>
+              <div className="statBox"><h3>5</h3><p>Temas de aviación</p></div>
             </div>
-            <div style={{ textAlign: "center" }}>
-              <button onClick={() => setPhase("playing")} className="btnPrimary" style={{ fontSize: 18, padding: "16px 48px" }}>
-                Empezar el Quiz
+            <div style={{ display: "flex", flexDirection: "column", gap: 14, alignItems: "center" }}>
+              <button onClick={() => setPhase("study")} className="btnPrimary" style={{ fontSize: 16, padding: "14px 40px", width: "100%", maxWidth: 400 }}>
+                📖 Estudiar antes del Quiz
               </button>
+              <button onClick={() => setPhase("playing")} className="btnOutline" style={{ fontSize: 15, padding: "12px 40px", width: "100%", maxWidth: 400 }}>
+                Ir directo al Quiz
+              </button>
+              <p style={{ fontSize: 12, color: "var(--muted2)", marginTop: 4 }}>
+                Recomendamos estudiar si es tu primera vez
+              </p>
             </div>
           </div>
         </section>
