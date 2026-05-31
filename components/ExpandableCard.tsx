@@ -58,7 +58,20 @@ export default function ExpandableCard({
   const [extraImages, setExtraImages] = useState<string[]>([]);
   const [loadingImgs, setLoadingImgs] = useState(false);
   const [lightbox, setLightbox] = useState<number | null>(null);
+  // Client-side preview image (used when server-side image is null/missing)
+  const [previewImg, setPreviewImg] = useState<string | null>(image ?? null);
+  const [previewLoading, setPreviewLoading] = useState(!image && !!wiki);
   const sheetRef = useRef<HTMLDivElement>(null);
+
+  // Load preview image client-side if not provided by server
+  useEffect(() => {
+    if (image || !wiki) return;
+    setPreviewLoading(true);
+    fetchWikiImages(wiki).then((imgs) => {
+      setPreviewImg(imgs[0] ?? null);
+      setPreviewLoading(false);
+    });
+  }, [wiki, image]);
 
   useEffect(() => {
     if (!open) return;
@@ -80,8 +93,9 @@ export default function ExpandableCard({
     return () => document.removeEventListener("keydown", onKey);
   }, [open]);
 
-  const allImages = image
-    ? [image, ...extraImages.filter((u) => u !== image)]
+  const displayImg = previewImg ?? image ?? null;
+  const allImages = displayImg
+    ? [displayImg, ...extraImages.filter((u) => u !== displayImg)]
     : extraImages;
 
   return (
@@ -92,13 +106,15 @@ export default function ExpandableCard({
         onClick={() => setOpen(true)}
         aria-label={`Expandir: ${title}`}
       >
-        {image ? (
+        {displayImg ? (
           <div className="expandCardImg">
-            <img src={image} alt={title} />
+            <img src={displayImg} alt={title} />
             <div className="expandCardImgOverlay" />
           </div>
         ) : (
-          <div className="expandCardImgPlaceholder" />
+          <div className="expandCardImgPlaceholder" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+            {previewLoading && <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 12 }}>Cargando…</span>}
+          </div>
         )}
         {badge && (
           <span className="expandCardBadge" style={accentColor ? { color: accentColor } : undefined}>

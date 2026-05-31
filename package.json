@@ -9,9 +9,11 @@
     "test": "echo \"No tests configured\" && exit 0"
   },
   "dependencies": {
+    "@types/three": "^0.184.1",
     "next": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "three": "^0.184.0"
   },
   "devDependencies": {
     "@types/node": "latest",
