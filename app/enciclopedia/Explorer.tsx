@@ -471,16 +471,24 @@ export default function Explorer() {
 
   useEffect(() => {
     const open = searchParams.get("open");
-    if (!open) return;
-    const target = dedupeAircraft(allAircraft).find(
-      (a) => cleanName(a.name).toLowerCase() === open.toLowerCase() ||
-             cleanName(a.wiki || "").toLowerCase() === open.toLowerCase()
-    );
-    if (target) {
-      setActive(target.group);
-      setSelected(target);
+    if (open) {
+      const target = dedupeAircraft(allAircraft).find(
+        (a) => cleanName(a.name).toLowerCase() === open.toLowerCase() ||
+               cleanName(a.wiki || "").toLowerCase() === open.toLowerCase()
+      );
+      if (target) { setActive(target.group); setSelected(target); }
+      return;
     }
+    try {
+      const s = JSON.parse(sessionStorage.getItem("we") || "null");
+      if (s?.active) setActive(s.active as AircraftGroup);
+      if (s?.query) setQuery(s.query);
+    } catch {}
   }, [searchParams]);
+
+  useEffect(() => {
+    try { sessionStorage.setItem("we", JSON.stringify({ active, query })); } catch {}
+  }, [active, query]);
 
   const normalizedQuery = query.trim().toLowerCase();
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Question = {
   question: string;
@@ -133,6 +133,7 @@ const questions: Question[] = [
 ];
 
 type Phase = "intro" | "playing" | "result";
+const SAVE_KEY = "wq";
 
 export default function QuizPage() {
   const [phase, setPhase] = useState<Phase>("intro");
@@ -141,8 +142,28 @@ export default function QuizPage() {
   const [score, setScore] = useState(0);
   const [answered, setAnswered] = useState(false);
 
+  // Restore saved progress on mount
+  useEffect(() => {
+    try {
+      const s = JSON.parse(sessionStorage.getItem(SAVE_KEY) || "null");
+      if (s?.phase === "playing" && typeof s.current === "number") {
+        setPhase("playing");
+        setCurrent(s.current);
+        setScore(s.score ?? 0);
+      }
+    } catch {}
+  }, []);
+
+  // Persist progress on every relevant change
+  useEffect(() => {
+    try {
+      if (phase === "intro") { sessionStorage.removeItem(SAVE_KEY); return; }
+      sessionStorage.setItem(SAVE_KEY, JSON.stringify({ phase, current, score }));
+    } catch {}
+  }, [phase, current, score]);
+
   const q = questions[current];
-  const progress = ((current) / questions.length) * 100;
+  const progress = (current / questions.length) * 100;
   const finalProgress = ((current + 1) / questions.length) * 100;
 
   function handleSelect(idx: number) {
@@ -163,6 +184,7 @@ export default function QuizPage() {
   }
 
   function handleRestart() {
+    sessionStorage.removeItem(SAVE_KEY);
     setPhase("intro");
     setCurrent(0);
     setSelected(null);
@@ -189,17 +211,14 @@ export default function QuizPage() {
           <p>20 preguntas sobre aviones, récords, historia y curiosidades. ¿Cuánto sabés del mundo de la aviación?</p>
         </section>
         <section className="container" style={{ paddingBottom: 60 }}>
-          <div className="quizContainer">
+          <div className="quizWrap">
             <div className="statsGrid" style={{ marginBottom: 40 }}>
               <div className="statBox"><h3>20</h3><p>Preguntas</p></div>
               <div className="statBox"><h3>1</h3><p>Puntaje por acierto</p></div>
               <div className="statBox"><h3>14</h3><p>Temas de aviación</p></div>
             </div>
             <div style={{ textAlign: "center" }}>
-              <button
-                onClick={() => setPhase("playing")}
-                style={{ padding: "18px 48px", fontSize: 20, fontWeight: 800, background: "linear-gradient(135deg, #d4af37, #8a6415)", color: "#050505", border: 0, borderRadius: 999, cursor: "pointer" }}
-              >
+              <button onClick={() => setPhase("playing")} className="btnPrimary" style={{ fontSize: 18, padding: "16px 48px" }}>
                 Empezar el Quiz
               </button>
             </div>
@@ -219,9 +238,9 @@ export default function QuizPage() {
           <h1>Resultado</h1>
         </section>
         <section className="container" style={{ paddingBottom: 60 }}>
-          <div className="quizContainer" style={{ textAlign: "center" }}>
-            <h2 style={{ fontSize: "clamp(24px, 5vw, 42px)", margin: "16px 0 8px" }}>{msg.title}</h2>
-            <p style={{ color: "#bdbdbd", fontSize: 18, marginBottom: 32 }}>{msg.sub}</p>
+          <div className="quizWrap" style={{ textAlign: "center" }}>
+            <h2 style={{ fontSize: "clamp(22px, 5vw, 40px)", margin: "16px 0 8px" }}>{msg.title}</h2>
+            <p style={{ color: "var(--muted2)", fontSize: 17, marginBottom: 32 }}>{msg.sub}</p>
             <div style={{ display: "flex", justifyContent: "center", gap: 24, marginBottom: 40 }}>
               <div className="statBox" style={{ minWidth: 140 }}>
                 <h3 style={{ fontSize: 52 }}>{score}</h3>
@@ -232,19 +251,9 @@ export default function QuizPage() {
                 <p>de acierto</p>
               </div>
             </div>
-            <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
-              <button
-                onClick={handleRestart}
-                style={{ padding: "16px 36px", fontSize: 17, fontWeight: 800, background: "linear-gradient(135deg, #d4af37, #8a6415)", color: "#050505", border: 0, borderRadius: 999, cursor: "pointer" }}
-              >
-                Jugar de nuevo
-              </button>
-              <a
-                href="/enciclopedia"
-                style={{ display: "inline-block", padding: "16px 36px", fontSize: 17, fontWeight: 700, background: "rgba(255,255,255,.08)", color: "white", border: "1px solid rgba(255,255,255,.18)", borderRadius: 999, textDecoration: "none" }}
-              >
-                Ver Enciclopedia
-              </a>
+            <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
+              <button onClick={handleRestart} className="btnPrimary">Jugar de nuevo</button>
+              <a href="/enciclopedia" className="btnOutline">Ver Enciclopedia</a>
             </div>
           </div>
         </section>
@@ -258,51 +267,50 @@ export default function QuizPage() {
         <a className="back" href="/">← Volver</a>
         <p className="gold">WIKIAIR · QUIZ · Pregunta {current + 1} de {questions.length}</p>
         <div className="quizProgress">
-          <div className="quizProgressBar" style={{ width: `${answered ? finalProgress : progress}%` }} />
+          <div className="quizBar" style={{ width: `${answered ? finalProgress : progress}%` }} />
         </div>
       </section>
 
       <section className="container" style={{ paddingBottom: 60 }}>
-        <div className="quizContainer">
-          <p className="quizQuestion">{q.question}</p>
+        <div className="quizWrap">
+          <div className="quizBox">
+            <p className="quizQuestion">{q.question}</p>
 
-          <div className="quizOptions">
-            {q.options.map((opt, idx) => {
-              let cls = "quizOption";
-              if (answered) {
-                if (idx === q.correct) cls += " quizCorrect";
-                else if (idx === selected && idx !== q.correct) cls += " quizWrong";
-              }
-              return (
-                <button key={idx} className={cls} onClick={() => handleSelect(idx)} type="button">
-                  <span style={{ color: "#d4af37", marginRight: 10, fontWeight: 800 }}>
-                    {["A", "B", "C", "D"][idx]}.
-                  </span>
-                  {opt}
+            <div className="quizOptions">
+              {q.options.map((opt, idx) => {
+                let cls = "quizOption";
+                if (answered) {
+                  if (idx === q.correct) cls += " quizCorrect";
+                  else if (idx === selected && idx !== q.correct) cls += " quizWrong";
+                }
+                return (
+                  <button key={idx} className={cls} onClick={() => handleSelect(idx)} type="button">
+                    <span style={{ color: "var(--sky)", marginRight: 10, fontWeight: 800 }}>
+                      {["A", "B", "C", "D"][idx]}.
+                    </span>
+                    {opt}
+                  </button>
+                );
+              })}
+            </div>
+
+            {answered && (
+              <div style={{ marginTop: 20, padding: 18, borderRadius: 12, background: "var(--glass2)", border: "1px solid var(--border)" }}>
+                <p style={{ color: selected === q.correct ? "#4ade80" : "#f87171", fontWeight: 800, marginBottom: 6 }}>
+                  {selected === q.correct ? "Correcto" : `Incorrecto — era la opción ${["A", "B", "C", "D"][q.correct]}`}
+                </p>
+                <p style={{ color: "var(--muted2)", fontSize: 14, margin: 0, lineHeight: 1.65 }}>{q.explanation}</p>
+              </div>
+            )}
+
+            {answered && (
+              <div style={{ marginTop: 20, textAlign: "center" }}>
+                <button onClick={handleNext} className="btnPrimary">
+                  {current + 1 >= questions.length ? "Ver resultados" : "Siguiente pregunta"}
                 </button>
-              );
-            })}
+              </div>
+            )}
           </div>
-
-          {answered && (
-            <div style={{ marginTop: 24, padding: 20, borderRadius: 18, background: "rgba(212,175,55,.08)", border: "1px solid rgba(212,175,55,.25)" }}>
-              <p style={{ color: selected === q.correct ? "#4ade80" : "#f87171", fontWeight: 800, marginBottom: 6 }}>
-                {selected === q.correct ? "Correcto" : `Incorrecto — era la opción ${["A", "B", "C", "D"][q.correct]}`}
-              </p>
-              <p style={{ color: "#dedede", fontSize: 15, margin: 0, lineHeight: 1.6 }}>{q.explanation}</p>
-            </div>
-          )}
-
-          {answered && (
-            <div style={{ marginTop: 24, textAlign: "center" }}>
-              <button
-                onClick={handleNext}
-                style={{ padding: "16px 40px", fontSize: 17, fontWeight: 800, background: "linear-gradient(135deg, #d4af37, #8a6415)", color: "#050505", border: 0, borderRadius: 999, cursor: "pointer" }}
-              >
-                {current + 1 >= questions.length ? "Ver resultados" : "Siguiente pregunta"}
-              </button>
-            </div>
-          )}
         </div>
       </section>
     </main>
