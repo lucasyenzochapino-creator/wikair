@@ -95,14 +95,14 @@ export default async function LicenciasPage() {
               overflow: "hidden", backdropFilter: "blur(10px)",
             }}>
               {/* Image header */}
-              <div style={{ height: 200, overflow: "hidden", background: "#010914", position: "relative" }}>
+              <div style={{ height: 200, overflow: "hidden", background: "#0A0A0A", position: "relative" }}>
                 {licenseImages[i] ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img src={licenseImages[i]!} alt={lic.code} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                 ) : (
                   <div style={{ width: "100%", height: "100%", background: "var(--glass2)" }} />
                 )}
-                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(2,12,27,0.95) 0%, rgba(2,12,27,0.3) 60%, transparent 100%)" }} />
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.3) 60%, transparent 100%)" }} />
                 <div style={{ position: "absolute", bottom: 16, left: 20, display: "flex", alignItems: "center", gap: 12 }}>
                   <span style={{ fontSize: 36, fontWeight: 900, color: "var(--sky)", letterSpacing: -1 }}>{lic.code}</span>
                   <span className="recordBadge" style={{ fontSize: 10 }}>{lic.badge}</span>

@@ -66,14 +66,14 @@ export default async function InstrumentosPage() {
         <div className="statsGrid">
 
           <div className="recordCard" style={{ padding: 0, overflow: "hidden" }}>
-            <div style={{ height: 160, overflow: "hidden", background: "#010914", position: "relative" }}>
+            <div style={{ height: 160, overflow: "hidden", background: "#0A0A0A", position: "relative" }}>
               {imgASI ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img src={imgASI} alt="Velocímetro (ASI)" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               ) : (
                 <div style={{ width: "100%", height: "100%", background: "var(--glass2)" }} />
               )}
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(2,12,27,0.85) 0%, transparent 55%)" }} />
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 55%)" }} />
             </div>
             <div style={{ padding: "16px 20px 20px" }}>
               <span className="recordBadge">PITOT-ESTÁTICO</span>
@@ -83,14 +83,14 @@ export default async function InstrumentosPage() {
           </div>
 
           <div className="recordCard" style={{ padding: 0, overflow: "hidden" }}>
-            <div style={{ height: 160, overflow: "hidden", background: "#010914", position: "relative" }}>
+            <div style={{ height: 160, overflow: "hidden", background: "#0A0A0A", position: "relative" }}>
               {imgAttitude ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img src={imgAttitude} alt="Horizonte Artificial" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               ) : (
                 <div style={{ width: "100%", height: "100%", background: "var(--glass2)" }} />
               )}
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(2,12,27,0.85) 0%, transparent 55%)" }} />
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 55%)" }} />
             </div>
             <div style={{ padding: "16px 20px 20px" }}>
               <span className="recordBadge">GIROSCÓPICO</span>
@@ -100,14 +100,14 @@ export default async function InstrumentosPage() {
           </div>
 
           <div className="recordCard" style={{ padding: 0, overflow: "hidden" }}>
-            <div style={{ height: 160, overflow: "hidden", background: "#010914", position: "relative" }}>
+            <div style={{ height: 160, overflow: "hidden", background: "#0A0A0A", position: "relative" }}>
               {imgAltimeter ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img src={imgAltimeter} alt="Altímetro" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               ) : (
                 <div style={{ width: "100%", height: "100%", background: "var(--glass2)" }} />
               )}
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(2,12,27,0.85) 0%, transparent 55%)" }} />
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 55%)" }} />
             </div>
             <div style={{ padding: "16px 20px 20px" }}>
               <span className="recordBadge">PITOT-ESTÁTICO</span>
@@ -117,14 +117,14 @@ export default async function InstrumentosPage() {
           </div>
 
           <div className="recordCard" style={{ padding: 0, overflow: "hidden" }}>
-            <div style={{ height: 160, overflow: "hidden", background: "#010914", position: "relative" }}>
+            <div style={{ height: 160, overflow: "hidden", background: "#0A0A0A", position: "relative" }}>
               {imgTurn ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img src={imgTurn} alt="Indicador de Viraje" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               ) : (
                 <div style={{ width: "100%", height: "100%", background: "var(--glass2)" }} />
               )}
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(2,12,27,0.85) 0%, transparent 55%)" }} />
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 55%)" }} />
             </div>
             <div style={{ padding: "16px 20px 20px" }}>
               <span className="recordBadge">GIROSCÓPICO</span>
@@ -134,14 +134,14 @@ export default async function InstrumentosPage() {
           </div>
 
           <div className="recordCard" style={{ padding: 0, overflow: "hidden" }}>
-            <div style={{ height: 160, overflow: "hidden", background: "#010914", position: "relative" }}>
+            <div style={{ height: 160, overflow: "hidden", background: "#0A0A0A", position: "relative" }}>
               {imgHeading ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img src={imgHeading} alt="Indicador de Rumbo" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               ) : (
                 <div style={{ width: "100%", height: "100%", background: "var(--glass2)" }} />
               )}
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(2,12,27,0.85) 0%, transparent 55%)" }} />
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 55%)" }} />
             </div>
             <div style={{ padding: "16px 20px 20px" }}>
               <span className="recordBadge">GIROSCÓPICO</span>
@@ -151,14 +151,14 @@ export default async function InstrumentosPage() {
           </div>
 
           <div className="recordCard" style={{ padding: 0, overflow: "hidden" }}>
-            <div style={{ height: 160, overflow: "hidden", background: "#010914", position: "relative" }}>
+            <div style={{ height: 160, overflow: "hidden", background: "#0A0A0A", position: "relative" }}>
               {imgVSI ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img src={imgVSI} alt="Variométro (VSI)" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               ) : (
                 <div style={{ width: "100%", height: "100%", background: "var(--glass2)" }} />
               )}
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(2,12,27,0.85) 0%, transparent 55%)" }} />
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 55%)" }} />
             </div>
             <div style={{ padding: "16px 20px 20px" }}>
               <span className="recordBadge">PITOT-ESTÁTICO</span>
@@ -180,14 +180,14 @@ export default async function InstrumentosPage() {
         <div className="statsGrid">
 
           <div className="recordCard" style={{ padding: 0, overflow: "hidden" }}>
-            <div style={{ height: 160, overflow: "hidden", background: "#010914", position: "relative" }}>
+            <div style={{ height: 160, overflow: "hidden", background: "#0A0A0A", position: "relative" }}>
               {imgPFD ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img src={imgPFD} alt="PFD – Primary Flight Display" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               ) : (
                 <div style={{ width: "100%", height: "100%", background: "var(--glass2)" }} />
               )}
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(2,12,27,0.85) 0%, transparent 55%)" }} />
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 55%)" }} />
             </div>
             <div style={{ padding: "16px 20px 20px" }}>
               <span className="recordBadge">PANTALLA</span>
@@ -197,14 +197,14 @@ export default async function InstrumentosPage() {
           </div>
 
           <div className="recordCard" style={{ padding: 0, overflow: "hidden" }}>
-            <div style={{ height: 160, overflow: "hidden", background: "#010914", position: "relative" }}>
+            <div style={{ height: 160, overflow: "hidden", background: "#0A0A0A", position: "relative" }}>
               {imgND ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img src={imgND} alt="ND – Navigation Display" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               ) : (
                 <div style={{ width: "100%", height: "100%", background: "var(--glass2)" }} />
               )}
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(2,12,27,0.85) 0%, transparent 55%)" }} />
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 55%)" }} />
             </div>
             <div style={{ padding: "16px 20px 20px" }}>
               <span className="recordBadge">NAVEGACIÓN</span>
@@ -214,14 +214,14 @@ export default async function InstrumentosPage() {
           </div>
 
           <div className="recordCard" style={{ padding: 0, overflow: "hidden" }}>
-            <div style={{ height: 160, overflow: "hidden", background: "#010914", position: "relative" }}>
+            <div style={{ height: 160, overflow: "hidden", background: "#0A0A0A", position: "relative" }}>
               {imgFMS ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img src={imgFMS} alt="FMS – Flight Management System" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               ) : (
                 <div style={{ width: "100%", height: "100%", background: "var(--glass2)" }} />
               )}
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(2,12,27,0.85) 0%, transparent 55%)" }} />
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 55%)" }} />
             </div>
             <div style={{ padding: "16px 20px 20px" }}>
               <span className="recordBadge">GESTIÓN</span>
@@ -231,14 +231,14 @@ export default async function InstrumentosPage() {
           </div>
 
           <div className="recordCard" style={{ padding: 0, overflow: "hidden" }}>
-            <div style={{ height: 160, overflow: "hidden", background: "#010914", position: "relative" }}>
+            <div style={{ height: 160, overflow: "hidden", background: "#0A0A0A", position: "relative" }}>
               {imgTCAS ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img src={imgTCAS} alt="TCAS – Anti-colisión" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               ) : (
                 <div style={{ width: "100%", height: "100%", background: "var(--glass2)" }} />
               )}
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(2,12,27,0.85) 0%, transparent 55%)" }} />
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 55%)" }} />
             </div>
             <div style={{ padding: "16px 20px 20px" }}>
               <span className="recordBadge">ALERTAS</span>
@@ -260,14 +260,14 @@ export default async function InstrumentosPage() {
         <div className="statsGrid">
 
           <div className="recordCard" style={{ padding: 0, overflow: "hidden" }}>
-            <div style={{ height: 160, overflow: "hidden", background: "#010914", position: "relative" }}>
+            <div style={{ height: 160, overflow: "hidden", background: "#0A0A0A", position: "relative" }}>
               {imgGPWS ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img src={imgGPWS} alt="GPWS – Alerta de terreno" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               ) : (
                 <div style={{ width: "100%", height: "100%", background: "var(--glass2)" }} />
               )}
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(2,12,27,0.85) 0%, transparent 55%)" }} />
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 55%)" }} />
             </div>
             <div style={{ padding: "16px 20px 20px" }}>
               <span className="recordBadge">PELIGRO</span>
@@ -277,14 +277,14 @@ export default async function InstrumentosPage() {
           </div>
 
           <div className="recordCard" style={{ padding: 0, overflow: "hidden" }}>
-            <div style={{ height: 160, overflow: "hidden", background: "#010914", position: "relative" }}>
+            <div style={{ height: 160, overflow: "hidden", background: "#0A0A0A", position: "relative" }}>
               {imgStick ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img src={imgStick} alt="Stick Shaker" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               ) : (
                 <div style={{ width: "100%", height: "100%", background: "var(--glass2)" }} />
               )}
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(2,12,27,0.85) 0%, transparent 55%)" }} />
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 55%)" }} />
             </div>
             <div style={{ padding: "16px 20px 20px" }}>
               <span className="recordBadge">PÉRDIDA</span>
@@ -294,14 +294,14 @@ export default async function InstrumentosPage() {
           </div>
 
           <div className="recordCard" style={{ padding: 0, overflow: "hidden" }}>
-            <div style={{ height: 160, overflow: "hidden", background: "#010914", position: "relative" }}>
+            <div style={{ height: 160, overflow: "hidden", background: "#0A0A0A", position: "relative" }}>
               {imgFDR ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img src={imgFDR} alt="Flight Data Recorder" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               ) : (
                 <div style={{ width: "100%", height: "100%", background: "var(--glass2)" }} />
               )}
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(2,12,27,0.85) 0%, transparent 55%)" }} />
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 55%)" }} />
             </div>
             <div style={{ padding: "16px 20px 20px" }}>
               <span className="recordBadge">CÓDIGO NEGRO</span>

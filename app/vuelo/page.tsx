@@ -17,7 +17,7 @@ async function getWikiImage(title: string) {
 const forces = [
   { badge: "↑ HACIA ARRIBA", name: "Sustentación", eng: "Lift", desc: "Fuerza aerodinámica generada por las alas que contrarresta el peso. Surge por la diferencia de presión entre la cara superior e inferior del ala y por el ángulo de ataque.", wiki: "Airbus A380", color: "#22c55e" },
   { badge: "↓ HACIA ABAJO",  name: "Peso",         eng: "Weight", desc: "La fuerza de gravedad que atrae al avión hacia la Tierra. El diseño busca minimizarlo sin comprometer la resistencia estructural.", wiki: "Antonov An-225", color: "#f87171" },
-  { badge: "→ HACIA ADELANTE", name: "Empuje",     eng: "Thrust", desc: "La fuerza que producen los motores. En turbofanes, un 80% del empuje viene del fan delantero. El 20% restante del núcleo.", wiki: "Jet engine", color: "#38bdf8" },
+  { badge: "→ HACIA ADELANTE", name: "Empuje",     eng: "Thrust", desc: "La fuerza que producen los motores. En turbofanes, un 80% del empuje viene del fan delantero. El 20% restante del núcleo.", wiki: "Jet engine", color: "#C8922A" },
   { badge: "← HACIA ATRÁS",   name: "Resistencia", eng: "Drag",  desc: "Se opone al movimiento del avión. Los ingenieros pasan años reduciéndola. Un 1% de mejora puede ahorrar millones en combustible al año.", wiki: "Lockheed SR-71 Blackbird", color: "#fbbf24" },
 ];
 
@@ -63,15 +63,15 @@ export default async function VueloPage() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(270px, 1fr))", gap: 20 }}>
           {forces.map((f, i) => (
             <div key={f.name} className="recordCard" style={{ padding: 0, overflow: "hidden" }}>
-              <div style={{ height: 180, overflow: "hidden", position: "relative", background: "#010914" }}>
+              <div style={{ height: 180, overflow: "hidden", position: "relative", background: "#0A0A0A" }}>
                 {forceImages[i] ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img src={forceImages[i]!} alt={f.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                 ) : (
                   <div style={{ width: "100%", height: "100%", background: "var(--glass2)" }} />
                 )}
-                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(2,12,27,0.9) 0%, transparent 60%)" }} />
-                <span style={{ position: "absolute", bottom: 12, left: 16, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: f.color, textTransform: "uppercase", background: "rgba(2,12,27,0.75)", padding: "3px 10px", borderRadius: 6 }}>{f.badge}</span>
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,10,10,0.9) 0%, transparent 60%)" }} />
+                <span style={{ position: "absolute", bottom: 12, left: 16, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: f.color, textTransform: "uppercase", background: "rgba(10,10,10,0.75)", padding: "3px 10px", borderRadius: 6 }}>{f.badge}</span>
               </div>
               <div style={{ padding: "18px 20px 22px" }}>
                 <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 10 }}>
@@ -100,14 +100,14 @@ export default async function VueloPage() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(270px, 1fr))", gap: 18 }}>
           {parts.map((p, i) => (
             <div key={p.name} className="recordCard" style={{ padding: 0, overflow: "hidden" }}>
-              <div style={{ height: 160, overflow: "hidden", background: "#010914", position: "relative" }}>
+              <div style={{ height: 160, overflow: "hidden", background: "#0A0A0A", position: "relative" }}>
                 {partImages[i] ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img src={partImages[i]!} alt={p.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                 ) : (
                   <div style={{ width: "100%", height: "100%", background: "var(--glass2)" }} />
                 )}
-                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(2,12,27,0.85) 0%, transparent 55%)" }} />
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 55%)" }} />
               </div>
               <div style={{ padding: "16px 20px 20px" }}>
                 <span className="recordBadge">{p.badge}</span>
@@ -132,7 +132,7 @@ export default async function VueloPage() {
               display: "grid", gridTemplateColumns: phaseImages[i] ? "clamp(140px, 22%, 200px) 1fr" : "1fr",
             }}>
               {phaseImages[i] && (
-                <div style={{ overflow: "hidden", background: "#010914", minHeight: 120 }}>
+                <div style={{ overflow: "hidden", background: "#0A0A0A", minHeight: 120 }}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={phaseImages[i]!} alt={f.phase} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                 </div>
