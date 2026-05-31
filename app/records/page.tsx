@@ -10,51 +10,52 @@ type RecordEntry = {
   wiki: string;
   stat: string;
   desc: string;
+  specs?: { label: string; value: string }[];
 };
 
 const speedRecords: RecordEntry[] = [
-  { badge: "RÉCORD ABSOLUTO", name: "North American X-15", wiki: "North American X-15", stat: "Mach 6.72", desc: "7.274 km/h · 3 de octubre de 1967, William Knight. El más rápido con tripulación de TODA LA HISTORIA." },
-  { badge: "AVIÓN DE RECONOCIMIENTO", name: "SR-71 Blackbird", wiki: "Lockheed SR-71 Blackbird", stat: "Mach 3.32", desc: "3.540 km/h · El más rápido operativo de la historia. Nunca fue derribado: simplemente aceleraba y escapaba." },
-  { badge: "CAZA DE COMBATE", name: "MiG-25 Foxbat", wiki: "Mikoyan-Gurevich MiG-25", stat: "Mach 3.2", desc: "3.400 km/h · El caza más rápido jamás construido. Sus motores se destruían después de alcanzar la velocidad máxima." },
-  { badge: "COMERCIAL SUPERSÓNICO", name: "Concorde", wiki: "Concorde", stat: "Mach 2.04", desc: "2.179 km/h · Cruzaba el Atlántico en 3 horas 30 minutos. El fuselaje se extendía 25 cm por dilatación térmica." },
-  { badge: "CAZA DE 5.ª GENERACIÓN", name: "F-22 Raptor", wiki: "Lockheed Martin F-22 Raptor", stat: "Mach 2.25+", desc: "Puede volar a Mach 1.8 sin postcombustor (supercruise), algo que la mayoría de los cazas no pueden hacer." },
-  { badge: "JET EJECUTIVO", name: "Cessna Citation X+", wiki: "Cessna Citation X", stat: "Mach 0.935", desc: "El jet privado más rápido del mundo certificado. Más veloz que algunos cazas de la época de la Guerra Fría." },
+  { badge: "RÉCORD ABSOLUTO", name: "North American X-15", wiki: "North American X-15", stat: "Mach 6.72", desc: "7.274 km/h · 3 de octubre de 1967, William Knight. El más rápido con tripulación de TODA LA HISTORIA.", specs: [{ label: "Motor", value: "XLR99 cohete" }, { label: "País", value: "EE.UU." }, { label: "Año", value: "1959-1968" }, { label: "Tripulación", value: "1 piloto" }] },
+  { badge: "AVIÓN DE RECONOCIMIENTO", name: "SR-71 Blackbird", wiki: "Lockheed SR-71 Blackbird", stat: "Mach 3.32", desc: "3.540 km/h · El más rápido operativo de la historia. Nunca fue derribado: simplemente aceleraba y escapaba.", specs: [{ label: "Motor", value: "2× P&W J58" }, { label: "País", value: "EE.UU." }, { label: "Año", value: "1966-1999" }, { label: "Tripulación", value: "2 (piloto + RSO)" }] },
+  { badge: "CAZA DE COMBATE", name: "MiG-25 Foxbat", wiki: "Mikoyan-Gurevich MiG-25", stat: "Mach 3.2", desc: "3.400 km/h · El caza más rápido jamás construido. Sus motores se destruían después de alcanzar la velocidad máxima.", specs: [{ label: "Motor", value: "2× Tumansky R-15B" }, { label: "País", value: "URSS" }, { label: "Año", value: "1970-activo" }, { label: "Tripulación", value: "1 piloto" }] },
+  { badge: "COMERCIAL SUPERSÓNICO", name: "Concorde", wiki: "Concorde", stat: "Mach 2.04", desc: "2.179 km/h · Cruzaba el Atlántico en 3 horas 30 minutos. El fuselaje se extendía 25 cm por dilatación térmica.", specs: [{ label: "Motor", value: "4× Olympus 593" }, { label: "País", value: "UK / Francia" }, { label: "Año", value: "1976-2003" }, { label: "Pasajeros", value: "100-128" }] },
+  { badge: "CAZA DE 5.ª GENERACIÓN", name: "F-22 Raptor", wiki: "Lockheed Martin F-22 Raptor", stat: "Mach 2.25+", desc: "Puede volar a Mach 1.8 sin postcombustor (supercruise), algo que la mayoría de los cazas no pueden hacer.", specs: [{ label: "Motor", value: "2× F119-PW-100" }, { label: "País", value: "EE.UU." }, { label: "Año", value: "2005-activo" }, { label: "Tripulación", value: "1 piloto" }] },
+  { badge: "JET EJECUTIVO", name: "Cessna Citation X+", wiki: "Cessna Citation X", stat: "Mach 0.935", desc: "El jet privado más rápido del mundo certificado. Más veloz que algunos cazas de la época de la Guerra Fría.", specs: [{ label: "Motor", value: "2× AE3007C2" }, { label: "País", value: "EE.UU." }, { label: "Año", value: "2013-activo" }, { label: "Pasajeros", value: "hasta 12" }] },
 ];
 
 const sizeRecords: RecordEntry[] = [
-  { badge: "EL MÁS GRANDE DE TODOS", name: "Antonov An-225 Mriya", wiki: "Antonov An-225", stat: "84 m largo · 88 m envergadura", desc: "640 toneladas de peso bruto. Carga útil: 250 t. Destruido en Gostomel (Ucrania) en febrero de 2022. Solo existió uno." },
-  { badge: "MAYOR AVIÓN DE PASAJEROS", name: "Airbus A380", wiki: "Airbus A380", stat: "73 m largo · 80 m envergadura", desc: "Doble cubierta completa. Hasta 853 pasajeros. Emirates lo usa con suites privadas, bar y ducha en primera clase." },
-  { badge: "LA BODEGA MÁS ANCHA", name: "Airbus BelugaXL", wiki: "Airbus BelugaXL", stat: "8.8 m de diámetro interior", desc: "Diseñado para transportar alas y fuselajes del A350 entre fábricas de Airbus en Europa." },
-  { badge: "TRANSPORTE MILITAR", name: "Lockheed C-5 Galaxy", wiki: "Lockheed C-5 Galaxy", stat: "75 m largo · 68 m envergadura", desc: "Puede llevar 2 tanques M1 Abrams o 6 helicópteros Black Hawk. Tiene rampas tanto delantera como trasera." },
-  { badge: "MAYOR HELICÓPTERO", name: "Mil Mi-26 Halo", wiki: "Mil Mi-26", stat: "32 m de diámetro de rotor", desc: "El helicóptero más pesado en producción. Puede transportar 20 toneladas o incluso otro helicóptero colgado debajo." },
-  { badge: "MAYOR DIRIGIBLE", name: "Hindenburg LZ 129", wiki: "Hindenburg disaster", stat: "245 m de longitud", desc: "Más largo que tres Boeing 747 juntos. Tenía bar, comedor y camarotes. Destruido en New Jersey en 1937." },
+  { badge: "EL MÁS GRANDE DE TODOS", name: "Antonov An-225 Mriya", wiki: "Antonov An-225", stat: "84 m largo · 88 m envergadura", desc: "640 toneladas de peso bruto. Carga útil: 250 t. Destruido en Gostomel (Ucrania) en febrero de 2022. Solo existió uno.", specs: [{ label: "MTOW", value: "640 t" }, { label: "Carga útil", value: "250 t" }, { label: "Motores", value: "6× D-18T" }, { label: "País", value: "URSS/Ucrania" }] },
+  { badge: "MAYOR AVIÓN DE PASAJEROS", name: "Airbus A380", wiki: "Airbus A380", stat: "73 m largo · 80 m envergadura", desc: "Doble cubierta completa. Hasta 853 pasajeros. Emirates lo usa con suites privadas, bar y ducha en primera clase.", specs: [{ label: "MTOW", value: "575 t" }, { label: "Pasajeros", value: "555-853" }, { label: "Motores", value: "4× Trent 970" }, { label: "País", value: "Europa" }] },
+  { badge: "LA BODEGA MÁS ANCHA", name: "Airbus BelugaXL", wiki: "Airbus BelugaXL", stat: "8.8 m de diámetro interior", desc: "Diseñado para transportar alas y fuselajes del A350 entre fábricas de Airbus en Europa.", specs: [{ label: "Carga", value: "51 t" }, { label: "Diámetro", value: "8.8 m interior" }, { label: "Basado en", value: "A330-200F" }, { label: "País", value: "Europa" }] },
+  { badge: "TRANSPORTE MILITAR", name: "Lockheed C-5 Galaxy", wiki: "Lockheed C-5 Galaxy", stat: "75 m largo · 68 m envergadura", desc: "Puede llevar 2 tanques M1 Abrams o 6 helicópteros Black Hawk. Tiene rampas tanto delantera como trasera.", specs: [{ label: "MTOW", value: "381 t" }, { label: "Carga útil", value: "122 t" }, { label: "Motores", value: "4× TF39" }, { label: "País", value: "EE.UU." }] },
+  { badge: "MAYOR HELICÓPTERO", name: "Mil Mi-26 Halo", wiki: "Mil Mi-26", stat: "32 m de diámetro de rotor", desc: "El helicóptero más pesado en producción. Puede transportar 20 toneladas o incluso otro helicóptero colgado debajo.", specs: [{ label: "MTOW", value: "56 t" }, { label: "Carga útil", value: "20 t" }, { label: "Rotor", value: "32 m diámetro" }, { label: "País", value: "URSS/Rusia" }] },
+  { badge: "MAYOR DIRIGIBLE", name: "Hindenburg LZ 129", wiki: "Hindenburg disaster", stat: "245 m de longitud", desc: "Más largo que tres Boeing 747 juntos. Tenía bar, comedor y camarotes. Destruido en New Jersey en 1937.", specs: [{ label: "Longitud", value: "245 m" }, { label: "Gas", value: "Hidrógeno" }, { label: "Año", value: "1936-1937" }, { label: "País", value: "Alemania" }] },
 ];
 
 const productionRecords: RecordEntry[] = [
-  { badge: "EL MÁS CONSTRUIDO", name: "Cessna 172 Skyhawk", wiki: "Cessna 172", stat: "44.000+ unidades", desc: "Desde 1956 hasta hoy. El avión más producido de la historia. La escuela de vuelo del mundo entero." },
-  { badge: "CAZA MÁS PRODUCIDO", name: "Messerschmitt Bf 109", wiki: "Messerschmitt Bf 109", stat: "33.984 unidades", desc: "El caza más fabricado de la historia. Estuvo en todos los frentes de la Segunda Guerra Mundial." },
-  { badge: "NARROW-BODY MODERNO", name: "Airbus A320 family", wiki: "Airbus A320 family", stat: "10.000+ unidades", desc: "La familia más vendida de la aviación comercial moderna, superando al Boeing 737 en pedidos acumulados." },
-  { badge: "HELICÓPTERO ICÓNICO", name: "Bell UH-1 Iroquois", wiki: "Bell UH-1 Iroquois", stat: "16.000+ unidades", desc: "El símbolo del Vietnam. El sonido del Huey es el más reconocible en la historia de los helicópteros." },
-  { badge: "CLÁSICO HISTÓRICO", name: "Douglas DC-3", wiki: "Douglas DC-3", stat: "16.079 unidades", desc: "El avión que hizo rentable la aviación comercial. Todavía hay unos 150 volando hoy, 90 años después." },
-  { badge: "CAZA ALIADO WWII", name: "Supermarine Spitfire", wiki: "Supermarine Spitfire", stat: "20.351 unidades", desc: "Héroe de la Batalla de Inglaterra. La silueta de ala elíptica es una de las más bellas de la historia." },
+  { badge: "EL MÁS CONSTRUIDO", name: "Cessna 172 Skyhawk", wiki: "Cessna 172", stat: "44.000+ unidades", desc: "Desde 1956 hasta hoy. El avión más producido de la historia. La escuela de vuelo del mundo entero.", specs: [{ label: "Unidades", value: "44.000+" }, { label: "Desde", value: "1956" }, { label: "Motor", value: "Lycoming IO-360" }, { label: "País", value: "EE.UU." }] },
+  { badge: "CAZA MÁS PRODUCIDO", name: "Messerschmitt Bf 109", wiki: "Messerschmitt Bf 109", stat: "33.984 unidades", desc: "El caza más fabricado de la historia. Estuvo en todos los frentes de la Segunda Guerra Mundial.", specs: [{ label: "Unidades", value: "33.984" }, { label: "Período", value: "1937-1945" }, { label: "Motor", value: "DB 601/605" }, { label: "País", value: "Alemania" }] },
+  { badge: "NARROW-BODY MODERNO", name: "Airbus A320 family", wiki: "Airbus A320 family", stat: "10.000+ unidades", desc: "La familia más vendida de la aviación comercial moderna, superando al Boeing 737 en pedidos acumulados.", specs: [{ label: "Pedidos", value: "15.000+" }, { label: "Desde", value: "1988" }, { label: "Pasajeros", value: "120-240" }, { label: "País", value: "Europa" }] },
+  { badge: "HELICÓPTERO ICÓNICO", name: "Bell UH-1 Iroquois", wiki: "Bell UH-1 Iroquois", stat: "16.000+ unidades", desc: "El símbolo del Vietnam. El sonido del Huey es el más reconocible en la historia de los helicópteros.", specs: [{ label: "Unidades", value: "16.000+" }, { label: "Período", value: "1959-activo" }, { label: "Motor", value: "Lycoming T53" }, { label: "País", value: "EE.UU." }] },
+  { badge: "CLÁSICO HISTÓRICO", name: "Douglas DC-3", wiki: "Douglas DC-3", stat: "16.079 unidades", desc: "El avión que hizo rentable la aviación comercial. Todavía hay unos 150 volando hoy, 90 años después.", specs: [{ label: "Unidades", value: "16.079" }, { label: "Período", value: "1935-1950" }, { label: "Motores", value: "2× P&W R-1830" }, { label: "País", value: "EE.UU." }] },
+  { badge: "CAZA ALIADO WWII", name: "Supermarine Spitfire", wiki: "Supermarine Spitfire", stat: "20.351 unidades", desc: "Héroe de la Batalla de Inglaterra. La silueta de ala elíptica es una de las más bellas de la historia.", specs: [{ label: "Unidades", value: "20.351" }, { label: "Período", value: "1938-1948" }, { label: "Motor", value: "Rolls-Royce Merlin" }, { label: "País", value: "Reino Unido" }] },
 ];
 
 const altitudeRecords: RecordEntry[] = [
-  { badge: "RÉCORD ABSOLUTO AVIÓN", name: "North American X-15", wiki: "North American X-15", stat: "112 km", desc: "22 de agosto de 1963. Joe Walker cruzó la línea Kármán (100 km). Técnicamente llegó al espacio exterior." },
-  { badge: "CONVENCIONAL CON TRIPULACIÓN", name: "SR-71 Blackbird", wiki: "Lockheed SR-71 Blackbird", stat: "26.000 m", desc: "La altitud de crucero operacional del SR-71. El cielo se vuelve negro y se pueden ver estrellas de día." },
-  { badge: "RECONOCIMIENTO MODERNO", name: "Lockheed U-2", wiki: "Lockheed U-2", stat: "21.000+ m", desc: "Todavía en servicio activo. El piloto necesita 3 horas de pre-oxigenación y usa un traje de presión completo." },
-  { badge: "CAZA SOVIÉTICO", name: "MiG-25 Foxbat", wiki: "Mikoyan-Gurevich MiG-25", stat: "37.650 m", desc: "Récord de altitud de un avión de combate. Capaz de interceptar objetivos donde otros cazas no pueden llegar." },
-  { badge: "AVIÓN COMERCIAL", name: "Concorde", wiki: "Concorde", stat: "18.300 m", desc: "El avión comercial que más alto voló. Desde esa altitud se podía ver la curvatura de la Tierra." },
-  { badge: "AVIÓN SOLAR", name: "Solar Impulse 2", wiki: "Solar Impulse 2", stat: "Vuelta al mundo", desc: "Sin una gota de combustible. 17 etapas, 558 horas de vuelo, 2015-2016. El futuro de la aviación sostenible." },
+  { badge: "RÉCORD ABSOLUTO AVIÓN", name: "North American X-15", wiki: "North American X-15", stat: "112 km", desc: "22 de agosto de 1963. Joe Walker cruzó la línea Kármán (100 km). Técnicamente llegó al espacio exterior.", specs: [{ label: "Altitud max.", value: "112 km" }, { label: "Fecha", value: "22 ago 1963" }, { label: "Piloto", value: "Joe Walker" }, { label: "País", value: "EE.UU." }] },
+  { badge: "CONVENCIONAL CON TRIPULACIÓN", name: "SR-71 Blackbird", wiki: "Lockheed SR-71 Blackbird", stat: "26.000 m", desc: "La altitud de crucero operacional del SR-71. El cielo se vuelve negro y se pueden ver estrellas de día.", specs: [{ label: "Crucero", value: "26.000 m" }, { label: "Presión", value: "Traje especial" }, { label: "Año", value: "1966-1999" }, { label: "País", value: "EE.UU." }] },
+  { badge: "RECONOCIMIENTO MODERNO", name: "Lockheed U-2", wiki: "Lockheed U-2", stat: "21.000+ m", desc: "Todavía en servicio activo. El piloto necesita 3 horas de pre-oxigenación y usa un traje de presión completo.", specs: [{ label: "Altitud", value: "21.000+ m" }, { label: "Estado", value: "En servicio" }, { label: "Motor", value: "GE F118" }, { label: "País", value: "EE.UU." }] },
+  { badge: "CAZA SOVIÉTICO", name: "MiG-25 Foxbat", wiki: "Mikoyan-Gurevich MiG-25", stat: "37.650 m", desc: "Récord de altitud de un avión de combate. Capaz de interceptar objetivos donde otros cazas no pueden llegar.", specs: [{ label: "Récord", value: "37.650 m" }, { label: "Año", value: "1977" }, { label: "Motor", value: "2× R-15B-300" }, { label: "País", value: "URSS" }] },
+  { badge: "AVIÓN COMERCIAL", name: "Concorde", wiki: "Concorde", stat: "18.300 m", desc: "El avión comercial que más alto voló. Desde esa altitud se podía ver la curvatura de la Tierra.", specs: [{ label: "Crucero", value: "18.300 m" }, { label: "Velocidad", value: "Mach 2.04" }, { label: "Período", value: "1976-2003" }, { label: "País", value: "UK / Francia" }] },
+  { badge: "AVIÓN SOLAR", name: "Solar Impulse 2", wiki: "Solar Impulse 2", stat: "Vuelta al mundo", desc: "Sin una gota de combustible. 17 etapas, 558 horas de vuelo, 2015-2016. El futuro de la aviación sostenible.", specs: [{ label: "Duración", value: "558 h vuelo" }, { label: "Etapas", value: "17" }, { label: "Año", value: "2015-2016" }, { label: "Motor", value: "4× eléctricos" }] },
 ];
 
 const historicRecords: RecordEntry[] = [
-  { badge: "EL INICIO DE TODO", name: "Wright Flyer", wiki: "Wright Flyer", stat: "17 dic 1903 · 12 segundos", desc: "El primer vuelo motorizado controlado de la historia humana. 37 metros recorridos a 48 km/h a 0,5 metros del suelo." },
-  { badge: "PRIMER JET COMERCIAL", name: "De Havilland Comet", wiki: "De Havilland Comet", stat: "1952 · La era jet empieza", desc: "Sus accidentes por fatiga del metal enseñaron cómo presurizar aviones de forma segura. Sus errores construyeron la aviación moderna." },
-  { badge: "PRIMER JET DE COMBATE", name: "Messerschmitt Me 262", wiki: "Messerschmitt Me 262", stat: "1944 · 150 km/h más rápido", desc: "Era tan superior que los aliados no podían derribarlo en vuelo recto. Solo podían atacarlo en despegue o aterrizaje." },
-  { badge: "DEMOCRATIZÓ EL VUELO", name: "Boeing 747", wiki: "Boeing 747", stat: "1969 · El Jumbo", desc: "Antes del 747, viajar en avión era un lujo. El Jumbo lo hizo accesible. Más de 1.574 construidos en 50 años." },
-  { badge: "BARRERA DEL SONIDO", name: "Bell X-1", wiki: "Bell X-1", stat: "14 oct 1947 · Mach 1.06", desc: "Chuck Yeager rompió la barrera del sonido con dos costillas rotas de un accidente a caballo el día anterior." },
-  { badge: "ORGULLO ARGENTINO", name: "FMA I.Ae. 33 Pulqui II", wiki: "FMA I.Ae. 33 Pulqui II", stat: "1950 · 4.° jet del mundo", desc: "Diseñado por Kurt Tank (creador del FW-190). Argentina fue el 4.° país del mundo en desarrollar un caza a reacción propio." },
+  { badge: "EL INICIO DE TODO", name: "Wright Flyer", wiki: "Wright Flyer", stat: "17 dic 1903 · 12 segundos", desc: "El primer vuelo motorizado controlado de la historia humana. 37 metros recorridos a 48 km/h a 0,5 metros del suelo.", specs: [{ label: "Fecha", value: "17 dic 1903" }, { label: "Duración", value: "12 segundos" }, { label: "Distancia", value: "37 metros" }, { label: "País", value: "EE.UU." }] },
+  { badge: "PRIMER JET COMERCIAL", name: "De Havilland Comet", wiki: "De Havilland Comet", stat: "1952 · La era jet empieza", desc: "Sus accidentes por fatiga del metal enseñaron cómo presurizar aviones de forma segura. Sus errores construyeron la aviación moderna.", specs: [{ label: "Año", value: "1952" }, { label: "Motores", value: "4× Ghost DH.4200" }, { label: "Pasajeros", value: "36-44" }, { label: "País", value: "Reino Unido" }] },
+  { badge: "PRIMER JET DE COMBATE", name: "Messerschmitt Me 262", wiki: "Messerschmitt Me 262", stat: "1944 · 150 km/h más rápido", desc: "Era tan superior que los aliados no podían derribarlo en vuelo recto. Solo podían atacarlo en despegue o aterrizaje.", specs: [{ label: "Año", value: "1944" }, { label: "Motores", value: "2× Junkers Jumo 004" }, { label: "Velocidad", value: "870 km/h" }, { label: "País", value: "Alemania" }] },
+  { badge: "DEMOCRATIZÓ EL VUELO", name: "Boeing 747", wiki: "Boeing 747", stat: "1969 · El Jumbo", desc: "Antes del 747, viajar en avión era un lujo. El Jumbo lo hizo accesible. Más de 1.574 construidos en 50 años.", specs: [{ label: "Año", value: "1969" }, { label: "Pasajeros", value: "366-605" }, { label: "MTOW", value: "412 t" }, { label: "País", value: "EE.UU." }] },
+  { badge: "BARRERA DEL SONIDO", name: "Bell X-1", wiki: "Bell X-1", stat: "14 oct 1947 · Mach 1.06", desc: "Chuck Yeager rompió la barrera del sonido con dos costillas rotas de un accidente a caballo el día anterior.", specs: [{ label: "Fecha", value: "14 oct 1947" }, { label: "Velocidad", value: "Mach 1.06" }, { label: "Piloto", value: "Chuck Yeager" }, { label: "País", value: "EE.UU." }] },
+  { badge: "ORGULLO ARGENTINO", name: "FMA I.Ae. 33 Pulqui II", wiki: "FMA I.Ae. 33 Pulqui II", stat: "1950 · 4.° jet del mundo", desc: "Diseñado por Kurt Tank (creador del FW-190). Argentina fue el 4.° país del mundo en desarrollar un caza a reacción propio.", specs: [{ label: "Año", value: "1950" }, { label: "Motor", value: "1× Nene II" }, { label: "Diseñador", value: "Kurt Tank" }, { label: "País", value: "Argentina" }] },
 ];
 
 const funFacts = [
@@ -85,7 +86,20 @@ function RecordCard({ entry }: { entry: RecordEntry }) {
       <span className="recordBadge">{entry.badge}</span>
       <h3>{entry.name}</h3>
       <p style={{ color: "var(--sky)", fontSize: 22, fontWeight: 800, margin: "8px 0" }}>{entry.stat}</p>
-      <p>{entry.desc}</p>
+      <p style={{ color: "var(--muted2)", fontSize: 13.5, lineHeight: 1.6 }}>{entry.desc}</p>
+      {entry.specs && entry.specs.length > 0 && (
+        <div style={{
+          marginTop: 14, display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px 12px",
+          borderTop: "1px solid var(--border)", paddingTop: 12
+        }}>
+          {entry.specs.map((s) => (
+            <div key={s.label}>
+              <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--muted)", display: "block" }}>{s.label}</span>
+              <span style={{ fontSize: 12.5, color: "var(--text)", fontWeight: 600 }}>{s.value}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

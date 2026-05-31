@@ -44,11 +44,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="navInner">
             <Link className="navLogo" href="/">WikiAir</Link>
             <div className="navLinks">
+              <Link href="/vuelo">Cómo vuela</Link>
+              <Link href="/instrumentos">Instrumentos</Link>
+              <Link href="/glosario">Glosario</Link>
+              <Link href="/licencias">Licencias</Link>
               <Link href="/enciclopedia">Enciclopedia</Link>
-              <Link href="/historia">Historia</Link>
-              <Link href="/radar">Radar</Link>
               <Link href="/records">Récords</Link>
+              <Link href="/radar">Radar</Link>
               <Link href="/quiz">Quiz</Link>
+              <Link href="/historia">Historia</Link>
             </div>
           </div>
         </nav>

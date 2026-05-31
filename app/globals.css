@@ -677,7 +677,14 @@ img { display: block; max-width: 100%; }
   .featuredGrid { grid-template-columns: repeat(2, 1fr); }
   .statsBar { grid-template-columns: repeat(2, 1fr); }
   .footerGrid { grid-template-columns: 1fr 1fr; }
-  .navLinks { display: none; }
+  .navInner { height: auto; padding: 10px 16px 6px; flex-direction: column; align-items: flex-start; gap: 4px; }
+  .navLinks {
+    display: flex !important;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; gap: 2px; padding-bottom: 4px; width: 100%;
+  }
+  .navLinks::-webkit-scrollbar { display: none; }
+  .navLinks a { font-size: 12px; padding: 5px 10px; white-space: nowrap; }
   .hero::after { display: none; }
 }
 @media (max-width: 600px) {

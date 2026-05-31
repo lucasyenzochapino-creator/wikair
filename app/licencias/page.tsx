@@ -1,5 +1,19 @@
 import Link from "next/link";
 
+async function getWikiImage(title: string) {
+  try {
+    const res = await fetch(
+      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`,
+      { next: { revalidate: 86400 } }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data?.thumbnail?.source || data?.originalimage?.source || null;
+  } catch {
+    return null;
+  }
+}
+
 const licenses = [
   {
     code: "PPL",
@@ -10,6 +24,7 @@ const licenses = [
     what: "Podés volar aviones simples, de día, en condiciones VFR (visual). No podés cobrar por volar.",
     badge: "PASO 1",
     detail: "Es la primera licencia. 40 horas incluyen al menos 10 horas de vuelo solo (sin instructor). Incluye teoría de meteorología, navegación, reglamentación y motores. En Argentina: habilitado por ANAC.",
+    wiki: "Cessna 172",
   },
   {
     code: "IR",
@@ -20,6 +35,7 @@ const licenses = [
     what: "Podés volar en IMC (dentro de nubes, sin referencias visuales) usando solo los instrumentos.",
     badge: "PASO 2",
     detail: "Se agrega sobre la PPL o CPL. Requiere vuelo simulado (FFS) y real en IMC. Incluye procedimientos ILS, VOR, aproximaciones de precisión y gestión de sistemas.",
+    wiki: "Instrument flight rules",
   },
   {
     code: "CPL",
@@ -30,6 +46,7 @@ const licenses = [
     what: "Podés ser pagado por volar. Primer oficial en aerolíneas regionales, instructor de vuelo, taxi aéreo.",
     badge: "PASO 3",
     detail: "Requiere 200 horas de vuelo total, incluyendo 100 horas como PIC (piloto al mando). Examen médico Clase 1 obligatorio. Examen teórico avanzado en ANAC.",
+    wiki: "Piper Seminole",
   },
   {
     code: "ME",
@@ -40,6 +57,7 @@ const licenses = [
     what: "Podés volar aviones con más de un motor. Obligatorio para la mayoría de los jets y aviones de línea.",
     badge: "PASO 4",
     detail: "Curso específico que incluye procedimientos de motor apagado (single-engine operations), performance con un motor inoperativo y emergencias. Típicamente se hace antes o junto con el ATPL.",
+    wiki: "Beechcraft Baron",
   },
   {
     code: "ATPL",
@@ -50,10 +68,13 @@ const licenses = [
     what: "La licencia máxima. Comandante de aerolíneas comerciales. El capitán de cualquier avión de pasajeros debe tenerla.",
     badge: "PASO 5",
     detail: "Requiere 1.500 horas totales (OACI) o 1.000 horas en algunos países. En Argentina sigue la norma OACI. Incluye 500 horas como PIC, 100 horas nocturnas y 75 horas IFR reales.",
+    wiki: "Airbus A320",
   },
 ];
 
-export default function LicenciasPage() {
+export default async function LicenciasPage() {
+  const licenseImages = await Promise.all(licenses.map((l) => getWikiImage(l.wiki)));
+
   return (
     <main className="page">
       <section className="container hero compactHero">
@@ -71,34 +92,40 @@ export default function LicenciasPage() {
           {licenses.map((lic, i) => (
             <div key={lic.code} style={{
               background: "var(--glass)", border: "1px solid var(--border)", borderRadius: "var(--rXL)",
-              padding: "24px 28px", backdropFilter: "blur(10px)",
+              overflow: "hidden", backdropFilter: "blur(10px)",
             }}>
-              <div style={{ display: "flex", gap: 20, alignItems: "flex-start", flexWrap: "wrap" }}>
-                <div style={{ minWidth: 80, textAlign: "center" }}>
-                  <div style={{
-                    width: 64, height: 64, borderRadius: "50%", background: "var(--sky-dim)",
-                    border: "2px solid var(--border-a)", display: "flex", alignItems: "center",
-                    justifyContent: "center", margin: "0 auto 8px", fontSize: 22, fontWeight: 900, color: "var(--sky)"
-                  }}>
-                    {i + 1}
-                  </div>
+              {/* Image header */}
+              <div style={{ height: 200, overflow: "hidden", background: "#010914", position: "relative" }}>
+                {licenseImages[i] ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img src={licenseImages[i]!} alt={lic.code} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                ) : (
+                  <div style={{ width: "100%", height: "100%", background: "var(--glass2)" }} />
+                )}
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(2,12,27,0.95) 0%, rgba(2,12,27,0.3) 60%, transparent 100%)" }} />
+                <div style={{ position: "absolute", bottom: 16, left: 20, display: "flex", alignItems: "center", gap: 12 }}>
+                  <span style={{ fontSize: 36, fontWeight: 900, color: "var(--sky)", letterSpacing: -1 }}>{lic.code}</span>
                   <span className="recordBadge" style={{ fontSize: 10 }}>{lic.badge}</span>
                 </div>
-                <div style={{ flex: 1, minWidth: 240 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginBottom: 8 }}>
-                    <span style={{ fontSize: 28, fontWeight: 900, color: "var(--sky)", letterSpacing: -1 }}>{lic.code}</span>
-                    <span style={{ fontSize: 18, fontWeight: 700, color: "var(--text)" }}>{lic.name}</span>
-                    <span style={{ fontSize: 13, color: "var(--muted2)" }}>{lic.eng}</span>
-                  </div>
-                  <p style={{ color: "var(--muted2)", marginBottom: 12, lineHeight: 1.6 }}>{lic.what}</p>
-                  <p style={{ color: "var(--muted)", fontSize: 13, lineHeight: 1.7 }}>{lic.detail}</p>
-                  <div style={{ display: "flex", gap: 16, marginTop: 12, flexWrap: "wrap" }}>
-                    <span style={{ fontSize: 13, color: "var(--sky)", background: "var(--sky-dim)", padding: "4px 12px", borderRadius: 6 }}>
-                      ✈ {lic.hours}
-                    </span>
-                    <span style={{ fontSize: 13, color: "var(--muted2)", background: "var(--glass2)", padding: "4px 12px", borderRadius: 6 }}>
-                      Edad mín: {lic.age}
-                    </span>
+              </div>
+              {/* Existing content */}
+              <div style={{ padding: "20px 28px 24px" }}>
+                <div style={{ display: "flex", gap: 20, alignItems: "flex-start", flexWrap: "wrap" }}>
+                  <div style={{ flex: 1, minWidth: 240 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginBottom: 8 }}>
+                      <span style={{ fontSize: 18, fontWeight: 700, color: "var(--text)" }}>{lic.name}</span>
+                      <span style={{ fontSize: 13, color: "var(--muted2)" }}>{lic.eng}</span>
+                    </div>
+                    <p style={{ color: "var(--muted2)", marginBottom: 12, lineHeight: 1.6 }}>{lic.what}</p>
+                    <p style={{ color: "var(--muted)", fontSize: 13, lineHeight: 1.7 }}>{lic.detail}</p>
+                    <div style={{ display: "flex", gap: 16, marginTop: 12, flexWrap: "wrap" }}>
+                      <span style={{ fontSize: 13, color: "var(--sky)", background: "var(--sky-dim)", padding: "4px 12px", borderRadius: 6 }}>
+                        ✈ {lic.hours}
+                      </span>
+                      <span style={{ fontSize: 13, color: "var(--muted2)", background: "var(--glass2)", padding: "4px 12px", borderRadius: 6 }}>
+                        Edad mín: {lic.age}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -160,6 +187,11 @@ export default function LicenciasPage() {
           </p>
         </div>
       </section>
+
+      {/* CTA */}
+      <div style={{ paddingBottom: 60, textAlign: "center" }}>
+        <Link className="btnPrimary" href="/quiz">Ponete a prueba con el quiz →</Link>
+      </div>
     </main>
   );
 }
