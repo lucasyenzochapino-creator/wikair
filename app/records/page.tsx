@@ -240,7 +240,7 @@ function RecordCard({ entry }: { entry: RecordEntry }) {
       <RecordImg wiki={entry.wiki} alt={entry.name} />
       <span className="recordBadge">{entry.badge}</span>
       <h3>{entry.name}</h3>
-      <p style={{ color: "var(--gold)", fontSize: 22, fontWeight: 800, margin: "8px 0", fontFamily: "var(--mono)" }}>{entry.stat}</p>
+      <p style={{ color: "var(--sky)", fontSize: 22, fontWeight: 800, margin: "8px 0" }}>{entry.stat}</p>
       <p>{entry.desc}</p>
     </div>
   );

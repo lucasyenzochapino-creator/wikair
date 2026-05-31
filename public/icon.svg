@@ -1,21 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <!-- Background -->
-  <rect width="512" height="512" rx="96" fill="#000608"/>
+  <rect width="512" height="512" rx="96" fill="#020c1b"/>
   <!-- Outer HUD ring -->
-  <circle cx="256" cy="256" r="210" fill="none" stroke="#00c8ff" stroke-width="4" opacity="0.25"/>
+  <circle cx="256" cy="256" r="210" fill="none" stroke="#38bdf8" stroke-width="4" opacity="0.25"/>
   <!-- Inner HUD ring -->
-  <circle cx="256" cy="256" r="150" fill="none" stroke="#00c8ff" stroke-width="2" opacity="0.15"/>
+  <circle cx="256" cy="256" r="150" fill="none" stroke="#38bdf8" stroke-width="2" opacity="0.15"/>
   <!-- HUD cross hairs -->
-  <line x1="256" y1="56" x2="256" y2="116" stroke="#00c8ff" stroke-width="3" opacity="0.4"/>
-  <line x1="256" y1="396" x2="256" y2="456" stroke="#00c8ff" stroke-width="3" opacity="0.4"/>
-  <line x1="56" y1="256" x2="116" y2="256" stroke="#00c8ff" stroke-width="3" opacity="0.4"/>
-  <line x1="396" y1="256" x2="456" y2="256" stroke="#00c8ff" stroke-width="3" opacity="0.4"/>
+  <line x1="256" y1="56" x2="256" y2="116" stroke="#38bdf8" stroke-width="3" opacity="0.4"/>
+  <line x1="256" y1="396" x2="256" y2="456" stroke="#38bdf8" stroke-width="3" opacity="0.4"/>
+  <line x1="56" y1="256" x2="116" y2="256" stroke="#38bdf8" stroke-width="3" opacity="0.4"/>
+  <line x1="396" y1="256" x2="456" y2="256" stroke="#38bdf8" stroke-width="3" opacity="0.4"/>
   <!-- Airplane silhouette — top-down view -->
-  <path d="M256 100 C260 130 264 175 264 220 L370 290 370 318 264 288 250 368 280 390 280 410 256 396 232 410 232 390 262 368 248 288 142 318 142 290 248 220 C248 175 252 130 256 100Z" fill="#00c8ff"/>
+  <path d="M256 100 C260 130 264 175 264 220 L370 290 370 318 264 288 250 368 280 390 280 410 256 396 232 410 232 390 262 368 248 288 142 318 142 290 248 220 C248 175 252 130 256 100Z" fill="#38bdf8"/>
   <!-- Fuselage highlight -->
   <path d="M256 110 C257.5 135 259 168 259 205 L262 205 C262 168 260 135 256 110Z" fill="#ffffff" opacity="0.35"/>
   <!-- Cyan glow dot — right wing tip -->
-  <circle cx="368" cy="302" r="6" fill="#00e5ff" opacity="0.9"/>
+  <circle cx="368" cy="302" r="6" fill="#7dd3fc" opacity="0.9"/>
   <!-- Cyan glow dot — left wing tip -->
-  <circle cx="144" cy="302" r="6" fill="#00e5ff" opacity="0.9"/>
+  <circle cx="144" cy="302" r="6" fill="#7dd3fc" opacity="0.9"/>
 </svg>
