@@ -49,7 +49,7 @@ const licenses = [
     age: "21 años",
     what: "La licencia máxima. Comandante de aerolíneas comerciales. El capitán de cualquier avión de pasajeros debe tenerla.",
     badge: "PASO 5",
-    detail: "Requiere 1.500 horas totales (OACI). En Argentina sigue la norma OACI. Incluye 500 horas como PIC, 100 horas nocturnas y 75 horas IFR reales.",
+    detail: "Requiere 1.500 horas totales (OACI) o 1.000 horas en algunos países. En Argentina sigue la norma OACI. Incluye 500 horas como PIC, 100 horas nocturnas y 75 horas IFR reales.",
   },
 ];
 
@@ -124,8 +124,8 @@ export default function LicenciasPage() {
           </div>
           <div className="recordCard">
             <span className="recordBadge">CLASE 2</span>
-            <h3>Controlador ATC</h3>
-            <p style={{ color: "var(--muted2)", fontSize: 14, marginTop: 8 }}>Para controladores de tránsito aéreo. Visión excelente, audición perfecta, psicológico obligatorio. La tensión del trabajo es enorme: manejan 20+ aviones simultáneos.</p>
+            <h3>Controlador de tránsito</h3>
+            <p style={{ color: "var(--muted2)", fontSize: 14, marginTop: 8 }}>Para controladores ATC. Visión excelente (pueden usarse lentes), audición perfecta, psicológico obligatorio. La tensión del trabajo es enorme: manejan 20+ aviones simultáneos.</p>
           </div>
         </div>
       </section>
@@ -135,10 +135,10 @@ export default function LicenciasPage() {
         <p className="gold">REFERENCIA</p>
         <h2 style={{ fontSize: "clamp(26px, 5vw, 44px)", margin: "8px 0 24px", letterSpacing: -1 }}>¿Cuánto cuesta y cuánto lleva?</h2>
         <div className="statsGrid">
-          <div className="statBox"><h3>PPL</h3><p>~12 a 18 meses · Costo estimado: USD 8.000-15.000</p></div>
-          <div className="statBox"><h3>CPL + IR</h3><p>~2 a 3 años adicionales · USD 25.000-45.000</p></div>
+          <div className="statBox"><h3>PPL</h3><p>~12 a 18 meses · Costo estimado en Argentina: USD 8.000-15.000</p></div>
+          <div className="statBox"><h3>CPL + IR</h3><p>~2 a 3 años adicionales tras la PPL · USD 25.000-45.000</p></div>
           <div className="statBox"><h3>1.500 hs</h3><p>Para ATPL: puede tomar 5-8 años construir las horas requeridas</p></div>
-          <div className="statBox"><h3>Aeroclubs</h3><p>La opción más accesible: más de 200 aeroclubes activos en todo el país</p></div>
+          <div className="statBox"><h3>Aeroclubs</h3><p>La opción más accesible en Argentina: AEROCLUB Buenos Aires, San Fernando, Morón y 200+ en todo el país</p></div>
         </div>
       </section>
 
