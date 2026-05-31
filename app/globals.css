@@ -24,7 +24,7 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
 
 body {
   background: var(--bg);
@@ -34,6 +34,7 @@ body {
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 a { color: inherit; text-decoration: none; }
@@ -677,14 +678,17 @@ img { display: block; max-width: 100%; }
   .featuredGrid { grid-template-columns: repeat(2, 1fr); }
   .statsBar { grid-template-columns: repeat(2, 1fr); }
   .footerGrid { grid-template-columns: 1fr 1fr; }
-  .navInner { height: auto; padding: 10px 16px 6px; flex-direction: column; align-items: flex-start; gap: 4px; }
+  /* Nav single-row with scrollable links — keeps height:64px so sticky top stays correct */
+  .navInner { padding: 0 12px; }
+  .navLogo { font-size: 16px; flex-shrink: 0; }
   .navLinks {
     display: flex !important;
     overflow-x: auto; -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; gap: 2px; padding-bottom: 4px; width: 100%;
+    scrollbar-width: none; gap: 1px;
+    max-width: calc(100vw - 110px);
   }
   .navLinks::-webkit-scrollbar { display: none; }
-  .navLinks a { font-size: 12px; padding: 5px 10px; white-space: nowrap; }
+  .navLinks a { font-size: 11px; padding: 5px 8px; white-space: nowrap; }
   .hero::after { display: none; }
 }
 @media (max-width: 600px) {
