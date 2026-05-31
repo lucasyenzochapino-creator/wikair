@@ -1,3 +1,4 @@
+import BackButton from "@/components/BackButton";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,7 +11,7 @@ export default function AcercaPage() {
   return (
     <div className="page">
       <div className="container">
-        <a className="back" href="/">← Volver al inicio</a>
+        <BackButton label="← Volver al inicio" />
 
         <div className="hero">
           <p className="gold" style={{ fontSize: 13, letterSpacing: 2, textTransform: "uppercase", margin: 0 }}>

@@ -1,3 +1,4 @@
+import BackButton from "@/components/BackButton";
 type Item = [string, string, string, string[]];
 
 type ReadyItem = {
@@ -106,7 +107,7 @@ export default async function HistoriaPage() {
   return (
     <main className="page">
       <section className="container hero compactHero">
-        <a className="back" href="/">← Volver</a>
+        <BackButton />
         <p className="gold">HISTORIA MUNDIAL</p>
         <h1>Historia de la aviación</h1>
         <p>Una mirada global con varias imágenes por tarjeta: etapas técnicas, guerras, aviación comercial, industria militar, regiones y países clave.</p>

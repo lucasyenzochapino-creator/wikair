@@ -108,7 +108,7 @@ export default function GlosarioClient({ heroImage }: GlosarioClientProps) {
           <div className="moduleHeroOverlay" />
         </div>
         <div className="container moduleHeroContent">
-          <Link className="back" href="/">← Inicio</Link>
+          <button className="back" onClick={() => window.history.back()} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, font: "inherit", color: "inherit" }}>← Inicio</button>
           <div className="moduleBadge">MÓDULO 04 · ESCUELA DE VUELO</div>
           <h1>Glosario de aviación</h1>
           <p>Más de 55 términos técnicos explicados en español argentino. Buscá cualquier concepto que no entiendas.</p>

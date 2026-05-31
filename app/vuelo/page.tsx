@@ -1,3 +1,4 @@
+import BackButton from "@/components/BackButton";
 import Link from "next/link";
 
 async function getWikiImage(title: string) {
@@ -59,7 +60,7 @@ export default async function VueloPage() {
           <div className="moduleHeroOverlay" />
         </div>
         <div className="container moduleHeroContent">
-          <Link className="back" href="/">← Inicio</Link>
+          <BackButton />
           <div className="moduleBadge">MÓDULO 01 · ESCUELA DE VUELO</div>
           <h1>¿Cómo vuela un avión?</h1>
           <p>Las 4 fuerzas que hacen posible el vuelo, las partes del avión y las 6 fases de cada viaje — explicadas con ejemplos reales.</p>

@@ -1,3 +1,4 @@
+import BackButton from "@/components/BackButton";
 import Link from "next/link";
 
 async function getWikiImage(title: string) {
@@ -105,7 +106,7 @@ export default async function LicenciasPage() {
           <div className="moduleHeroOverlay" />
         </div>
         <div className="container moduleHeroContent">
-          <Link className="back" href="/">← Inicio</Link>
+          <BackButton />
           <div className="moduleBadge">MÓDULO 03 · ESCUELA DE VUELO</div>
           <h1>Licencias de piloto</h1>
           <p>El camino de cero a capitán: requisitos reales según ANAC Argentina y normas OACI. Horas, edades, costos y exámenes.</p>

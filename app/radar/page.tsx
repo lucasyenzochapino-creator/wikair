@@ -1,3 +1,4 @@
+import BackButton from "@/components/BackButton";
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
@@ -121,7 +122,7 @@ export default function RadarPage() {
   return (
     <main className="page">
       <section className="container hero compactHero">
-        <a className="back" href="/">← Volver</a>
+        <BackButton />
         <p className="gold">WIKIAIR · RADAR EN VIVO</p>
         <h1>Radar aéreo global</h1>
         <p>Datos ADS-B en tiempo real via OpenSky Network. Seleccioná la región para ver vuelos activos ahora mismo.</p>

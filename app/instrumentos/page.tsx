@@ -1,3 +1,4 @@
+import BackButton from "@/components/BackButton";
 import Link from "next/link";
 
 async function getWikiImage(title: string) {
@@ -59,7 +60,7 @@ export default async function InstrumentosPage() {
           <div className="moduleHeroOverlay" />
         </div>
         <div className="container moduleHeroContent">
-          <Link className="back" href="/">← Inicio</Link>
+          <BackButton />
           <div className="moduleBadge">MÓDULO 02 · ESCUELA DE VUELO</div>
           <h1>Instrumentos de vuelo</h1>
           <p>Los ojos del piloto. Todo lo que se lee en la cabina, qué significa cada número, y los sistemas que salvan vidas.</p>

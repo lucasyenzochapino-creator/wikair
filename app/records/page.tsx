@@ -1,3 +1,4 @@
+import BackButton from "@/components/BackButton";
 "use client";
 
 import { useState } from "react";
@@ -112,7 +113,7 @@ export default function RecordsPage() {
   return (
     <main className="page">
       <section className="container hero compactHero">
-        <Link className="back" href="/">← Volver</Link>
+        <BackButton />
         <p className="gold">WIKIAIR · RÉCORDS</p>
         <h1>Los extremos de la aviación</h1>
         <p>Los más rápidos, los más grandes, los más producidos y los más históricos. Datos reales y récords verificados.</p>
