@@ -50,10 +50,10 @@ export default async function HomePage() {
           </div>
 
           <div className="statsBar">
-            <div className="statItem"><h3>648</h3><p>Aeronaves en catálogo</p></div>
-            <div className="statItem"><h3>60+</h3><p>Términos en el glosario</p></div>
-            <div className="statItem"><h3>50</h3><p>Preguntas en el quiz</p></div>
-            <div className="statItem"><h3>Live</h3><p>Radar en tiempo real</p></div>
+            <Link className="statItem statItemLink" href="/enciclopedia"><h3>648</h3><p>Aeronaves en catálogo</p></Link>
+            <Link className="statItem statItemLink" href="/glosario"><h3>60+</h3><p>Términos en el glosario</p></Link>
+            <Link className="statItem statItemLink" href="/quiz"><h3>50</h3><p>Preguntas en el quiz</p></Link>
+            <Link className="statItem statItemLink" href="/radar"><h3>Live</h3><p>Radar en tiempo real</p></Link>
           </div>
         </div>
       </section>

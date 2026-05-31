@@ -38,10 +38,19 @@ function dedupeAircraft(items: Aircraft[]) {
 function isBadImage(item: WikiImage) {
   const text = `${item.title} ${item.url} ${item.mime || ""}`.toLowerCase();
   const banned = [
-    ".svg", "image/svg", "roundel", "insignia", "emblem", "badge", "logo",
+    ".svg", "image/svg", "roundel", "insignia", "emblem", "badge",
     "flag", "map", "diagram", "silhouette", "drawing", "3-view", "3 view",
-    "blank", "icon", "patch", "tail flash", "coat of arms", "seal",
+    "blank", "patch", "tail flash", "coat of arms", "seal",
     "air force logo", "wikimedia-logo", "symbol",
+    // iconos/logos (más específico que "icon" a secas)
+    "icon.png", "icon.jpg", "icon.svg", "app_icon", "_icon.", "-icon.",
+    // imágenes claramente no aeronáuticas
+    "bridge", "puente", "building", "edificio", "skyline", "cityscape",
+    "portrait", "headshot", "person_", "_person", "politician",
+    "logo_", "_logo", "coat_of", "emblem_",
+    "train", "locomotive", "metro_", "tram",
+    "ship_", "_ship", "vessel", "tanker_",
+    "car_", "_car.", "automobile", "motorcycle",
   ];
   return banned.some((w) => text.includes(w));
 }
