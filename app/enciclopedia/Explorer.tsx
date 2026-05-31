@@ -233,10 +233,12 @@ function GalleryFromCommons({
   query,
   group,
   onOpen,
+  onImagesReady,
 }: {
   query: string;
   group?: string;
   onOpen: (images: WikiImage[], index: number) => void;
+  onImagesReady?: (imgs: WikiImage[]) => void;
 }) {
   const [images, setImages] = useState<WikiImage[]>([]);
   const [done, setDone] = useState(false);
@@ -255,8 +257,10 @@ function GalleryFromCommons({
       if (!active) return;
       const combined = [en, es, ...commons].filter(Boolean) as WikiImage[];
       const deduped = Array.from(new Map(combined.map((i) => [i.url, i])).values());
-      setImages(deduped.slice(0, 12));
+      const final = deduped.slice(0, 12);
+      setImages(final);
       setDone(true);
+      onImagesReady?.(final);
     }).catch(() => { if (active) setDone(true); });
 
     return () => { active = false; };
@@ -394,6 +398,7 @@ function DetailModal({
   onImageOpen: (images: WikiImage[], index: number) => void;
 }) {
   const eco = getEconomics(plane);
+  const [galleryImages, setGalleryImages] = useState<WikiImage[]>([]);
 
   useEffect(() => {
     const prev = document.body.style.overflow;
@@ -423,7 +428,7 @@ function DetailModal({
         </div>
 
         <div className="modalHeroImage" style={{ minHeight: 280, position: "relative" }}>
-          <CardImage plane={plane} onOpen={onImageOpen} />
+          <CardImage plane={plane} onOpen={(imgs, idx) => onImageOpen(galleryImages.length > 0 ? galleryImages : imgs, 0)} />
           <div className="modalImageCaption">
             <span>{plane.name}</span>
             <span style={{ opacity: 0.7 }}>{plane.role}</span>
@@ -476,7 +481,7 @@ function DetailModal({
 
         <section className="modalSection">
           <h4>Galería de fotos</h4>
-          <GalleryFromCommons query={plane.wiki || plane.name} group={plane.group} onOpen={onImageOpen} />
+          <GalleryFromCommons query={plane.wiki || plane.name} group={plane.group} onOpen={onImageOpen} onImagesReady={setGalleryImages} />
         </section>
 
         <div className="modalActions">

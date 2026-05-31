@@ -268,7 +268,7 @@ export default function QuizPage() {
     return (
       <main className="page">
         <section className="container hero compactHero">
-          <a className="back" href="/">← Volver</a>
+          <button className="back" onClick={() => window.history.back()} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, font: "inherit", color: "inherit" }}>← Volver</button>
           <p className="gold">WIKIAIR · QUIZ</p>
           <h1>Quiz de Aviación</h1>
           <p>{questions.length} preguntas sobre aviones, récords, historia y curiosidades. Tenés 30 segundos por pregunta.</p>
@@ -302,7 +302,7 @@ export default function QuizPage() {
     return (
       <main className="page">
         <section className="container hero compactHero">
-          <a className="back" href="/">← Volver</a>
+          <button className="back" onClick={() => window.history.back()} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, font: "inherit", color: "inherit" }}>← Volver</button>
           <p className="gold">WIKIAIR · QUIZ</p>
           <h1>Resultado</h1>
         </section>
@@ -333,7 +333,7 @@ export default function QuizPage() {
   return (
     <main className="page">
       <section className="container hero compactHero">
-        <a className="back" href="/">← Volver</a>
+        <button className="back" onClick={() => window.history.back()} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, font: "inherit", color: "inherit" }}>← Volver</button>
         <p className="gold">WIKIAIR · QUIZ · Pregunta {current + 1} de {questions.length}</p>
         <div className="quizProgress">
           <div className="quizBar" style={{ width: `${answered ? finalProgress : progress}%` }} />

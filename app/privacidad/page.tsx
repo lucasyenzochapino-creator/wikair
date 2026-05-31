@@ -1,3 +1,4 @@
+import BackButton from "@/components/BackButton";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,7 +11,7 @@ export default function PrivacidadPage() {
   return (
     <div className="page">
       <div className="container" style={{ maxWidth: 820 }}>
-        <a className="back" href="/">← Volver al inicio</a>
+        <BackButton label="← Volver al inicio" />
 
         <div className="hero" style={{ paddingBottom: 12 }}>
           <p
