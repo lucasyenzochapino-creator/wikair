@@ -128,26 +128,28 @@ img { display: block; max-width: 100%; }
   border-radius: 12px; font-size: 15px; font-weight: 700;
   background: linear-gradient(135deg, var(--sky) 0%, #0ea5e9 100%);
   color: #020c1b; border: none;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s ease;
   box-shadow: 0 6px 40px rgba(14,165,233,0.35), 0 1px 0 rgba(255,255,255,0.15) inset;
 }
 .btnPrimary:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 60px rgba(14,165,233,0.5);
+  transform: translateY(-2px) scale(1.015);
+  box-shadow: 0 14px 60px rgba(14,165,233,0.5);
 }
+.btnPrimary:active { transform: scale(0.97); box-shadow: 0 4px 20px rgba(14,165,233,0.3); }
 
 .btnOutline {
   display: inline-flex; align-items: center; gap: 8px; padding: 15px 32px;
   border-radius: 12px; font-size: 15px; font-weight: 600;
   background: rgba(255,255,255,0.04); color: var(--text);
   border: 1px solid rgba(255,255,255,0.12);
-  transition: transform 0.2s, background 0.2s, border-color 0.2s;
+  transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), background 0.2s ease, border-color 0.2s ease;
   backdrop-filter: blur(8px);
 }
 .btnOutline:hover {
-  background: rgba(255,255,255,0.08); transform: translateY(-3px);
+  background: rgba(255,255,255,0.08); transform: translateY(-2px);
   border-color: rgba(56,189,248,0.3);
 }
+.btnOutline:active { transform: scale(0.97); }
 
 /* ── STATS BAR ─────────────────────────────────────────────── */
 .statsBar {
@@ -191,14 +193,15 @@ img { display: block; max-width: 100%; }
   background: var(--glass);
   border: 1px solid var(--border);
   backdrop-filter: blur(12px);
-  transition: all 0.3s;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s ease;
 }
 .navCard:hover {
   background: var(--glass2);
   border-color: rgba(56,189,248,0.25);
-  transform: translateY(-6px);
+  transform: translateY(-5px);
   box-shadow: 0 24px 70px rgba(0,0,0,0.5), 0 0 40px rgba(14,165,233,0.07);
 }
+.navCard:active { transform: translateY(-1px) scale(0.995); }
 .navCardIcon { font-size: 28px; }
 .navCard h2 { font-size: 19px; font-weight: 700; letter-spacing: -0.5px; }
 .navCard p { color: var(--muted2); font-size: 13.5px; line-height: 1.55; flex: 1; }
@@ -211,15 +214,16 @@ img { display: block; max-width: 100%; }
 .featuredCard {
   position: relative; border-radius: var(--rXL); overflow: hidden;
   border: 1px solid var(--border); aspect-ratio: 4/3; background: var(--bg2);
-  transition: transform 0.35s cubic-bezier(.4,0,.2,1), box-shadow 0.35s, border-color 0.3s;
+  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s ease, border-color 0.25s ease;
 }
 .featuredCard:hover {
-  transform: scale(1.03);
+  transform: scale(1.025);
   box-shadow: 0 40px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(56,189,248,0.2);
   border-color: rgba(56,189,248,0.25);
 }
-.featuredCard img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
-.featuredCard:hover img { transform: scale(1.07); }
+.featuredCard:active { transform: scale(1.01); }
+.featuredCard img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.22,1,0.36,1); }
+.featuredCard:hover img { transform: scale(1.06); }
 .featuredCardOverlay {
   position: absolute; inset: 0;
   background: linear-gradient(to top, rgba(2,12,27,0.92) 0%, rgba(2,12,27,0.3) 55%, transparent 100%);
@@ -275,16 +279,17 @@ img { display: block; max-width: 100%; }
   background: var(--glass);
   border: 1px solid var(--border);
   border-radius: var(--rXL); overflow: hidden;
-  transition: all 0.35s cubic-bezier(.4,0,.2,1);
+  transition: border-color 0.25s ease, transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s ease;
   display: flex; flex-direction: column;
   position: relative;
   backdrop-filter: blur(8px);
 }
 .aircraftCard:hover {
   border-color: rgba(56,189,248,0.28);
-  transform: translateY(-10px);
+  transform: translateY(-8px);
   box-shadow: 0 40px 100px rgba(0,0,0,0.7), 0 0 40px rgba(14,165,233,0.07);
 }
+.aircraftCard:active { transform: translateY(-3px); }
 
 /* Image box */
 .imageBox {
@@ -547,7 +552,8 @@ img { display: block; max-width: 100%; }
 .recordsGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
 .recordCard {
   background: var(--glass); border: 1px solid var(--border);
-  border-radius: var(--rXL); padding: 22px; transition: all 0.3s;
+  border-radius: var(--rXL); padding: 22px;
+  transition: border-color 0.25s ease, background 0.25s ease, transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s ease;
   position: relative; overflow: hidden; backdrop-filter: blur(10px);
 }
 .recordCard:hover {
@@ -555,6 +561,7 @@ img { display: block; max-width: 100%; }
   transform: translateY(-4px);
   box-shadow: 0 24px 70px rgba(0,0,0,0.6), 0 0 40px rgba(14,165,233,0.07);
 }
+.recordCard:active { transform: translateY(-1px); }
 .recordBadge {
   display: inline-flex; align-items: center; gap: 5px;
   font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
@@ -688,12 +695,50 @@ img { display: block; max-width: 100%; }
 
 /* ── ANIMATIONS ─────────────────────────────────────────────── */
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(18px); }
+  from { opacity: 0; transform: translateY(22px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.aircraftCard { animation: fadeInUp 0.4s ease both; }
-.navCard      { animation: fadeInUp 0.35s ease both; }
-.recordCard   { animation: fadeInUp 0.4s ease both; }
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 24px rgba(14,165,233,0.10); }
+  50%       { box-shadow: 0 0 40px rgba(14,165,233,0.26); }
+}
+
+.aircraftCard { animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.navCard      { animation: fadeInUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.recordCard   { animation: fadeInUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Stagger delays */
+.navCard:nth-child(1)     { animation-delay:   0ms; }
+.navCard:nth-child(2)     { animation-delay:  60ms; }
+.navCard:nth-child(3)     { animation-delay: 120ms; }
+.navCard:nth-child(4)     { animation-delay: 180ms; }
+.navCard:nth-child(5)     { animation-delay: 240ms; }
+
+.recordCard:nth-child(1)  { animation-delay:   0ms; }
+.recordCard:nth-child(2)  { animation-delay:  55ms; }
+.recordCard:nth-child(3)  { animation-delay: 110ms; }
+.recordCard:nth-child(4)  { animation-delay: 165ms; }
+.recordCard:nth-child(5)  { animation-delay: 220ms; }
+.recordCard:nth-child(6)  { animation-delay: 275ms; }
+
+.aircraftCard:nth-child(1) { animation-delay:   0ms; }
+.aircraftCard:nth-child(2) { animation-delay:  40ms; }
+.aircraftCard:nth-child(3) { animation-delay:  80ms; }
+.aircraftCard:nth-child(4) { animation-delay: 120ms; }
+.aircraftCard:nth-child(5) { animation-delay: 160ms; }
+.aircraftCard:nth-child(6) { animation-delay: 200ms; }
 
 /* ── COMPARE BAR ─────────────────────────────────────────────── */
 .compareBar {
@@ -702,6 +747,7 @@ img { display: block; max-width: 100%; }
   backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   padding: 12px 24px;
   display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  animation: slideUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .compareBar .comparePlane {
   display: flex; align-items: center; gap: 8px;
@@ -745,4 +791,28 @@ img { display: block; max-width: 100%; }
 @media (max-width: 600px) {
   .compareGrid { grid-template-columns: 1fr; }
   .compareCol { border-right: none; border-bottom: 1px solid var(--border); }
+}
+
+/* ── MODAL ENTRANCE ────────────────────────────────────────────── */
+.modalOverlay { animation: overlayIn 0.22s ease both; }
+.modalCard    { animation: modalIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* ── HERO LABEL PULSE ──────────────────────────────────────────── */
+.heroLabel { animation: glowPulse 3.5s ease-in-out infinite; }
+
+/* ── FOCUS ACCESSIBLE ──────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--sky);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ── TABULAR NUMBERS ───────────────────────────────────────────── */
+.statItem h3,
+.statBox h3,
+.quizQuestion { font-variant-numeric: tabular-nums; }
+
+/* ── TAB BUTTON TRANSITIONS ────────────────────────────────────── */
+.tabButton {
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
 }

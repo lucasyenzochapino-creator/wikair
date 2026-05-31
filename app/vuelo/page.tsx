@@ -1,107 +1,148 @@
 import Link from "next/link";
 
-export default function VueloPage() {
+async function getWikiImage(title: string) {
+  try {
+    const res = await fetch(
+      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`,
+      { next: { revalidate: 86400 } }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data?.thumbnail?.source || data?.originalimage?.source || null;
+  } catch {
+    return null;
+  }
+}
+
+const forces = [
+  { badge: "↑ HACIA ARRIBA", name: "Sustentación", eng: "Lift", desc: "Fuerza aerodinámica generada por las alas que contrarresta el peso. Surge por la diferencia de presión entre la cara superior e inferior del ala y por el ángulo de ataque.", wiki: "Airbus A380", color: "#22c55e" },
+  { badge: "↓ HACIA ABAJO",  name: "Peso",         eng: "Weight", desc: "La fuerza de gravedad que atrae al avión hacia la Tierra. El diseño busca minimizarlo sin comprometer la resistencia estructural.", wiki: "Antonov An-225", color: "#f87171" },
+  { badge: "→ HACIA ADELANTE", name: "Empuje",     eng: "Thrust", desc: "La fuerza que producen los motores. En turbofanes, un 80% del empuje viene del fan delantero. El 20% restante del núcleo.", wiki: "Jet engine", color: "#38bdf8" },
+  { badge: "← HACIA ATRÁS",   name: "Resistencia", eng: "Drag",  desc: "Se opone al movimiento del avión. Los ingenieros pasan años reduciéndola. Un 1% de mejora puede ahorrar millones en combustible al año.", wiki: "Lockheed SR-71 Blackbird", color: "#fbbf24" },
+];
+
+const parts = [
+  { badge: "ESTRUCTURA",      name: "Fuselaje",         desc: "Cuerpo principal. Su sección circular soporta la presurización uniformemente sin concentrar tensiones.", wiki: "Boeing 787 Dreamliner" },
+  { badge: "SUSTENTACIÓN",    name: "Alas",              desc: "Perfil alar asimétrico: más curvo arriba, genera mayor velocidad y menor presión en la cara superior.", wiki: "Airbus A350 XWB" },
+  { badge: "CONTROL LATERAL", name: "Alerones",          desc: "Borde trasero del ala. Uno sube, el otro baja — el avión se inclina. Controlan el rolido.", wiki: "Boeing 777" },
+  { badge: "BAJA VELOCIDAD",  name: "Flaps y Slats",    desc: "Aumentan la sustentación en despegue y aterrizaje. Permiten volar más lento sin entrar en pérdida.", wiki: "Flap (aeronautics)" },
+  { badge: "CONTROL VERTICAL", name: "Timón de cola",   desc: "Superficie vertical. Controla la guiñada: mueve la nariz izquierda o derecha. Se usa con los alerones.", wiki: "Vertical stabilizer" },
+  { badge: "PROPULSIÓN",      name: "Motores turbofán", desc: "En aviones comerciales. El fan delantero genera el 80% del empuje. Alta eficiencia a velocidad subsónica.", wiki: "Turbofan" },
+];
+
+const phases = [
+  { n: "01", phase: "Rodaje (Taxi)",       wiki: "Taxiway",            detail: "Movimiento en tierra desde la puerta hasta la pista activa. ATC asigna la ruta de rodaje. Chequeo final de sistemas." },
+  { n: "02", phase: "Despegue (Takeoff)",  wiki: "Aircraft takeoff",   detail: "Aceleración por la pista. Al alcanzar Vr el piloto eleva el morro. En V2 el avión está en el aire con motores al máximo." },
+  { n: "03", phase: "Ascenso (Climb)",     wiki: "Climb (aeronautics)", detail: "El avión sube hacia FL350-FL410 (10.600-12.500 m). Los flaps se retraen progresivamente mientras sube." },
+  { n: "04", phase: "Crucero (Cruise)",    wiki: "Cruise (aeronautics)", detail: "La fase más larga. Motor a régimen de crucero (~40% de potencia máxima). El FMS gestiona ruta y combustible." },
+  { n: "05", phase: "Descenso",            wiki: "Instrument approach", detail: "Inicia unos 200 km antes del destino (Top of Descent). Se despliegan flaps gradualmente. Velocidad reducida." },
+  { n: "06", phase: "Aterrizaje (Landing)", wiki: "Landing (aeronautics)", detail: "Touchdown a ~240-260 km/h. Inversores de empuje, spoilers y frenos de carbono detienen el avión." },
+];
+
+export default async function VueloPage() {
+  const [forceImages, partImages, phaseImages] = await Promise.all([
+    Promise.all(forces.map((f) => getWikiImage(f.wiki))),
+    Promise.all(parts.map((p) => getWikiImage(p.wiki))),
+    Promise.all(phases.map((p) => getWikiImage(p.wiki))),
+  ]);
+
   return (
     <main className="page">
       <section className="container hero compactHero">
         <Link className="back" href="/">← Volver</Link>
-        <p className="gold">WIKIAIR · ESCUELA DE VUELO</p>
+        <p className="gold">WIKIAIR · ESCUELA DE VUELO · MÓDULO 1</p>
         <h1>¿Cómo vuela un avión?</h1>
-        <p>Las 4 fuerzas, las partes del avión y las 7 fases de cada vuelo. El fundamento de todo.</p>
+        <p>Las 4 fuerzas que hacen posible el vuelo, las partes del avión y las fases de cada viaje — con imágenes reales.</p>
       </section>
 
       {/* LAS 4 FUERZAS */}
-      <section className="container" style={{ paddingTop: 40, paddingBottom: 48 }}>
-        <p className="gold">FUNDAMENTOS</p>
-        <h2 style={{ fontSize: "clamp(26px, 5vw, 44px)", margin: "8px 0 12px", letterSpacing: -1 }}>Las 4 fuerzas del vuelo</h2>
-        <p style={{ color: "var(--muted2)", marginBottom: 32, maxWidth: 640 }}>
-          Todo avión en vuelo está sometido a exactamente 4 fuerzas. El secreto del vuelo es mantenerlas en equilibrio.
-        </p>
-        <div className="statsGrid">
-          <div className="recordCard">
-            <span className="recordBadge">↑ HACIA ARRIBA</span>
-            <h3>Sustentación</h3>
-            <p style={{ color: "var(--sky)", fontSize: 20, fontWeight: 800, margin: "8px 0" }}>Lift</p>
-            <p>Fuerza aerodinámica generada por las alas que contrarresta el peso. Surge por la diferencia de presión entre la cara superior e inferior del ala (perfil alar) y por el ángulo de ataque. Sin sustentación, no hay vuelo.</p>
-          </div>
-          <div className="recordCard">
-            <span className="recordBadge">↓ HACIA ABAJO</span>
-            <h3>Peso</h3>
-            <p style={{ color: "var(--sky)", fontSize: 20, fontWeight: 800, margin: "8px 0" }}>Weight</p>
-            <p>La fuerza de gravedad que atrae al avión hacia la Tierra. Siempre actúa hacia el centro de la Tierra. El diseño del avión busca minimizarlo sin comprometer la resistencia estructural.</p>
-          </div>
-          <div className="recordCard">
-            <span className="recordBadge">→ HACIA ADELANTE</span>
-            <h3>Empuje</h3>
-            <p style={{ color: "var(--sky)", fontSize: 20, fontWeight: 800, margin: "8px 0" }}>Thrust</p>
-            <p>La fuerza que producen los motores para impulsar al avión hacia adelante. En turbofanes, un 80% del empuje viene del fan delantero. En aviones de hélice, la hélice "engancha" el aire y lo empuja hacia atrás.</p>
-          </div>
-          <div className="recordCard">
-            <span className="recordBadge">← HACIA ATRÁS</span>
-            <h3>Resistencia</h3>
-            <p style={{ color: "var(--sky)", fontSize: 20, fontWeight: 800, margin: "8px 0" }}>Drag</p>
-            <p>La fuerza que se opone al movimiento del avión a través del aire. Hay resistencia de forma (por la silueta), de inducción (por la sustentación) y de compresibilidad (cerca de Mach 1). Los ingenieros pasan años reduciéndola.</p>
-          </div>
+      <section className="container" style={{ paddingTop: 40, paddingBottom: 56 }}>
+        <p className="gold">FÍSICA DEL VUELO</p>
+        <h2 style={{ fontSize: "clamp(26px, 5vw, 44px)", margin: "8px 0 8px", letterSpacing: -1 }}>Las 4 fuerzas del vuelo</h2>
+        <p style={{ color: "var(--muted2)", marginBottom: 36, maxWidth: 560 }}>Todo avión en vuelo está sometido exactamente a estas 4 fuerzas. El secreto es mantenerlas en equilibrio.</p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(270px, 1fr))", gap: 20 }}>
+          {forces.map((f, i) => (
+            <div key={f.name} className="recordCard" style={{ padding: 0, overflow: "hidden" }}>
+              <div style={{ height: 180, overflow: "hidden", position: "relative", background: "#010914" }}>
+                {forceImages[i] ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img src={forceImages[i]!} alt={f.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                ) : (
+                  <div style={{ width: "100%", height: "100%", background: "var(--glass2)" }} />
+                )}
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(2,12,27,0.9) 0%, transparent 60%)" }} />
+                <span style={{ position: "absolute", bottom: 12, left: 16, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: f.color, textTransform: "uppercase", background: "rgba(2,12,27,0.75)", padding: "3px 10px", borderRadius: 6 }}>{f.badge}</span>
+              </div>
+              <div style={{ padding: "18px 20px 22px" }}>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 10 }}>
+                  <h3 style={{ fontSize: 21, margin: 0 }}>{f.name}</h3>
+                  <span style={{ fontSize: 13, color: "var(--muted2)", fontStyle: "italic" }}>{f.eng}</span>
+                </div>
+                <p style={{ color: "var(--muted2)", fontSize: 13.5, lineHeight: 1.65 }}>{f.desc}</p>
+              </div>
+            </div>
+          ))}
         </div>
-        <div style={{ background: "var(--glass)", border: "1px solid var(--border)", borderRadius: "var(--rXL)", padding: "20px 28px", marginTop: 24, backdropFilter: "blur(10px)" }}>
-          <p style={{ color: "var(--muted2)", lineHeight: 1.7 }}>
-            <strong style={{ color: "var(--text)" }}>En vuelo nivelado:</strong> Sustentación = Peso · Empuje = Resistencia.<br />
-            <strong style={{ color: "var(--text)" }}>En ascenso:</strong> Empuje {">"} Resistencia · Sustentación {">"} Peso.<br />
+        <div style={{ background: "var(--glass)", border: "1px solid var(--border)", borderRadius: "var(--rXL)", padding: "18px 24px", marginTop: 20, backdropFilter: "blur(10px)" }}>
+          <p style={{ color: "var(--muted2)", lineHeight: 1.7, fontSize: 14 }}>
+            <strong style={{ color: "var(--text)" }}>En vuelo nivelado:</strong> Sustentación = Peso · Empuje = Resistencia. &nbsp;
+            <strong style={{ color: "var(--text)" }}>En ascenso:</strong> Empuje {">"} Resistencia. &nbsp;
             <strong style={{ color: "var(--text)" }}>En descenso:</strong> El motor puede reducirse porque el peso ayuda a mantener velocidad.
           </p>
         </div>
       </section>
 
       {/* PARTES DEL AVIÓN */}
-      <section className="container" style={{ paddingBottom: 48 }}>
+      <section className="container" style={{ paddingBottom: 56 }}>
         <p className="gold">ANATOMÍA</p>
-        <h2 style={{ fontSize: "clamp(26px, 5vw, 44px)", margin: "8px 0 24px", letterSpacing: -1 }}>Partes del avión</h2>
-        <div className="statsGrid">
-          {[
-            { badge: "ESTRUCTURA", name: "Fuselaje", desc: "Cuerpo principal del avión. Aloja pasajeros, carga y sistemas. Su sección transversal es circular para soportar la presurización uniformemente." },
-            { badge: "SUSTENTACIÓN", name: "Alas", desc: "Generan la sustentación. Su perfil alar es más curvo arriba que abajo, creando mayor velocidad (y menor presión) en la cara superior según Bernoulli." },
-            { badge: "CONTROL LATERAL", name: "Alerones", desc: "En el borde trasero de las alas. Controlan el rolido: cuando el alerón derecho sube, el izquierdo baja, y el avión se inclina a la derecha." },
-            { badge: "BAJA VELOCIDAD", name: "Flaps y Slats", desc: "Los flaps aumentan la sustentación en despegue y aterrizaje. Los slats están en el borde delantero. Permiten volar más lento sin entrar en pérdida." },
-            { badge: "CONTROL VERTICAL", name: "Timón de cola (Rudder)", desc: "Superficie vertical en la cola. Controla la guiñada (yaw): mueve la nariz izquierda o derecha. Se combina con los alerones para virar coordinadamente." },
-            { badge: "CONTROL LONGITUDINAL", name: "Timón de profundidad (Elevator)", desc: "Superficie horizontal en la cola. Controla el cabeceo (pitch): nariz arriba o abajo. Determina el ángulo de ataque y, por tanto, la sustentación." },
-            { badge: "PROPULSIÓN", name: "Motores", desc: "Turbofanes en comerciales, turbopropulsores en regionales, pistones en aviones ligeros. Los motores modernos tienen una relación de derivación (bypass) de 10:1 para eficiencia." },
-            { badge: "ATERRIZAJE", name: "Tren de aterrizaje", desc: "Ruedas y estructuras de absorción de impacto. Se retrae en vuelo para reducir la resistencia. Los frenos de carbono del A380 pueden absorber 175 MJ." },
-            { badge: "FRENADO AÉREO", name: "Spoilers / Aerofrenos", desc: "Superficies que se despliegan en la parte superior del ala para destruir sustentación y frenar. Se usan en el descenso y en el aterrizaje junto a los inversores de empuje." },
-            { badge: "NAVEGACIÓN", name: "Antenas y sensores", desc: "Tubo de pitot (velocidad), sensor de ángulo de ataque, radóm (radar meteorológico en el morro), antenas GPS, VOR, ILS, transponder ADS-B." },
-            { badge: "CABINA", name: "Cockpit", desc: "La cabina de vuelo. En aviones modernos domina el glass cockpit con pantallas EFIS. El A320 introdujo los sidesticks en 1984 en reemplazo del yoke tradicional." },
-            { badge: "ESTABILIDAD", name: "Estabilizadores", desc: "Superficies fijas en la cola (horizontal y vertical) que dan estabilidad al avión, igual que las plumas en una flecha. Sin ellos, el avión sería incontrolable." },
-          ].map((part) => (
-            <div key={part.name} className="recordCard">
-              <span className="recordBadge">{part.badge}</span>
-              <h3>{part.name}</h3>
-              <p style={{ color: "var(--muted2)", fontSize: 14, marginTop: 8 }}>{part.desc}</p>
+        <h2 style={{ fontSize: "clamp(26px, 5vw, 44px)", margin: "8px 0 8px", letterSpacing: -1 }}>Partes del avión</h2>
+        <p style={{ color: "var(--muted2)", marginBottom: 36, maxWidth: 560 }}>Cada parte tiene una función específica. Conocer el avión es el primer paso para pilotarlo.</p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(270px, 1fr))", gap: 18 }}>
+          {parts.map((p, i) => (
+            <div key={p.name} className="recordCard" style={{ padding: 0, overflow: "hidden" }}>
+              <div style={{ height: 160, overflow: "hidden", background: "#010914", position: "relative" }}>
+                {partImages[i] ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img src={partImages[i]!} alt={p.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                ) : (
+                  <div style={{ width: "100%", height: "100%", background: "var(--glass2)" }} />
+                )}
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(2,12,27,0.85) 0%, transparent 55%)" }} />
+              </div>
+              <div style={{ padding: "16px 20px 20px" }}>
+                <span className="recordBadge">{p.badge}</span>
+                <h3 style={{ fontSize: 18, margin: "8px 0 8px" }}>{p.name}</h3>
+                <p style={{ color: "var(--muted2)", fontSize: 13.5, lineHeight: 1.6 }}>{p.desc}</p>
+              </div>
             </div>
           ))}
         </div>
       </section>
 
       {/* FASES DEL VUELO */}
-      <section className="container" style={{ paddingBottom: 48 }}>
+      <section className="container" style={{ paddingBottom: 56 }}>
         <p className="gold">DE PUERTA A PUERTA</p>
-        <h2 style={{ fontSize: "clamp(26px, 5vw, 44px)", margin: "8px 0 24px", letterSpacing: -1 }}>Las 7 fases de un vuelo</h2>
+        <h2 style={{ fontSize: "clamp(26px, 5vw, 44px)", margin: "8px 0 8px", letterSpacing: -1 }}>Las 6 fases de un vuelo</h2>
+        <p style={{ color: "var(--muted2)", marginBottom: 36, maxWidth: 560 }}>Desde que el avión sale de la puerta hasta que llega al destino, hay 6 fases bien definidas.</p>
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          {[
-            { n: "01", phase: "Rodaje (Taxi)", detail: "El avión se mueve en tierra desde la puerta hasta la pista activa. Los pilotos reciben instrucciones del ATC de tierra, verifican los sistemas y realizan el chequeo previo al despegue." },
-            { n: "02", phase: "Despegue (Takeoff)", detail: "El avión acelera por la pista. Al alcanzar la velocidad de rotación (Vr), el piloto eleva el morro. En el V2 el avión está en el aire. Los motores al máximo, flaps desplegados, tren de aterrizaje retractándose." },
-            { n: "03", phase: "Ascenso inicial (Initial Climb)", detail: "Hasta 3.000 pies sobre el aeropuerto. Velocidad de ascenso alta, flaps retraidéndose progresivamente. El ATC asigna una SID (ruta estándar de salida) para separar el tráfico saliente." },
-            { n: "04", phase: "Ascenso (Climb)", detail: "El avión sube hacia la altitud de crucero (normalmente FL350-FL410, 10.600-12.500 m). A medida que sube, el aire es más delgado y el avión vuela más rápido para la misma velocidad indicada." },
-            { n: "05", phase: "Crucero (Cruise)", detail: "La fase más larga. Motor a régimen de crucero (aprox. 40% de la potencia máxima). El FMS gestiona la ruta y el autopiloto mantiene el avión. El combustible se consume y el avión se vuelve más ligero, permitiendo subir más (step climb)." },
-            { n: "06", phase: "Descenso y Aproximación", detail: "El avión inicia el descenso unos 200 km antes del destino (Top of Descent, TOD). Se despliegan los flaps progresivamente. El ILS guía la aproximación final a la pista. Velocidad reducida hasta ~250 km/h." },
-            { n: "07", phase: "Aterrizaje (Landing)", detail: "Touchdown a unos 240-260 km/h. Se activan los inversores de empuje, los spoilers destruyen la sustentación restante y los frenos de las ruedas detienen el avión. Rodaje hasta la puerta. Motores apagados." },
-          ].map((f) => (
+          {phases.map((f, i) => (
             <div key={f.n} style={{
               background: "var(--glass)", border: "1px solid var(--border)", borderRadius: "var(--rXL)",
-              padding: "20px 28px", backdropFilter: "blur(10px)", display: "flex", gap: 20, alignItems: "flex-start"
+              overflow: "hidden", backdropFilter: "blur(10px)",
+              display: "grid", gridTemplateColumns: phaseImages[i] ? "clamp(140px, 22%, 200px) 1fr" : "1fr",
             }}>
-              <span style={{ fontSize: 36, fontWeight: 900, color: "var(--sky)", opacity: 0.3, lineHeight: 1, minWidth: 48 }}>{f.n}</span>
-              <div>
-                <h3 style={{ margin: "0 0 8px", fontSize: 18 }}>{f.phase}</h3>
-                <p style={{ color: "var(--muted2)", fontSize: 14, lineHeight: 1.7, margin: 0 }}>{f.detail}</p>
+              {phaseImages[i] && (
+                <div style={{ overflow: "hidden", background: "#010914", minHeight: 120 }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={phaseImages[i]!} alt={f.phase} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                </div>
+              )}
+              <div style={{ padding: "20px 24px", display: "flex", gap: 16, alignItems: "flex-start" }}>
+                <span style={{ fontSize: 30, fontWeight: 900, color: "var(--sky)", opacity: 0.22, lineHeight: 1, minWidth: 38 }}>{f.n}</span>
+                <div>
+                  <h3 style={{ margin: "0 0 8px", fontSize: 17 }}>{f.phase}</h3>
+                  <p style={{ color: "var(--muted2)", fontSize: 13.5, lineHeight: 1.65, margin: 0 }}>{f.detail}</p>
+                </div>
               </div>
             </div>
           ))}
@@ -113,22 +154,14 @@ export default function VueloPage() {
         <p className="gold">PROFUNDIZÁ</p>
         <h2 style={{ fontSize: "clamp(26px, 5vw, 44px)", margin: "8px 0 24px", letterSpacing: -1 }}>¿Por qué las alas generan sustentación?</h2>
         <div className="statsGrid">
-          <div className="statBox">
-            <h3>Bernoulli</h3>
-            <p>Mayor velocidad del aire = menor presión. El aire sobre el ala (cara más curva) va más rápido → menor presión → el ala es "succionada" hacia arriba.</p>
-          </div>
-          <div className="statBox">
-            <h3>Ángulo de ataque</h3>
-            <p>El ala inclinada desvía el aire hacia abajo. Por tercera ley de Newton, el aire empuja el ala hacia arriba. A mayor ángulo, más sustentación... hasta el ángulo crítico.</p>
-          </div>
-          <div className="statBox">
-            <h3>Stall</h3>
-            <p>Si el ángulo de ataque supera ~15-20°, el flujo de aire se separa del ala y la sustentación cae en picado. El avión "cae". La solución: bajar el morro.</p>
-          </div>
-          <div className="statBox">
-            <h3>Perfil alar</h3>
-            <p>La forma de la sección transversal del ala. Los aviones de carreras usan perfiles simétricos. Los comerciales usan perfiles asimétricos para máxima eficiencia a velocidad de crucero.</p>
-          </div>
+          <div className="statBox"><h3>Bernoulli</h3><p>Mayor velocidad del aire = menor presión. El aire sobre el ala va más rápido → menor presión → el ala es "succionada" hacia arriba.</p></div>
+          <div className="statBox"><h3>Ángulo de ataque</h3><p>El ala inclinada desvía el aire hacia abajo. Por tercera ley de Newton, el aire empuja el ala hacia arriba. A mayor ángulo, más sustentación.</p></div>
+          <div className="statBox"><h3>Stall</h3><p>Si el ángulo supera ~15-20°, el flujo de aire se separa del ala y la sustentación cae en picado. Solución: bajar el morro inmediatamente.</p></div>
+          <div className="statBox"><h3>Perfil alar</h3><p>La forma de la sección transversal del ala. Los comerciales usan perfiles asimétricos optimizados para velocidad de crucero.</p></div>
+        </div>
+        <div style={{ marginTop: 32, display: "flex", gap: 12, flexWrap: "wrap" }}>
+          <Link className="btnPrimary" href="/instrumentos">Módulo 2: Instrumentos →</Link>
+          <Link className="btnOutline" href="/glosario">Glosario de aviación</Link>
         </div>
       </section>
     </main>
