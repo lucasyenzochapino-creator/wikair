@@ -775,6 +775,135 @@ img { display: block; max-width: 100%; }
 .card p { color: var(--muted2); font-size: 13px; line-height: 1.5; }
 .compactHero { padding: 28px 0 24px !important; }
 
+/* ── MODULE HERO ─────────────────────────────────────────────── */
+.moduleHero {
+  position: relative; overflow: hidden; min-height: 280px;
+  display: flex; align-items: flex-end;
+}
+.moduleHeroImg {
+  position: absolute; inset: 0;
+}
+.moduleHeroImg img { width: 100%; height: 100%; object-fit: cover; }
+.moduleHeroOverlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, rgba(6,14,30,0.3) 0%, rgba(6,14,30,0.85) 100%);
+}
+.moduleHeroContent {
+  position: relative; z-index: 2;
+  padding-top: 120px; padding-bottom: 40px;
+}
+.moduleHeroContent h1 { font-size: clamp(28px, 6vw, 52px); letter-spacing: -1.5px; margin: 6px 0 0; }
+.moduleHeroContent p { color: var(--muted2); font-size: 15px; margin-top: 10px; max-width: 520px; }
+.moduleBadge {
+  display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+  color: var(--sky); font-family: var(--mono); text-transform: uppercase; margin-bottom: 8px;
+}
+
+/* ── FACT ROW ────────────────────────────────────────────────── */
+.factRow { display: flex; gap: 12px; flex-wrap: wrap; }
+.factCard {
+  background: var(--glass); border: 1px solid var(--border);
+  border-radius: var(--rXL); padding: 16px 20px; flex: 1; min-width: 120px;
+  display: flex; flex-direction: column; align-items: center; text-align: center; gap: 2px;
+}
+.factNum { font-size: 28px; font-weight: 900; color: var(--sky); letter-spacing: -1px; line-height: 1; font-family: var(--mono); }
+.factUnit { font-size: 13px; font-weight: 700; color: var(--muted2); }
+.factLabel { font-size: 11px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+
+/* ── INFO BANNER ─────────────────────────────────────────────── */
+.infoBanner {
+  background: rgba(56,139,253,0.06); border: 1px solid rgba(56,139,253,0.18);
+  border-radius: var(--rXL); padding: 16px 20px;
+}
+.infoBanner p { font-size: 13.5px; color: var(--muted2); line-height: 1.65; margin: 0; }
+
+/* ── LEARN GRID ──────────────────────────────────────────────── */
+.learnGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.learnCard {
+  background: var(--glass); border: 1px solid var(--border);
+  border-radius: var(--rXL); padding: 20px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.learnIcon {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: rgba(56,139,253,0.1); border: 1px solid rgba(56,139,253,0.2);
+  display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;
+}
+.learnCard h3 { font-size: 15px; font-weight: 700; margin: 0; }
+.learnCard p { font-size: 13px; color: var(--muted2); line-height: 1.55; margin: 0; }
+
+/* ── EXPANDABLE CARD ─────────────────────────────────────────── */
+.expandCard {
+  display: flex; flex-direction: column;
+  background: var(--glass); border: 1px solid var(--border);
+  border-radius: var(--rXL); overflow: hidden;
+  cursor: pointer; text-align: left; width: 100%;
+  transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s;
+}
+.expandCard:hover { transform: translateY(-3px); border-color: rgba(56,139,253,0.3); box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+.expandCard:active { transform: scale(0.98); }
+.expandCardImg { position: relative; aspect-ratio: 16/9; overflow: hidden; }
+.expandCardImg img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.expandCardImgOverlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 40%, rgba(6,14,30,0.8)); }
+.expandCardImgPlaceholder { aspect-ratio: 16/9; background: rgba(56,139,253,0.05); border-bottom: 1px solid var(--border); }
+.expandCardBadge {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  letter-spacing: 0.1em; color: var(--sky);
+  padding: 3px 0 0 14px; text-transform: uppercase;
+}
+.expandCardBody { padding: 10px 14px 14px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.expandCardBody h3 { font-size: 14px; font-weight: 700; margin: 0; letter-spacing: -0.3px; }
+.expandCardBody p { font-size: 12.5px; color: var(--muted2); margin: 0; line-height: 1.5; flex: 1; }
+.expandCardCta { font-size: 11px; font-weight: 700; color: var(--sky); margin-top: 6px; }
+
+/* Sheet overlay */
+.expandOverlay {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+  display: flex; align-items: flex-end; justify-content: center;
+}
+.expandSheet {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 20px 20px 0 0;
+  width: 100%; max-width: 680px; max-height: 90dvh;
+  overflow-y: auto; overscroll-behavior: contain;
+  animation: sheetUp 0.28s cubic-bezier(0.32,0.72,0,1);
+  position: relative;
+}
+@keyframes sheetUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.expandSheetHandle {
+  width: 40px; height: 4px; border-radius: 2px;
+  background: rgba(255,255,255,0.15); margin: 12px auto 0;
+}
+.expandSheetClose {
+  position: sticky; top: 0; float: right; z-index: 10;
+  margin: 8px 12px 0; padding: 6px 14px;
+  background: rgba(0,0,0,0.6); border: 1px solid var(--border);
+  border-radius: 20px; font-size: 12px; font-weight: 700; color: var(--muted2);
+  cursor: pointer; backdrop-filter: blur(8px);
+}
+.expandSheetHero {
+  display: block; width: 100%; aspect-ratio: 16/9; overflow: hidden; position: relative;
+  cursor: zoom-in; border: none; padding: 0; background: none;
+}
+.expandSheetHero img { width: 100%; height: 100%; object-fit: cover; }
+.expandSheetHeroOverlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.6)); }
+.expandSheetZoomHint {
+  position: absolute; bottom: 10px; right: 12px;
+  font-size: 11px; color: rgba(255,255,255,0.6);
+  background: rgba(0,0,0,0.5); border-radius: 4px; padding: 2px 8px;
+}
+.expandSheetContent { padding: 16px 20px 32px; }
+.expandSheetContent h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; margin: 6px 0 12px; }
+.expandSheetContent > p { color: var(--muted2); font-size: 14px; line-height: 1.65; }
+.expandSheetGallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 16px; }
+.expandSheetThumb { border: none; padding: 0; background: none; cursor: zoom-in; border-radius: 6px; overflow: hidden; aspect-ratio: 4/3; }
+.expandSheetThumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.2s; }
+.expandSheetThumb:hover img { transform: scale(1.06); }
+
 /* ── RESPONSIVE ─────────────────────────────────────────────── */
 @media (max-width: 900px) {
   .featuredGrid { grid-template-columns: repeat(2, 1fr); }
