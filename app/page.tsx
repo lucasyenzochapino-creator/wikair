@@ -35,34 +35,66 @@ export default async function HomePage() {
       {/* HERO */}
       <section className="hero">
         <div className="container">
-          <div className="heroLabel">WIKIAIR · ENCICLOPEDIA DE AVIACIÓN</div>
+          <div className="heroLabel">WIKIAIR · ESCUELA DE VUELO Y ENCICLOPEDIA</div>
           <h1 className="heroTitle">
-            Todo sobre<br />
-            <span>aviación</span>
+            Aprendé<br />
+            <span>a volar</span>
           </h1>
           <p className="heroSub">
-            648 aeronaves con fichas técnicas completas — militares, comerciales, históricas,
-            helicópteros, planeadores y más. Imágenes reales, radar en vivo y récords mundiales.
+            Desde cero hasta experto. Glosario, instrumentos, licencias, 648 aeronaves con fichas técnicas,
+            radar en vivo y quiz con 50 preguntas. La escuela de vuelo digital.
           </p>
           <div className="heroCta">
-            <Link className="btnPrimary" href="/enciclopedia">Explorar enciclopedia</Link>
-            <Link className="btnOutline" href="/radar">Radar en vivo</Link>
+            <Link className="btnPrimary" href="/vuelo">Empezar a aprender</Link>
+            <Link className="btnOutline" href="/enciclopedia">Enciclopedia</Link>
           </div>
 
           <div className="statsBar">
             <div className="statItem"><h3>648</h3><p>Aeronaves en catálogo</p></div>
-            <div className="statItem"><h3>14</h3><p>Categorías</p></div>
-            <div className="statItem"><h3>3</h3><p>Radares en vivo</p></div>
-            <div className="statItem"><h3>20</h3><p>Preguntas en el quiz</p></div>
+            <div className="statItem"><h3>60+</h3><p>Términos en el glosario</p></div>
+            <div className="statItem"><h3>50</h3><p>Preguntas en el quiz</p></div>
+            <div className="statItem"><h3>Live</h3><p>Radar en tiempo real</p></div>
           </div>
         </div>
       </section>
 
-      {/* SECCIONES */}
+      {/* ESCUELA DE VUELO */}
       <section className="section sectionSm">
         <div className="container">
           <div className="sectionHeader">
-            <div className="sectionLabel">SECCIONES</div>
+            <div className="sectionLabel">ESCUELA DE VUELO</div>
+            <h2 className="sectionTitle">Aprendé aviación paso a paso</h2>
+          </div>
+          <div className="navGrid">
+            <Link className="navCard" href="/vuelo">
+              <h2>¿Cómo vuela un avión?</h2>
+              <p>Las 4 fuerzas, las partes del avión y las 7 fases de cada vuelo. El fundamento de todo.</p>
+              <span className="cardArrow">Módulo 1 →</span>
+            </Link>
+            <Link className="navCard" href="/instrumentos">
+              <h2>Instrumentos de vuelo</h2>
+              <p>Los 6 básicos del cockpit, glass cockpit moderno, alertas y alarmas. Lo que leen los pilotos.</p>
+              <span className="cardArrow">Módulo 2 →</span>
+            </Link>
+            <Link className="navCard" href="/glosario">
+              <h2>Glosario de aviación</h2>
+              <p>60+ términos explicados: ATC, IFR, VFR, METAR, ILS, ETOPS, squawk y todo lo que necesitás saber.</p>
+              <span className="cardArrow">Módulo 3 →</span>
+            </Link>
+            <Link className="navCard" href="/licencias">
+              <h2>Licencias de piloto</h2>
+              <p>De PPL a ATPL: requisitos, horas y costos reales. El camino de cero a capitán de aerolínea en Argentina.</p>
+              <span className="cardArrow">Módulo 4 →</span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* EXPLORAR */}
+      <section className="section sectionSm">
+        <div className="container">
+          <div className="sectionHeader">
+            <div className="sectionLabel">EXPLORAR</div>
             <h2 className="sectionTitle">Todo sobre aviación en un lugar</h2>
           </div>
           <div className="navGrid">
@@ -77,13 +109,13 @@ export default async function HomePage() {
               <span className="cardArrow">Ver récords →</span>
             </Link>
             <Link className="navCard" href="/quiz">
-              <h2>Quiz</h2>
-              <p>Ponete a prueba con 20 preguntas sobre aviones, récords, historia y curiosidades. ¿Qué tanto sabés?</p>
+              <h2>Quiz · 50 preguntas</h2>
+              <p>Ponete a prueba con 50 preguntas y 30 segundos por respuesta. Historia, récords, técnica y más.</p>
               <span className="cardArrow">Jugar →</span>
             </Link>
             <Link className="navCard" href="/radar">
               <h2>Radar en vivo</h2>
-              <p>Tráfico aéreo en tiempo real. Seguí vuelos, altitudes y trayectorias en todo el mundo.</p>
+              <p>Tráfico aéreo en tiempo real. Seguí vuelos, altitudes y velocidades en todo el mundo ahora mismo.</p>
               <span className="cardArrow">Ver radar →</span>
             </Link>
             <Link className="navCard" href="/historia">
