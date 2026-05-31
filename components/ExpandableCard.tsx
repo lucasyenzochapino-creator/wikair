@@ -21,34 +21,11 @@ function isGoodImg(url: string) {
 
 async function fetchWikiImages(wiki: string): Promise<string[]> {
   try {
-    const [summaryRes, mediaRes] = await Promise.allSettled([
-      fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wiki)}`),
-      fetch(`https://en.wikipedia.org/api/rest_v1/page/media-list/${encodeURIComponent(wiki)}`),
-    ]);
-
-    // Primary image from summary
-    let thumb: string | null = null;
-    if (summaryRes.status === "fulfilled" && summaryRes.value.ok) {
-      const d = await summaryRes.value.json();
-      thumb = d?.originalimage?.source || d?.thumbnail?.source || null;
-    }
-
-    // Gallery images from media-list (all images in the Wikipedia article)
-    const mediaImgs: string[] = [];
-    if (mediaRes.status === "fulfilled" && mediaRes.value.ok) {
-      const d = await mediaRes.value.json();
-      for (const item of (d?.items ?? []) as any[]) {
-        if (item.type !== "image") continue;
-        // Pick the largest srcset variant
-        const srcset: any[] = item.srcset ?? [];
-        const best = srcset[srcset.length - 1]?.src ?? item.thumbnail?.source ?? "";
-        const url = best.startsWith("//") ? `https:${best}` : best;
-        if (url && isGoodImg(url)) mediaImgs.push(url);
-      }
-    }
-
-    const all = [thumb, ...mediaImgs].filter(Boolean) as string[];
-    return [...new Set(all)].slice(0, 10);
+    // Call our own API proxy (runs on Vercel, always has internet access)
+    const res = await fetch(`/api/wiki-images?q=${encodeURIComponent(wiki)}`);
+    if (!res.ok) return [];
+    const imgs = await res.json();
+    return Array.isArray(imgs) ? imgs.filter((u: string) => u && isGoodImg(u)) : [];
   } catch {
     return [];
   }
