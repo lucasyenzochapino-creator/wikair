@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { aircraft as dataAircraft } from "./data";
 import { getEconomics } from "./costs";
 import { groups, type Aircraft, type AircraftGroup } from "./types";
@@ -306,13 +307,80 @@ function LightboxView({
   );
 }
 
+/* ────────────────────────── CompareModal ────────────────────────── */
+function CompareModal({ a, b, onClose }: { a: Aircraft; b: Aircraft; onClose: () => void }) {
+  const ecoA = getEconomics(a);
+  const ecoB = getEconomics(b);
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", onKey);
+    return () => { document.body.style.overflow = prev; document.removeEventListener("keydown", onKey); };
+  }, [onClose]);
+
+  const rows: { label: string; valA: string; valB: string }[] = [
+    { label: "Categoría", valA: a.group, valB: b.group },
+    { label: "Rol", valA: a.role, valB: b.role },
+    { label: "Fabricante", valA: a.maker, valB: b.maker },
+    { label: "País", valA: a.origin, valB: b.origin },
+    { label: "Primer vuelo", valA: a.firstFlight, valB: b.firstFlight },
+    { label: "Estado", valA: a.status, valB: b.status },
+    { label: "Velocidad máx.", valA: a.speed, valB: b.speed },
+    { label: "Alcance", valA: a.range, valB: b.range },
+    { label: "Capacidad", valA: a.capacity, valB: b.capacity },
+    { label: "Motor", valA: a.engine, valB: b.engine },
+    { label: "Precio est. USD", valA: ecoA.price, valB: ecoB.price },
+    { label: "Unidades producidas", valA: a.productionApprox?.toLocaleString("es-AR") ?? "Variable", valB: b.productionApprox?.toLocaleString("es-AR") ?? "Variable" },
+    { label: "Licencia", valA: a.license, valB: b.license },
+  ];
+
+  return (
+    <div className="modalOverlay" role="dialog" aria-modal="true" onClick={onClose}>
+      <div className="modalCard" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 900 }}>
+        <div className="modalHeader">
+          <div>
+            <p className="gold" style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em" }}>Comparador de aeronaves</p>
+            <h2 style={{ fontSize: 20 }}>{a.name} vs {b.name}</h2>
+          </div>
+          <button className="modalClose" type="button" onClick={onClose}>Cerrar</button>
+        </div>
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr>
+                <th style={{ padding: "12px 20px", textAlign: "left", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--muted)", borderBottom: "1px solid var(--border)", width: "30%" }}>Especificación</th>
+                <th style={{ padding: "12px 20px", textAlign: "left", fontSize: 14, fontWeight: 800, color: "var(--sky)", borderBottom: "1px solid var(--border)", borderLeft: "1px solid var(--border)" }}>{cleanName(a.name)}</th>
+                <th style={{ padding: "12px 20px", textAlign: "left", fontSize: 14, fontWeight: 800, color: "var(--sky-bright)", borderBottom: "1px solid var(--border)", borderLeft: "1px solid var(--border)" }}>{cleanName(b.name)}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, i) => (
+                <tr key={row.label} style={{ background: i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.015)" }}>
+                  <td style={{ padding: "10px 20px", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--muted)", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>{row.label}</td>
+                  <td style={{ padding: "10px 20px", fontSize: 13, color: "var(--text)", borderBottom: "1px solid rgba(255,255,255,0.04)", borderLeft: "1px solid var(--border)" }}>{row.valA}</td>
+                  <td style={{ padding: "10px 20px", fontSize: 13, color: "var(--text)", borderBottom: "1px solid rgba(255,255,255,0.04)", borderLeft: "1px solid var(--border)" }}>{row.valB}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ────────────────────────── DetailModal ────────────────────────── */
 function DetailModal({
   plane,
+  isFav,
+  onToggleFav,
   onClose,
   onImageOpen,
 }: {
   plane: Aircraft;
+  isFav: boolean;
+  onToggleFav: () => void;
   onClose: () => void;
   onImageOpen: (images: WikiImage[], index: number) => void;
 }) {
@@ -325,6 +393,11 @@ function DetailModal({
     document.addEventListener("keydown", onKey);
     return () => { document.body.style.overflow = prev; document.removeEventListener("keydown", onKey); };
   }, [onClose]);
+
+  function handleShare() {
+    const text = `WikiAir — ${plane.name}\n${plane.role} · ${plane.maker}\n\nhttps://wikair.vercel.app/enciclopedia?open=${encodeURIComponent(plane.name)}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noreferrer");
+  }
 
   return (
     <div className="modalOverlay" role="dialog" aria-modal="true" onClick={onClose}>
@@ -398,7 +471,18 @@ function DetailModal({
         </section>
 
         <div className="modalActions">
-          <button className="radarLink" type="button" onClick={onClose}>← Volver al catálogo</button>
+          <button className="radarLink" type="button" onClick={onClose}>← Volver</button>
+          <button
+            type="button"
+            onClick={onToggleFav}
+            className="radarLink"
+            style={isFav ? { borderColor: "rgba(251,191,36,0.4)", color: "var(--amber)" } : {}}
+          >
+            {isFav ? "Guardado" : "Guardar"}
+          </button>
+          <button type="button" onClick={handleShare} className="radarLink">
+            Compartir WhatsApp
+          </button>
         </div>
       </div>
     </div>
@@ -410,12 +494,21 @@ function AircraftCard({
   plane,
   onSelect,
   onImageOpen,
+  isFav,
+  onToggleFav,
+  isCompared,
+  onToggleCompare,
+  compareDisabled,
 }: {
   plane: Aircraft;
   onSelect: () => void;
   onImageOpen: (images: WikiImage[], index: number) => void;
+  isFav: boolean;
+  onToggleFav: () => void;
+  isCompared: boolean;
+  onToggleCompare: () => void;
+  compareDisabled: boolean;
 }) {
-  const eco = getEconomics(plane);
   const desc = shortHistory(plane.history, 130);
 
   return (
@@ -428,13 +521,46 @@ function AircraftCard({
         </div>
       </div>
       <div className="aircraftBody">
-        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
-          <span className="pill">{plane.group}</span>
-          {plane.status === "Retirado" && (
-            <span className="pill" style={{ borderColor: "rgba(255,100,100,0.3)", background: "rgba(255,80,80,0.07)", color: "#f87171" }}>
-              Retirado
-            </span>
-          )}
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+            <span className="pill">{plane.group}</span>
+            {plane.status === "Retirado" && (
+              <span className="pill" style={{ borderColor: "rgba(255,100,100,0.3)", background: "rgba(255,80,80,0.07)", color: "#f87171" }}>
+                Retirado
+              </span>
+            )}
+          </div>
+          <div style={{ display: "flex", gap: 4 }}>
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onToggleFav(); }}
+              style={{
+                background: "none", border: "none", cursor: "pointer", padding: "2px 6px",
+                fontSize: 11, fontWeight: 700, color: isFav ? "var(--amber)" : "var(--muted)",
+                borderRadius: 6, transition: "color 0.15s",
+              }}
+              title={isFav ? "Quitar de favoritos" : "Guardar en favoritos"}
+            >
+              {isFav ? "★" : "☆"}
+            </button>
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onToggleCompare(); }}
+              disabled={compareDisabled && !isCompared}
+              style={{
+                background: isCompared ? "var(--sky-dim)" : "none",
+                border: isCompared ? "1px solid var(--border-a)" : "none",
+                cursor: compareDisabled && !isCompared ? "default" : "pointer",
+                padding: "2px 7px", fontSize: 10, fontWeight: 700,
+                color: isCompared ? "var(--sky)" : "var(--muted)",
+                borderRadius: 6, opacity: compareDisabled && !isCompared ? 0.35 : 1,
+                transition: "all 0.15s",
+              }}
+              title={isCompared ? "Quitar del comparador" : "Agregar al comparador"}
+            >
+              {isCompared ? "− Comp." : "+ Comp."}
+            </button>
+          </div>
         </div>
         <h3>{cleanName(plane.name)}</h3>
         <p style={{ fontSize: 13, color: "var(--muted2)", marginBottom: 6 }}>{plane.maker}</p>
@@ -466,18 +592,66 @@ export default function Explorer() {
   const [lightbox, setLightbox] = useState<Lightbox | null>(null);
   const [query, setQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showFavs, setShowFavs] = useState(false);
+  const [favs, setFavs] = useState<string[]>([]);
+  const [compareList, setCompareList] = useState<Aircraft[]>([]);
+  const [showCompare, setShowCompare] = useState(false);
+  const searchParams = useSearchParams();
+
+  // Load favorites from localStorage on mount
+  useEffect(() => {
+    try { setFavs(JSON.parse(localStorage.getItem("wf") || "[]")); } catch {}
+  }, []);
+
+  function toggleFav(name: string) {
+    setFavs((prev) => {
+      const next = prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name];
+      try { localStorage.setItem("wf", JSON.stringify(next)); } catch {}
+      return next;
+    });
+  }
+
+  function toggleCompare(plane: Aircraft) {
+    setCompareList((prev) => {
+      if (prev.some((p) => p.name === plane.name)) return prev.filter((p) => p.name !== plane.name);
+      if (prev.length >= 2) return prev;
+      return [...prev, plane];
+    });
+  }
+
+  useEffect(() => {
+    const open = searchParams.get("open");
+    if (open) {
+      const target = dedupeAircraft(allAircraft).find(
+        (a) => cleanName(a.name).toLowerCase() === open.toLowerCase() ||
+               cleanName(a.wiki || "").toLowerCase() === open.toLowerCase()
+      );
+      if (target) { setActive(target.group); setSelected(target); }
+      return;
+    }
+    try {
+      const s = JSON.parse(sessionStorage.getItem("we") || "null");
+      if (s?.active) setActive(s.active as AircraftGroup);
+      if (s?.query) setQuery(s.query);
+    } catch {}
+  }, [searchParams]);
+
+  useEffect(() => {
+    try { sessionStorage.setItem("we", JSON.stringify({ active, query })); } catch {}
+  }, [active, query]);
 
   const normalizedQuery = query.trim().toLowerCase();
 
   const list = useMemo(() => {
     const base = dedupeAircraft(allAircraft);
+    if (showFavs) return base.filter((item) => favs.includes(cleanName(item.name)));
     if (normalizedQuery) {
       return base.filter((item) =>
         `${item.name} ${item.maker} ${item.origin} ${item.role} ${item.group} ${item.registryId ?? ""}`.toLowerCase().includes(normalizedQuery)
       );
     }
     return base.filter((item) => item.group === active);
-  }, [active, normalizedQuery]);
+  }, [active, normalizedQuery, showFavs, favs]);
 
   const suggestions = useMemo(() => {
     if (!normalizedQuery || !showSuggestions) return [];
@@ -504,11 +678,18 @@ export default function Explorer() {
       {/* ── Sticky category tabs ── */}
       <nav className="categoryNav">
         <div className="categoryNavInner">
+          <button
+            onClick={() => { setShowFavs(true); setSelected(null); setQuery(""); setShowSuggestions(false); }}
+            className={showFavs ? "tabActive" : "tabButton"}
+            title="Favoritos"
+          >
+            Favoritos {favs.length > 0 && `(${favs.length})`}
+          </button>
           {groups.map((group) => (
             <button
               key={group}
-              onClick={() => { setActive(group); setSelected(null); setQuery(""); setShowSuggestions(false); }}
-              className={active === group ? "tabActive" : "tabButton"}
+              onClick={() => { setActive(group); setShowFavs(false); setSelected(null); setQuery(""); setShowSuggestions(false); }}
+              className={!showFavs && active === group ? "tabActive" : "tabButton"}
               title={group}
             >
               {group}
@@ -523,10 +704,10 @@ export default function Explorer() {
           <input
             className="searchInput"
             value={query}
-            onChange={(e) => { setQuery(e.target.value); setShowSuggestions(true); }}
+            onChange={(e) => { setQuery(e.target.value); setShowSuggestions(true); if (e.target.value) setShowFavs(false); }}
             onFocus={() => { if (query.trim()) setShowSuggestions(true); }}
             onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-            placeholder={`Buscar en ${active} — o cualquier aeronave por nombre, país, fabricante…`}
+            placeholder={showFavs ? "Buscar en favoritos…" : `Buscar en ${active} — o cualquier aeronave por nombre, país, fabricante…`}
           />
           {suggestions.length > 0 && showSuggestions && (
             <div className="suggestions">
@@ -545,20 +726,23 @@ export default function Explorer() {
           )}
         </div>
 
-        {/* ── Section header with category explanation ── */}
+        {/* ── Section header ── */}
         <div className="groupTitle">
           <p className="gold" style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 6 }}>
-            {normalizedQuery ? `${list.length} resultados` : `${list.length} aeronaves · WikiAir`}
+            {showFavs ? `${list.length} guardados` : normalizedQuery ? `${list.length} resultados` : `${list.length} aeronaves · WikiAir`}
           </p>
           <h2>
-            {normalizedQuery ? `Resultados para "${query}"` : active}
+            {showFavs ? "Favoritos" : normalizedQuery ? `Resultados para "${query}"` : active}
           </h2>
-          {!normalizedQuery && catInfo && (
+          {showFavs && list.length === 0 && (
+            <p style={{ color: "var(--muted2)", fontSize: 14, marginTop: 8 }}>
+              Todavía no guardaste ningún avión. Tocá el icono de estrella en cualquier ficha técnica.
+            </p>
+          )}
+          {!showFavs && !normalizedQuery && catInfo && (
             <div className="catInfoBlock">
               <p className="catDescription">{catInfo.description}</p>
-              {catInfo.detail && (
-                <p className="catDetail">{catInfo.detail}</p>
-              )}
+              {catInfo.detail && <p className="catDetail">{catInfo.detail}</p>}
             </div>
           )}
         </div>
@@ -571,15 +755,47 @@ export default function Explorer() {
               plane={plane}
               onSelect={() => setSelected(plane)}
               onImageOpen={openImages}
+              isFav={favs.includes(cleanName(plane.name))}
+              onToggleFav={() => toggleFav(cleanName(plane.name))}
+              isCompared={compareList.some((p) => p.name === plane.name)}
+              onToggleCompare={() => toggleCompare(plane)}
+              compareDisabled={compareList.length >= 2}
             />
           ))}
         </div>
       </div>
 
+      {/* ── Compare floating bar ── */}
+      {compareList.length > 0 && (
+        <div className="compareBar">
+          <span style={{ fontSize: 12, fontWeight: 700, color: "var(--muted2)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+            Comparar:
+          </span>
+          {compareList.map((p) => (
+            <div key={p.name} className="comparePlane">
+              <span>{cleanName(p.name)}</span>
+              <button type="button" onClick={() => toggleCompare(p)} title="Quitar">×</button>
+            </div>
+          ))}
+          {compareList.length === 2 ? (
+            <button className="btnPrimary" style={{ padding: "8px 20px", fontSize: 13 }} onClick={() => setShowCompare(true)}>
+              Ver comparación
+            </button>
+          ) : (
+            <span style={{ fontSize: 12, color: "var(--muted2)" }}>Seleccioná otro avión para comparar</span>
+          )}
+        </div>
+      )}
+
       {/* ── Modals ── */}
+      {showCompare && compareList.length === 2 && (
+        <CompareModal a={compareList[0]} b={compareList[1]} onClose={() => setShowCompare(false)} />
+      )}
       {selected && (
         <DetailModal
           plane={selected}
+          isFav={favs.includes(cleanName(selected.name))}
+          onToggleFav={() => toggleFav(cleanName(selected.name))}
           onClose={() => setSelected(null)}
           onImageOpen={openImages}
         />
