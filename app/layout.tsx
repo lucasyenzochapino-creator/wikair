@@ -3,6 +3,7 @@ import Link from "next/link";
 import Script from "next/script";
 import "./globals.css";
 import Footer from "@/components/Footer";
+import MobileNav from "@/components/MobileNav";
 
 export const metadata: Metadata = {
   title: "WikiAir – Enciclopedia de Aviación",
@@ -51,6 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <nav className="mainNav">
           <div className="navInner">
             <Link className="navLogo" href="/">WikiAir</Link>
+            <MobileNav />
             <div className="navLinks">
               <Link href="/vuelo"><NavIcon d="M12 19V5M5 12l7-7 7 7" />Cómo vuela</Link>
               <Link href="/instrumentos"><NavIcon d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 0v10m0 0l4-4m-4 4l-4-4" />Instrumentos</Link>
