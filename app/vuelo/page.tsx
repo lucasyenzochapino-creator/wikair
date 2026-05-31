@@ -40,7 +40,8 @@ const phases = [
 ];
 
 export default async function VueloPage() {
-  const [forceImages, partImages, phaseImages] = await Promise.all([
+  const [heroImage, forceImages, partImages, phaseImages] = await Promise.all([
+    getWikiImage("Fixed-wing aircraft"),
     Promise.all(forces.map((f) => getWikiImage(f.wiki))),
     Promise.all(parts.map((p) => getWikiImage(p.wiki))),
     Promise.all(phases.map((p) => getWikiImage(p.wiki))),
@@ -48,18 +49,58 @@ export default async function VueloPage() {
 
   return (
     <main className="page">
-      <section className="container hero compactHero">
-        <Link className="back" href="/">← Volver</Link>
-        <p className="gold">WIKIAIR · ESCUELA DE VUELO · MÓDULO 1</p>
-        <h1>¿Cómo vuela un avión?</h1>
-        <p>Las 4 fuerzas que hacen posible el vuelo, las partes del avión y las fases de cada viaje — con imágenes reales.</p>
+      {/* ── HERO CON IMAGEN ──────────────────────────────────────── */}
+      <section className="moduleHero">
+        <div className="moduleHeroImg">
+          {heroImage && (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img src={heroImage} alt="Avión en vuelo" />
+          )}
+          <div className="moduleHeroOverlay" />
+        </div>
+        <div className="container moduleHeroContent">
+          <Link className="back" href="/">← Inicio</Link>
+          <div className="moduleBadge">MÓDULO 01 · ESCUELA DE VUELO</div>
+          <h1>¿Cómo vuela un avión?</h1>
+          <p>Las 4 fuerzas que hacen posible el vuelo, las partes del avión y las 6 fases de cada viaje — explicadas con ejemplos reales.</p>
+        </div>
       </section>
 
-      {/* LAS 4 FUERZAS */}
-      <section className="container" style={{ paddingTop: 40, paddingBottom: 56 }}>
+      {/* ── DATOS DESTACADOS ────────────────────────────────────── */}
+      <section className="container" style={{ paddingTop: 48, paddingBottom: 0 }}>
+        <div className="factRow">
+          <div className="factCard">
+            <span className="factNum">4</span>
+            <span className="factLabel">Fuerzas del vuelo</span>
+          </div>
+          <div className="factCard">
+            <span className="factNum">12.500</span>
+            <span className="factUnit">m</span>
+            <span className="factLabel">Altitud crucero típica</span>
+          </div>
+          <div className="factCard">
+            <span className="factNum">903</span>
+            <span className="factUnit">km/h</span>
+            <span className="factLabel">Velocidad crucero A380</span>
+          </div>
+          <div className="factCard">
+            <span className="factNum">~15°</span>
+            <span className="factLabel">Ángulo de stall típico</span>
+          </div>
+          <div className="factCard">
+            <span className="factNum">6</span>
+            <span className="factLabel">Fases de un vuelo</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ── LAS 4 FUERZAS ───────────────────────────────────────── */}
+      <section className="container" style={{ paddingTop: 56, paddingBottom: 56 }}>
         <p className="gold">FÍSICA DEL VUELO</p>
         <h2 style={{ fontSize: "clamp(26px, 5vw, 44px)", margin: "8px 0 8px", letterSpacing: -1 }}>Las 4 fuerzas del vuelo</h2>
-        <p style={{ color: "var(--muted2)", marginBottom: 36, maxWidth: 560 }}>Todo avión en vuelo está sometido exactamente a estas 4 fuerzas. El secreto es mantenerlas en equilibrio.</p>
+        <p style={{ color: "var(--muted2)", marginBottom: 36, maxWidth: 560 }}>
+          Todo avión en vuelo está sometido exactamente a estas 4 fuerzas. El secreto es mantenerlas en equilibrio — como hacer malabarismo con física.
+        </p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(270px, 1fr))", gap: 20 }}>
           {forces.map((f, i) => (
             <div key={f.name} className="recordCard" style={{ padding: 0, overflow: "hidden" }}>
@@ -83,8 +124,8 @@ export default async function VueloPage() {
             </div>
           ))}
         </div>
-        <div style={{ background: "var(--glass)", border: "1px solid var(--border)", borderRadius: "var(--rXL)", padding: "18px 24px", marginTop: 20, backdropFilter: "blur(10px)" }}>
-          <p style={{ color: "var(--muted2)", lineHeight: 1.7, fontSize: 14 }}>
+        <div className="infoBanner" style={{ marginTop: 20 }}>
+          <p>
             <strong style={{ color: "var(--text)" }}>En vuelo nivelado:</strong> Sustentación = Peso · Empuje = Resistencia. &nbsp;
             <strong style={{ color: "var(--text)" }}>En ascenso:</strong> Empuje {">"} Resistencia. &nbsp;
             <strong style={{ color: "var(--text)" }}>En descenso:</strong> El motor puede reducirse porque el peso ayuda a mantener velocidad.
@@ -92,11 +133,48 @@ export default async function VueloPage() {
         </div>
       </section>
 
-      {/* PARTES DEL AVIÓN */}
+      {/* ── POR QUÉ VUELA: CONCEPTOS CLAVE ──────────────────────── */}
+      <section className="container" style={{ paddingBottom: 56 }}>
+        <p className="gold">AERODINÁMICA</p>
+        <h2 style={{ fontSize: "clamp(26px, 5vw, 44px)", margin: "8px 0 8px", letterSpacing: -1 }}>¿Por qué las alas generan sustentación?</h2>
+        <p style={{ color: "var(--muted2)", marginBottom: 32, maxWidth: 560 }}>Dos explicaciones que se complementan — no son alternativas, son partes del mismo fenómeno.</p>
+        <div className="learnGrid">
+          <div className="learnCard">
+            <div className="learnIcon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12h18M3 6l9-3 9 3M3 18l9 3 9-3"/></svg>
+            </div>
+            <h3>Efecto Bernoulli</h3>
+            <p>Mayor velocidad del aire = menor presión. El aire sobre el ala va más rápido por el perfil curvo → menor presión arriba → el ala es "succionada" hacia arriba. Igual que cuando un tren pasa y sentís que te jala.</p>
+          </div>
+          <div className="learnCard">
+            <div className="learnIcon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l14 0M5 12l4-4M5 12l4 4"/></svg>
+            </div>
+            <h3>Ángulo de ataque y Newton</h3>
+            <p>El ala inclinada desvía el aire hacia abajo. Por la 3.ª ley de Newton, el aire empuja el ala hacia arriba. A mayor ángulo de ataque, más sustentación — hasta cierto límite.</p>
+          </div>
+          <div className="learnCard">
+            <div className="learnIcon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22V12M12 12L8 16M12 12l4 4"/><path d="M20 6H4"/></svg>
+            </div>
+            <h3>Stall (Entrada en pérdida)</h3>
+            <p>Si el ángulo de ataque supera ~15-20°, el flujo de aire se separa del ala y la sustentación cae abruptamente. Solución inmediata: bajar el morro para reducir el ángulo. Todos los pilotos aprenden esto en hora 1.</p>
+          </div>
+          <div className="learnCard">
+            <div className="learnIcon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="12" rx="10" ry="4"/><path d="M12 2v20"/></svg>
+            </div>
+            <h3>Perfil alar</h3>
+            <p>La forma de la sección transversal del ala. Los aviones comerciales usan perfiles asimétricos optimizados para crucero subsónico. Los cazas supersónicos usan perfiles simétricos más delgados.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── PARTES DEL AVIÓN ────────────────────────────────────── */}
       <section className="container" style={{ paddingBottom: 56 }}>
         <p className="gold">ANATOMÍA</p>
         <h2 style={{ fontSize: "clamp(26px, 5vw, 44px)", margin: "8px 0 8px", letterSpacing: -1 }}>Partes del avión</h2>
-        <p style={{ color: "var(--muted2)", marginBottom: 36, maxWidth: 560 }}>Cada parte tiene una función específica. Conocer el avión es el primer paso para pilotarlo.</p>
+        <p style={{ color: "var(--muted2)", marginBottom: 36, maxWidth: 560 }}>Cada parte tiene una función específica y ninguna está de adorno. Conocer el avión es el primer paso para pilotarlo.</p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(270px, 1fr))", gap: 18 }}>
           {parts.map((p, i) => (
             <div key={p.name} className="recordCard" style={{ padding: 0, overflow: "hidden" }}>
@@ -119,11 +197,11 @@ export default async function VueloPage() {
         </div>
       </section>
 
-      {/* FASES DEL VUELO */}
+      {/* ── FASES DEL VUELO ─────────────────────────────────────── */}
       <section className="container" style={{ paddingBottom: 56 }}>
         <p className="gold">DE PUERTA A PUERTA</p>
         <h2 style={{ fontSize: "clamp(26px, 5vw, 44px)", margin: "8px 0 8px", letterSpacing: -1 }}>Las 6 fases de un vuelo</h2>
-        <p style={{ color: "var(--muted2)", marginBottom: 36, maxWidth: 560 }}>Desde que el avión sale de la puerta hasta que llega al destino, hay 6 fases bien definidas.</p>
+        <p style={{ color: "var(--muted2)", marginBottom: 36, maxWidth: 560 }}>Desde que el avión sale de la puerta hasta que llega al destino, hay 6 fases bien definidas. Cada una tiene sus propios procedimientos y velocidades de referencia.</p>
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           {phases.map((f, i) => (
             <div key={f.n} style={{
@@ -149,17 +227,11 @@ export default async function VueloPage() {
         </div>
       </section>
 
-      {/* BERNOULLI */}
+      {/* ── CTA ─────────────────────────────────────────────────── */}
       <section className="container" style={{ paddingBottom: 60 }}>
-        <p className="gold">PROFUNDIZÁ</p>
-        <h2 style={{ fontSize: "clamp(26px, 5vw, 44px)", margin: "8px 0 24px", letterSpacing: -1 }}>¿Por qué las alas generan sustentación?</h2>
-        <div className="statsGrid">
-          <div className="statBox"><h3>Bernoulli</h3><p>Mayor velocidad del aire = menor presión. El aire sobre el ala va más rápido → menor presión → el ala es "succionada" hacia arriba.</p></div>
-          <div className="statBox"><h3>Ángulo de ataque</h3><p>El ala inclinada desvía el aire hacia abajo. Por tercera ley de Newton, el aire empuja el ala hacia arriba. A mayor ángulo, más sustentación.</p></div>
-          <div className="statBox"><h3>Stall</h3><p>Si el ángulo supera ~15-20°, el flujo de aire se separa del ala y la sustentación cae en picado. Solución: bajar el morro inmediatamente.</p></div>
-          <div className="statBox"><h3>Perfil alar</h3><p>La forma de la sección transversal del ala. Los comerciales usan perfiles asimétricos optimizados para velocidad de crucero.</p></div>
-        </div>
-        <div style={{ marginTop: 32, display: "flex", gap: 12, flexWrap: "wrap" }}>
+        <p className="gold">SEGUÍ APRENDIENDO</p>
+        <h2 style={{ fontSize: "clamp(26px, 5vw, 44px)", margin: "8px 0 24px", letterSpacing: -1 }}>¿Listo para el siguiente módulo?</h2>
+        <div style={{ marginTop: 8, display: "flex", gap: 12, flexWrap: "wrap" }}>
           <Link className="btnPrimary" href="/instrumentos">Módulo 2: Instrumentos →</Link>
           <Link className="btnOutline" href="/glosario">Glosario de aviación</Link>
         </div>
