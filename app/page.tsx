@@ -54,6 +54,7 @@ export default async function HomePage() {
             <Link className="statItem statItemLink" href="/glosario"><h3>60+</h3><p>Términos en el glosario</p></Link>
             <Link className="statItem statItemLink" href="/quiz"><h3>50</h3><p>Preguntas en el quiz</p></Link>
             <Link className="statItem statItemLink" href="/radar"><h3>Live</h3><p>Radar en tiempo real</p></Link>
+            <Link className="statItem statItemLink" href="/simulador"><h3>Sim</h3><p>Simulador de vuelo</p></Link>
           </div>
         </div>
       </section>
@@ -126,6 +127,11 @@ export default async function HomePage() {
               <h2>Historia</h2>
               <p>Desde los hermanos Wright hasta la era de los drones. La historia completa de la aviación.</p>
               <span className="cardArrow">Ver historia →</span>
+            </Link>
+            <Link className="navCard" href="/simulador">
+              <h2>Simulador de vuelo ✈</h2>
+              <p>Volá ahora desde el navegador. GeoFS con terreno satelital real, 20+ aeronaves y modo multijugador. 100% gratis.</p>
+              <span className="cardArrow">Volar →</span>
             </Link>
           </div>
         </div>
