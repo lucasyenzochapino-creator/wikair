@@ -212,16 +212,73 @@ export default function SimuladorPage() {
 
       {/* Otros simuladores */}
       <div className="container" style={{ paddingBottom: 48 }}>
-        <div className="infoBanner">
-          <p>
-            <strong style={{ color: "var(--text)" }}>¿Querés más opciones?</strong>{" "}
-            <a href="https://www.flightgear.org" target="_blank" rel="noopener noreferrer" style={{ color: "var(--sky)" }}>FlightGear ↗</a>{" "}
-            es el simulador de código abierto más completo (PC/Mac/Linux).{" "}
-            <a href="https://www.x-plane.com/mobile/" target="_blank" rel="noopener noreferrer" style={{ color: "var(--sky)" }}>X-Plane Mobile ↗</a>{" "}
-            y{" "}
-            <a href="https://www.infiniteflightllc.com" target="_blank" rel="noopener noreferrer" style={{ color: "var(--sky)" }}>Infinite Flight ↗</a>{" "}
-            son las mejores apps para iPhone y Android con física de vuelo profesional.
-          </p>
+        <p className="gold">TAMBIÉN PARA ANDROID · 100% GRATIS</p>
+        <h2 style={{ fontSize: "clamp(18px, 3.5vw, 26px)", margin: "8px 0 18px", letterSpacing: -0.5 }}>Otras opciones gratuitas</h2>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32 }}>
+          {[
+            {
+              name: "X-Plane Mobile",
+              tag: "GRATIS · ANDROID",
+              desc: "El simulador móvil más avanzado del mundo. Física de vuelo de precisión aeronáutica real, desarrollado por Laminar Research — los mismos que hacen la versión profesional de PC. La Cessna 172 viene incluida gratis.",
+              cta: "Descargar en Android",
+              href: "https://play.google.com/store/apps/details?id=com.laminarresearch.xplane",
+              stars: 5,
+              badge: "⭐ Recomendado",
+            },
+            {
+              name: "GeoFS",
+              tag: "GRATIS · NAVEGADOR",
+              desc: "Funciona directo en Chrome de Android sin instalar nada. Terreno satelital real de todo el planeta, 20+ aeronaves. Ideal si no querés descargar una app.",
+              cta: "Abrir en el navegador",
+              href: "https://www.geo-fs.com/geofs.php?v=2.91",
+              stars: 3,
+              badge: null,
+            },
+          ].map((sim) => (
+            <div key={sim.name} style={{
+              background: "var(--glass)", border: "1px solid var(--border)",
+              borderRadius: 16, padding: "20px 22px",
+              display: "flex", gap: 18, alignItems: "flex-start", flexWrap: "wrap",
+            }}>
+              <div style={{ flex: 1, minWidth: 200 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6, flexWrap: "wrap" }}>
+                  <h3 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>{sim.name}</h3>
+                  <span style={{
+                    fontSize: 10, fontWeight: 700, letterSpacing: "0.08em",
+                    color: "#22c55e", fontFamily: "'Space Mono', monospace",
+                    background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)",
+                    borderRadius: 6, padding: "2px 8px",
+                  }}>{sim.tag}</span>
+                  {sim.badge && (
+                    <span style={{
+                      fontSize: 10, fontWeight: 700, color: "#f59e0b",
+                      background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.3)",
+                      borderRadius: 6, padding: "2px 8px",
+                    }}>{sim.badge}</span>
+                  )}
+                </div>
+                <p style={{ fontSize: 13.5, color: "var(--muted2)", lineHeight: 1.6, margin: "0 0 8px" }}>{sim.desc}</p>
+                <p style={{ fontSize: 12, color: "var(--muted)", margin: 0, fontFamily: "'Space Mono', monospace" }}>
+                  {"★".repeat(sim.stars)}{"☆".repeat(5 - sim.stars)}
+                </p>
+              </div>
+              <a
+                href={sim.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                  padding: "10px 18px", borderRadius: 10, fontSize: 13, fontWeight: 700,
+                  background: "rgba(56,139,253,0.12)", border: "1px solid rgba(56,139,253,0.25)",
+                  color: "var(--sky)", whiteSpace: "nowrap", flexShrink: 0,
+                  textDecoration: "none",
+                }}
+              >
+                {sim.cta} ↗
+              </a>
+            </div>
+          ))}
         </div>
         <div style={{ marginTop: 24, display: "flex", gap: 12, flexWrap: "wrap" }}>
           <Link className="btnPrimary" href="/vuelo">Módulo 1: Cómo vuela →</Link>

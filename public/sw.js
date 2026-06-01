@@ -1,4 +1,4 @@
-const CACHE = "wikair-v5";
+const CACHE = "wikair-v6";
 const STATIC = ["/", "/enciclopedia", "/records", "/quiz", "/radar", "/historia", "/manifest.json"];
 
 self.addEventListener("install", (e) => {

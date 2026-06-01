@@ -72,7 +72,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Script id="sw-register" strategy="afterInteractive">{`
           if ('serviceWorker' in navigator) {
             var base = (window.__NEXT_DATA__ && window.__NEXT_DATA__.basePath) || '';
-            navigator.serviceWorker.register(base + '/sw.js');
+            navigator.serviceWorker.register(base + '/sw.js').then(function(reg) {
+              // Check for a new SW every time the user returns to the app
+              document.addEventListener('visibilitychange', function() {
+                if (document.visibilityState === 'visible') reg.update();
+              });
+              // Also check every 2 minutes while the app is open
+              setInterval(function() { reg.update(); }, 2 * 60 * 1000);
+            });
           }
         `}</Script>
       </body>

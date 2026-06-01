@@ -19,16 +19,43 @@ function isGoodImg(url: string) {
   return !BAD.some((b) => low.includes(b));
 }
 
+async function wikiDirect(wiki: string): Promise<string[]> {
+  const [summaryRes, mediaRes] = await Promise.allSettled([
+    fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wiki)}`),
+    fetch(`https://en.wikipedia.org/api/rest_v1/page/media-list/${encodeURIComponent(wiki)}`),
+  ]);
+
+  const imgs: string[] = [];
+  if (summaryRes.status === "fulfilled" && summaryRes.value.ok) {
+    const d = await summaryRes.value.json();
+    const main = d?.originalimage?.source || d?.thumbnail?.source;
+    if (main && isGoodImg(main)) imgs.push(main);
+  }
+
+  if (mediaRes.status === "fulfilled" && mediaRes.value.ok) {
+    const d = await mediaRes.value.json();
+    for (const item of (d?.items ?? []) as any[]) {
+      if (item.type !== "image") continue;
+      const s: any[] = item.srcset ?? [];
+      const raw = s[s.length - 1]?.src || s[0]?.src || item.thumbnail?.source || "";
+      const url = raw.startsWith("//") ? `https:${raw}` : raw;
+      if (url && isGoodImg(url) && !imgs.includes(url)) imgs.push(url);
+      if (imgs.length >= 10) break;
+    }
+  }
+  return imgs;
+}
+
 async function fetchWikiImages(wiki: string): Promise<string[]> {
   try {
-    // Call our own API proxy (runs on Vercel, always has internet access)
     const res = await fetch(`/api/wiki-images?q=${encodeURIComponent(wiki)}`);
-    if (!res.ok) return [];
-    const imgs = await res.json();
-    return Array.isArray(imgs) ? imgs.filter((u: string) => u && isGoodImg(u)) : [];
-  } catch {
-    return [];
-  }
+    if (res.ok) {
+      const imgs = await res.json();
+      if (Array.isArray(imgs) && imgs.length > 0)
+        return imgs.filter((u: string) => u && isGoodImg(u));
+    }
+  } catch {}
+  try { return await wikiDirect(wiki); } catch { return []; }
 }
 
 export default function ExpandableCard({
@@ -45,12 +72,10 @@ export default function ExpandableCard({
   const [extraImages, setExtraImages] = useState<string[]>([]);
   const [loadingImgs, setLoadingImgs] = useState(false);
   const [lightbox, setLightbox] = useState<number | null>(null);
-  // Client-side preview image (used when server-side image is null/missing)
   const [previewImg, setPreviewImg] = useState<string | null>(image ?? null);
   const [previewLoading, setPreviewLoading] = useState(!image && !!wiki);
   const sheetRef = useRef<HTMLDivElement>(null);
 
-  // Load preview image client-side if not provided by server
   useEffect(() => {
     if (image || !wiki) return;
     setPreviewLoading(true);
