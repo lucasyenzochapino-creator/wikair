@@ -216,11 +216,9 @@ export default function SimuladorPage() {
           <p>
             <strong style={{ color: "var(--text)" }}>¿Querés más opciones?</strong>{" "}
             <a href="https://www.flightgear.org" target="_blank" rel="noopener noreferrer" style={{ color: "var(--sky)" }}>FlightGear ↗</a>{" "}
-            es el simulador de código abierto más completo (PC/Mac/Linux).{" "}
-            <a href="https://www.x-plane.com/mobile/" target="_blank" rel="noopener noreferrer" style={{ color: "var(--sky)" }}>X-Plane Mobile ↗</a>{" "}
-            y{" "}
-            <a href="https://www.infiniteflightllc.com" target="_blank" rel="noopener noreferrer" style={{ color: "var(--sky)" }}>Infinite Flight ↗</a>{" "}
-            son las mejores apps para iPhone y Android con física de vuelo profesional.
+            es el simulador de código abierto más completo (PC/Mac/Linux, gratis).{" "}
+            <a href="https://play.google.com/store/apps/details?id=com.b4t.aerofly2" target="_blank" rel="noopener noreferrer" style={{ color: "var(--sky)" }}>Aerofly FS 2 ↗</a>{" "}
+            es una excelente opción gratuita para Android con física realista.
           </p>
         </div>
         <div style={{ marginTop: 24, display: "flex", gap: 12, flexWrap: "wrap" }}>
