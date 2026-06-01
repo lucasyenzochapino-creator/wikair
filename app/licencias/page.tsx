@@ -1,5 +1,6 @@
 import BackButton from "@/components/BackButton";
 import ExpandableCard from "@/components/ExpandableCard";
+import WikiClientImg from "@/components/WikiClientImg";
 import Link from "next/link";
 
 async function getWikiImage(title: string) {
@@ -99,7 +100,7 @@ const medicals = [
   },
   {
     name: "Clase 1 — Piloto Comercial y ATPL",
-    wiki: "Flight physical",
+    wiki: "Medical certificate (aviation)",
     summary: "Examen completo: ECG con esfuerzo, espirometría, oftalmología completa, psicológico y neurológico.",
     detail: "La Clase 1 es el examen médico más completo que existe para pilotos. Incluye: ECG con prueba de esfuerzo en bicicleta o cinta, espirometría (función pulmonar), audiometría completa con timpanometría, oftalmología con fondo de ojo y campo visual computarizado, análisis de laboratorio completo incluyendo glucemia, colesterol y función hepática, examen psicológico completo y evaluación neurológica.\n\nVálido por 1 año en la mayoría de los casos. Después de los 60 años, el co-piloto en operaciones comerciales debe tener a bordo un tripulante menor de 60 años. Después de los 65, ya no se puede ejercer como piloto en operaciones comerciales de transporte aéreo (OACI Anexo 1).",
     badge: "CPL / ATPL",
@@ -125,10 +126,7 @@ export default async function LicenciasPage() {
       {/* ── HERO ──────────────────────────────────────────────────── */}
       <section className="moduleHero">
         <div className="moduleHeroImg">
-          {heroImage && (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img src={heroImage} alt="Piloto en cabina" />
-          )}
+          <WikiClientImg src={heroImage} wiki="Commercial pilot licence" alt="Piloto en cabina" />
           <div className="moduleHeroOverlay" />
         </div>
         <div className="container moduleHeroContent">

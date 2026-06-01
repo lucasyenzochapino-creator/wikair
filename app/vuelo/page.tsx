@@ -1,5 +1,6 @@
 import BackButton from "@/components/BackButton";
 import ExpandableCard from "@/components/ExpandableCard";
+import WikiClientImg from "@/components/WikiClientImg";
 import Link from "next/link";
 
 async function getWikiImage(title: string) {
@@ -148,7 +149,7 @@ const phases = [
   {
     n: "02",
     phase: "Despegue (Takeoff)",
-    wiki: "Aircraft takeoff",
+    wiki: "Takeoff",
     summary: "Aceleración por la pista. Al alcanzar Vr el piloto eleva el morro. En V2 el avión está en el aire.",
     detail: "El despegue tiene tres velocidades críticas: V1 (velocidad de decisión — por encima de esta, siempre despegar aunque falle un motor), Vr (velocidad de rotación — el piloto tira del volante/sidestick para levantar el morro), y V2 (velocidad de seguridad en el aire — garantiza el ascenso seguro con un motor inoperativo).\n\nEn un Airbus A320 con peso normal, V1 ≈ 140 kt, Vr ≈ 150 kt, V2 ≈ 155 kt. Todo esto ocurre en 35-40 segundos y unos 2.000 m de pista. En el instante de rotación (Vr), el piloto aplica ~3° de cabeceo por segundo hasta alcanzar 15° de nariz arriba. Los motores están al 100% de N1 desde que se da el «TOGA» (Takeoff / Go-Around).",
   },
@@ -196,10 +197,7 @@ export default async function VueloPage() {
       {/* ── HERO CON IMAGEN ──────────────────────────────────────── */}
       <section className="moduleHero">
         <div className="moduleHeroImg">
-          {heroImage && (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img src={heroImage} alt="Avión en vuelo" />
-          )}
+          <WikiClientImg src={heroImage} wiki="Fixed-wing aircraft" alt="Avión en vuelo" />
           <div className="moduleHeroOverlay" />
         </div>
         <div className="container moduleHeroContent">
