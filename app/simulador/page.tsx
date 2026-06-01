@@ -212,18 +212,111 @@ export default function SimuladorPage() {
 
       {/* Otros simuladores */}
       <div className="container" style={{ paddingBottom: 48 }}>
-        <div className="infoBanner">
-          <p>
-            <strong style={{ color: "var(--text)" }}>¿Querés más opciones?</strong>{" "}
-            <a href="https://www.flightgear.org" target="_blank" rel="noopener noreferrer" style={{ color: "var(--sky)" }}>FlightGear ↗</a>{" "}
-            es el simulador de código abierto más completo (PC/Mac/Linux).{" "}
-            <a href="https://www.x-plane.com/mobile/" target="_blank" rel="noopener noreferrer" style={{ color: "var(--sky)" }}>X-Plane Mobile ↗</a>{" "}
-            y{" "}
-            <a href="https://www.infiniteflightllc.com" target="_blank" rel="noopener noreferrer" style={{ color: "var(--sky)" }}>Infinite Flight ↗</a>{" "}
-            son las mejores apps para iPhone y Android con física de vuelo profesional.
-          </p>
+        <p className="gold">MÁS SIMULADORES</p>
+        <h2 style={{ fontSize: "clamp(18px, 3.5vw, 26px)", margin: "8px 0 18px", letterSpacing: -0.5 }}>Todos los simuladores de vuelo</h2>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32 }}>
+          {[
+            {
+              name: "GeoFS",
+              tag: "GRATIS · NAVEGADOR · MOBILE",
+              tagColor: "#22c55e",
+              desc: "El mejor simulador gratuito en el navegador. Terreno satelital real de todo el planeta, 20+ aeronaves, física de vuelo realista. Funciona directo en Chrome o Safari sin instalar nada.",
+              cta: "Abrir GeoFS",
+              href: "https://www.geo-fs.com/geofs.php?v=2.91",
+              stars: 3,
+              platforms: "Web · iOS · Android",
+            },
+            {
+              name: "X-Plane Mobile",
+              tag: "GRATIS · APP NATIVA",
+              tagColor: "#22c55e",
+              desc: "El simulador móvil más avanzado del mundo. Desarrollado por Laminar Research, con física de vuelo de precisión aeronáutica real. Versión base gratuita, aeronaves adicionales de pago.",
+              cta: "Descargar X-Plane Mobile",
+              href: "https://www.x-plane.com/mobile/",
+              stars: 5,
+              platforms: "iOS · Android",
+            },
+            {
+              name: "Infinite Flight",
+              tag: "SUSCRIPCIÓN $10/MES",
+              tagColor: "#f59e0b",
+              desc: "El simulador de aviación más completo para móvil. Multijugador en tiempo real, 120+ aeronaves con cabinas interactivas, control ATC real, vuelos online por todo el mundo.",
+              cta: "Ver Infinite Flight",
+              href: "https://infiniteflight.com",
+              stars: 5,
+              platforms: "iOS · Android",
+            },
+            {
+              name: "FlightGear",
+              tag: "GRATIS · CÓDIGO ABIERTO",
+              tagColor: "#22c55e",
+              desc: "El simulador de código abierto más completo. Usado en investigación aeronáutica y entrenamiento. Más de 400 aeronaves, escenarios mundiales, compatible con joystick.",
+              cta: "Descargar FlightGear",
+              href: "https://www.flightgear.org/download/",
+              stars: 4,
+              platforms: "Windows · Mac · Linux",
+            },
+            {
+              name: "Microsoft Flight Simulator 2024",
+              tag: "DE PAGO · PREMIUM",
+              tagColor: "#818cf8",
+              desc: "El simulador más realista del mercado. Terreno generado por IA con el planeta entero, clima en tiempo real, cabinas interactivas. Estándar de la industria para entrenamiento.",
+              cta: "Ver en Xbox / PC",
+              href: "https://www.xbox.com/en-US/games/microsoft-flight-simulator",
+              stars: 5,
+              platforms: "PC · Xbox · Xbox Cloud Gaming",
+            },
+            {
+              name: "DCS World",
+              tag: "GRATIS (base) · AVANZADO",
+              tagColor: "#22c55e",
+              desc: "El simulador de combate aéreo más realista del mundo. Módulos de aviones de combate con sistemas 100% fieles al original. La versión base con el Su-25T y TF-51D es gratuita.",
+              cta: "Ver DCS World",
+              href: "https://www.digitalcombatsimulator.com",
+              stars: 5,
+              platforms: "Windows",
+            },
+          ].map((sim) => (
+            <div key={sim.name} style={{
+              background: "var(--glass)", border: "1px solid var(--border)",
+              borderRadius: 16, padding: "20px 22px",
+              display: "flex", gap: 18, alignItems: "flex-start", flexWrap: "wrap",
+            }}>
+              <div style={{ flex: 1, minWidth: 200 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6, flexWrap: "wrap" }}>
+                  <h3 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>{sim.name}</h3>
+                  <span style={{
+                    fontSize: 10, fontWeight: 700, letterSpacing: "0.08em",
+                    color: sim.tagColor, fontFamily: "'Space Mono', monospace",
+                    background: `${sim.tagColor}18`, border: `1px solid ${sim.tagColor}40`,
+                    borderRadius: 6, padding: "2px 8px",
+                  }}>{sim.tag}</span>
+                </div>
+                <p style={{ fontSize: 13.5, color: "var(--muted2)", lineHeight: 1.6, margin: "0 0 8px" }}>{sim.desc}</p>
+                <p style={{ fontSize: 11, color: "var(--muted)", margin: 0, fontFamily: "'Space Mono', monospace" }}>
+                  {"★".repeat(sim.stars)}{"☆".repeat(5 - sim.stars)} · {sim.platforms}
+                </p>
+              </div>
+              <a
+                href={sim.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                  padding: "10px 18px", borderRadius: 10, fontSize: 13, fontWeight: 700,
+                  background: "rgba(56,139,253,0.12)", border: "1px solid rgba(56,139,253,0.25)",
+                  color: "var(--sky)", whiteSpace: "nowrap", flexShrink: 0,
+                  textDecoration: "none",
+                }}
+              >
+                {sim.cta} ↗
+              </a>
+            </div>
+          ))}
         </div>
-        <div style={{ marginTop: 24, display: "flex", gap: 12, flexWrap: "wrap" }}>
+
+        <div style={{ marginTop: 8, display: "flex", gap: 12, flexWrap: "wrap" }}>
           <Link className="btnPrimary" href="/vuelo">Módulo 1: Cómo vuela →</Link>
           <Link className="btnOutline" href="/instrumentos">Ver instrumentos</Link>
         </div>
