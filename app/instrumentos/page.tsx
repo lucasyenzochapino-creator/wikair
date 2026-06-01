@@ -1,5 +1,6 @@
 import BackButton from "@/components/BackButton";
 import ExpandableCard from "@/components/ExpandableCard";
+import WikiClientImg from "@/components/WikiClientImg";
 import Link from "next/link";
 
 async function getWikiImage(title: string) {
@@ -10,7 +11,7 @@ async function getWikiImage(title: string) {
     );
     if (!res.ok) return null;
     const data = await res.json();
-    return data?.originalimage?.source || data?.thumbnail?.source || null;
+    return data?.thumbnail?.source || data?.originalimage?.source || null;
   } catch {
     return null;
   }
@@ -129,10 +130,7 @@ export default async function InstrumentosPage() {
       {/* ── HERO ──────────────────────────────────────────────────── */}
       <section className="moduleHero">
         <div className="moduleHeroImg">
-          {heroImage && (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img src={heroImage} alt="Cabina de vuelo moderna" />
-          )}
+          <WikiClientImg src={heroImage} wiki="Glass cockpit" alt="Cabina de vuelo moderna" />
           <div className="moduleHeroOverlay" />
         </div>
         <div className="container moduleHeroContent">

@@ -1,5 +1,6 @@
 import BackButton from "@/components/BackButton";
 import ExpandableCard from "@/components/ExpandableCard";
+import WikiClientImg from "@/components/WikiClientImg";
 import Link from "next/link";
 
 async function getWikiImage(title: string) {
@@ -10,7 +11,7 @@ async function getWikiImage(title: string) {
     );
     if (!res.ok) return null;
     const data = await res.json();
-    return data?.originalimage?.source || data?.thumbnail?.source || null;
+    return data?.thumbnail?.source || data?.originalimage?.source || null;
   } catch {
     return null;
   }
@@ -115,25 +116,25 @@ const aero = [
     name: "Efecto Bernoulli",
     summary: "Mayor velocidad del aire = menor presión. El aire sobre el ala va más rápido → menor presión arriba → el ala es «succionada» hacia arriba.",
     detail: "El principio de Bernoulli establece que en un fluido en movimiento, donde la velocidad aumenta, la presión disminuye. En el ala de un avión, la cara superior tiene mayor curvatura, lo que hace que el aire deba recorrer una distancia mayor en el mismo tiempo — viaja más rápido → presión más baja arriba que abajo → diferencia de presión que empuja el ala hacia arriba.\n\nEsta explicación es parcialmente correcta pero incompleta: el principio de Bernoulli no es el único mecanismo de sustentación. Es más preciso decir que el ala dirige el flujo de aire downwash hacia abajo, y la diferencia de presión resultante (que Bernoulli describe) genera la sustentación. Los dos efectos son partes del mismo fenómeno físico.",
-    wiki: "Wing",
+    wiki: "Bernoulli's principle",
   },
   {
     name: "Ángulo de ataque y Newton",
     summary: "El ala inclinada desvía el aire hacia abajo. Por la 3.ª ley de Newton, el aire empuja el ala hacia arriba.",
     detail: "La tercera ley de Newton dice que toda acción tiene una reacción igual y opuesta. El ala inclinada hacia arriba (ángulo de ataque positivo) desvía el flujo de aire hacia abajo (downwash). Por reacción, el aire empuja el ala hacia arriba — generando sustentación.\n\nEsta explicación newtoniana funciona especialmente bien para perfiles simétricos (cazas, aviones acrobáticos) y explica por qué un avión puede volar invertido: si el piloto inclina negativamente el ala, el downwash va hacia arriba y la «sustentación» actúa hacia abajo. Los pilotos de acrobacia usan esto constantemente. También explica por qué aumentar el ángulo de ataque aumenta la sustentación — hasta el límite del stall.",
-    wiki: "Aerobatics",
+    wiki: "Angle of attack",
   },
   {
     name: "Stall (Entrada en pérdida)",
     summary: "Si el ángulo de ataque supera ~15-20°, el flujo se separa del ala y la sustentación cae abruptamente.",
     detail: "El stall (pérdida o entrada en pérdida) ocurre cuando el ángulo de ataque supera el ángulo crítico — típicamente 15-20° según el perfil alar. A partir de ese punto, la capa límite de aire se separa de la superficie superior del ala, creando turbulencia caótica en lugar de flujo laminar. La sustentación cae abruptamente (hasta un 50%) y la resistencia se dispara.\n\nLa recuperación del stall es el manoeuvre más importante que aprende todo piloto: bajar el morro para reducir el ángulo de ataque, aumentar potencia, recuperar velocidad. Los aviones modernos tienen sistemas ALPHA FLOOR (Airbus) o pusher de columna (Boeing) que intervienen automáticamente si se detecta un ángulo de ataque peligroso. Los stalls de aerolínea son rarísimos pero devastadores (AF447, 2009).",
-    wiki: "Stall warning system",
+    wiki: "Stall (fluid dynamics)",
   },
   {
     name: "Perfil alar (Airfoil)",
     summary: "La forma de la sección transversal del ala. Perfiles asimétricos en comerciales, simétricos en cazas supersónicos.",
     detail: "El perfil alar (airfoil en inglés) es la forma de la sección transversal del ala. Los perfiles NACA fueron los primeros estandarizados: el NACA 2412 tiene 12% de grosor y una curvatura media de 2% de la cuerda. Los aviones comerciales modernos usan perfiles supercríticos diseñados por computadora que retrasan la aparición de ondas de choque hasta velocidades cercanas a Mach 0.85.\n\nLos cazas supersónicos como el F-16 y F-22 usan perfiles simétricos muy delgados (4-6% de grosor) que tienen menos resistencia transónica pero generan menos sustentación — por eso necesitan alta velocidad y ángulos de ataque mayores para volar. Los planeadores usan perfiles muy grurvos y de alta curvatura para maximizar la relación sustentación/resistencia (L/D ratio), llegando a L/D de 60:1.",
-    wiki: "Glider (aircraft)",
+    wiki: "Airfoil",
   },
 ];
 
@@ -141,35 +142,35 @@ const phases = [
   {
     n: "01",
     phase: "Rodaje (Taxi)",
-    wiki: "Airport apron",
+    wiki: "Taxiway",
     summary: "Movimiento en tierra desde la puerta hasta la pista activa. ATC asigna la ruta de rodaje.",
     detail: "El rodaje (taxi) puede durar desde 5 minutos (aeropuerto pequeño) hasta 45 minutos (JFK o LAX con tráfico). El ATC (Control de Tráfico Aéreo) asigna la ruta de rodaje específica: «wikair 123, taxi al punto de espera 36L vía Alpha, Bravo». El piloto repite la instrucción completa confirmando que entendió.\n\nDurante el taxi se realiza el «before takeoff checklist»: verificar flaps, trim, frenos, luces exteriores, transponder en modo AUTO, TCAS en modo TA/RA. El motor ya está a temperatura operativa. La velocidad máxima de rodaje es típicamente 30 kt (55 km/h) en línea recta y 15 kt (28 km/h) en curvas. El combustible se quema incluso en tierra: un A380 consume ~2.400 kg/h de fuel en taxi.",
   },
   {
     n: "02",
     phase: "Despegue (Takeoff)",
-    wiki: "Aircraft takeoff",
+    wiki: "Takeoff",
     summary: "Aceleración por la pista. Al alcanzar Vr el piloto eleva el morro. En V2 el avión está en el aire.",
     detail: "El despegue tiene tres velocidades críticas: V1 (velocidad de decisión — por encima de esta, siempre despegar aunque falle un motor), Vr (velocidad de rotación — el piloto tira del volante/sidestick para levantar el morro), y V2 (velocidad de seguridad en el aire — garantiza el ascenso seguro con un motor inoperativo).\n\nEn un Airbus A320 con peso normal, V1 ≈ 140 kt, Vr ≈ 150 kt, V2 ≈ 155 kt. Todo esto ocurre en 35-40 segundos y unos 2.000 m de pista. En el instante de rotación (Vr), el piloto aplica ~3° de cabeceo por segundo hasta alcanzar 15° de nariz arriba. Los motores están al 100% de N1 desde que se da el «TOGA» (Takeoff / Go-Around).",
   },
   {
     n: "03",
     phase: "Ascenso (Climb)",
-    wiki: "Aircraft pilot",
+    wiki: "Climb (aeronautics)",
     summary: "El avión sube hacia FL350-FL410 (10.600-12.500 m). Los flaps se retraen progresivamente.",
     detail: "El ascenso (climb) tiene varias fases. Primero: ascenso inicial con flaps hasta 3.000 ft (900 m). Segundo: flaps retraídos, aceleración a velocidad de ascenso económica (ECON CLB). Tercero: crucero hasta FL100 (3.000 m) donde se apaga la señal de cinturón. Cuarto: ascenso al nivel de crucero en escalones si el tráfico lo requiere.\n\nLa velocidad de ascenso varía: cerca del suelo ~250 kt (restringido por regulación bajo 10.000 ft en muchos países), luego se acelera a Mach 0.78 aprox. hasta el nivel de crucero. La tasa de ascenso inicial puede ser 2.500 ft/min, reduciendo a 500 ft/min cerca del techo de servicio. Los motores trabajan a régimen CLIMB (aprox. 90% N1) durante todo este período.",
   },
   {
     n: "04",
     phase: "Crucero (Cruise)",
-    wiki: "Airline",
+    wiki: "Cruise (aeronautics)",
     summary: "La fase más larga. Motor a régimen de crucero (~40% de potencia). El FMS gestiona ruta y combustible.",
     detail: "El crucero es el alma de la aviación comercial. A FL350-FL390 (10.600-11.900 m), la atmósfera es más delgada, hay menos resistencia, y los motores trabajan con mayor eficiencia. La velocidad de crucero económica (Econ Mach) es determinada por el FMS (Flight Management System) considerando el viento, el Cost Index del operador, y el combustible disponible.\n\nTípicamente: Mach 0.78-0.85 (850-920 km/h TAS) a esas altitudes. El FMS calcula automáticamente el Top of Descent (TOD) — el punto exacto donde iniciar el descenso para llegar al destino. El combustible es el recurso más crítico: un A380 quema ~12.000 kg/h en crucero. En un vuelo de 14 horas (Sydney-Dallas), puede cargar hasta 250.000 kg de fuel.",
   },
   {
     n: "05",
     phase: "Descenso",
-    wiki: "Instrument flight rules",
+    wiki: "Instrument approach",
     summary: "Inicia unos 200 km antes del destino (Top of Descent). Flaps gradualmente. Velocidad reducida.",
     detail: "El descenso comienza en el «Top of Descent» (TOD), típicamente a 120-150 millas náuticas (200-280 km) del aeropuerto de destino a FL350. El perfil ideal es «idle descent» — motores al mínimo, el avión planea usando su energía potencial. Esto ahorra hasta 300-400 kg de combustible versus un descenso con potencia.\n\nEl ATC puede asignar restricciones de altitud y velocidad que el FMS debe cumplir: «cruce FIXXX a FL180 con 280 kt». Las aproximaciones modernas usan ILS (Instrument Landing System), GPS (RNAV), o RNP (Required Navigation Performance) que guían el avión al umbral de pista con precisión de metros. Por debajo de 10.000 ft la velocidad se limita a 250 kt.",
   },
@@ -196,10 +197,7 @@ export default async function VueloPage() {
       {/* ── HERO CON IMAGEN ──────────────────────────────────────── */}
       <section className="moduleHero">
         <div className="moduleHeroImg">
-          {heroImage && (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img src={heroImage} alt="Avión en vuelo" />
-          )}
+          <WikiClientImg src={heroImage} wiki="Fixed-wing aircraft" alt="Avión en vuelo" />
           <div className="moduleHeroOverlay" />
         </div>
         <div className="container moduleHeroContent">
@@ -237,7 +235,7 @@ export default async function VueloPage() {
               image={forceImages[i]}
               summary={f.summary}
               detail={f.detail}
-              wiki={f.wikiSearch}
+              wiki={f.wiki}
               accentColor={f.color}
             />
           ))}
@@ -286,7 +284,7 @@ export default async function VueloPage() {
               image={partImages[i]}
               summary={p.summary}
               detail={p.detail}
-              wiki={p.wikiSearch}
+              wiki={p.wiki}
             />
           ))}
         </div>

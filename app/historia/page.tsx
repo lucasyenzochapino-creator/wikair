@@ -1,4 +1,5 @@
 import BackButton from "@/components/BackButton";
+import WikiClientImg from "@/components/WikiClientImg";
 type Item = [string, string, string, string[]];
 
 type ReadyItem = {
@@ -6,6 +7,7 @@ type ReadyItem = {
   title: string;
   text: string;
   images: string[];
+  queries: string[];
 };
 
 const eras: Item[] = [
@@ -76,7 +78,7 @@ async function prepare(items: Item[]) {
       const commons = await getCommonsImages(query);
       images.push(...commons);
     }
-    return { period, title, text, images: Array.from(new Set(images)).slice(0, 6) } as ReadyItem;
+    return { period, title, text, images: Array.from(new Set(images)).slice(0, 6), queries } as ReadyItem;
   }));
 }
 
@@ -86,7 +88,8 @@ function CardWithImages({ item, label }: { item: ReadyItem; label: string }) {
   return (
     <article className="card">
       <div className="historyImage">
-        {main ? <img src={main} alt={item.title} /> : <div className="imageFallback">WikiAir</div>}
+        <WikiClientImg src={main} wiki={item.queries[0]} alt={item.title} />
+        {!main && <div className="imageFallback" style={{ position: "absolute", inset: 0 }} />}
       </div>
       {rest.length > 0 && (
         <div className="historyThumbs">

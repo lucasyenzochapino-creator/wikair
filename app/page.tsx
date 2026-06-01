@@ -1,4 +1,5 @@
 import Link from "next/link";
+import WikiClientImg from "@/components/WikiClientImg";
 
 const featured = [
   { name: "F-22 Raptor", wiki: "F-22 Raptor", role: "Caza de 5.ª generación", group: "Militar" },
@@ -35,7 +36,7 @@ export default async function HomePage() {
       {/* HERO */}
       <section className="hero">
         <div className="container">
-          <div className="heroLabel">ENCICLOPEDIA · ESCUELA DE VUELO</div>
+          <div className="heroLabel">WIKIAIR · ENCICLOPEDIA DE AVIACIÓN</div>
           <h1 className="heroTitle">
             Aprendé<br />
             <span>a volar</span>
@@ -146,12 +147,9 @@ export default async function HomePage() {
           </div>
           <div className="featuredGrid">
             {featuredWithImages.map((item) => (
-              <Link className="featuredCard" key={item.name} href={`/enciclopedia?open=${encodeURIComponent(item.name)}`}>
-                {item.image ? (
-                  <img src={item.image} alt={item.name} />
-                ) : (
-                  <div className="featuredCardFallback"><span className="fallbackName">{item.name}</span></div>
-                )}
+              <Link className="featuredCard" key={item.name} href="/enciclopedia">
+                <WikiClientImg src={item.image} wiki={item.wiki} alt={item.name} />
+                {!item.image && <div className="featuredCardFallback" style={{ position: "absolute", inset: 0 }} />}
                 <div className="featuredCardOverlay">
                   <p>{item.group} · {item.role}</p>
                   <h3>{item.name}</h3>

@@ -12,50 +12,36 @@ interface ExpandableCardProps {
   className?: string;
 }
 
-const BAD = ["flag", "map", "diagram", "icon", "logo", "badge", "emblem", "coat", "seal", "blank", "silhouette", ".svg"];
-
-function isGoodImg(url: string) {
-  const low = url.toLowerCase();
-  return !BAD.some((b) => low.includes(b));
-}
-
-async function wikiDirect(wiki: string): Promise<string[]> {
-  const [summaryRes, mediaRes] = await Promise.allSettled([
-    fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wiki)}`),
-    fetch(`https://en.wikipedia.org/api/rest_v1/page/media-list/${encodeURIComponent(wiki)}`),
-  ]);
-
-  const imgs: string[] = [];
-  if (summaryRes.status === "fulfilled" && summaryRes.value.ok) {
-    const d = await summaryRes.value.json();
-    const main = d?.originalimage?.source || d?.thumbnail?.source;
-    if (main && isGoodImg(main)) imgs.push(main);
-  }
-
-  if (mediaRes.status === "fulfilled" && mediaRes.value.ok) {
-    const d = await mediaRes.value.json();
-    for (const item of (d?.items ?? []) as any[]) {
-      if (item.type !== "image") continue;
-      const s: any[] = item.srcset ?? [];
-      const raw = s[s.length - 1]?.src || s[0]?.src || item.thumbnail?.source || "";
-      const url = raw.startsWith("//") ? `https:${raw}` : raw;
-      if (url && isGoodImg(url) && !imgs.includes(url)) imgs.push(url);
-      if (imgs.length >= 10) break;
-    }
-  }
-  return imgs;
-}
-
 async function fetchWikiImages(wiki: string): Promise<string[]> {
   try {
-    const res = await fetch(`/api/wiki-images?q=${encodeURIComponent(wiki)}`);
-    if (res.ok) {
-      const imgs = await res.json();
-      if (Array.isArray(imgs) && imgs.length > 0)
-        return imgs.filter((u: string) => u && isGoodImg(u));
+    const res = await fetch(
+      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wiki)}`
+    );
+    if (!res.ok) return [];
+    const data = await res.json();
+    const main = data?.originalimage?.source || data?.thumbnail?.source;
+
+    const res2 = await fetch(
+      `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(wiki)}&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url|mime&format=json&origin=*`
+    );
+    const data2 = res2.ok ? await res2.json() : null;
+    const commons: string[] = [];
+    if (data2?.query?.pages) {
+      for (const page of Object.values(data2.query.pages) as any[]) {
+        const url: string = page?.imageinfo?.[0]?.url ?? "";
+        const mime: string = page?.imageinfo?.[0]?.mime ?? "";
+        if (url && mime.startsWith("image/") && !mime.includes("svg")) {
+          const low = url.toLowerCase();
+          const bad = ["flag", "map", "diagram", "icon", "logo", "badge", "emblem", "coat", "seal", "blank", "silhouette"];
+          if (!bad.some((b) => low.includes(b))) commons.push(url);
+        }
+      }
     }
-  } catch {}
-  try { return await wikiDirect(wiki); } catch { return []; }
+    const all = [main, ...commons].filter(Boolean) as string[];
+    return [...new Set(all)].slice(0, 8);
+  } catch {
+    return [];
+  }
 }
 
 export default function ExpandableCard({
@@ -72,10 +58,12 @@ export default function ExpandableCard({
   const [extraImages, setExtraImages] = useState<string[]>([]);
   const [loadingImgs, setLoadingImgs] = useState(false);
   const [lightbox, setLightbox] = useState<number | null>(null);
+  // Client-side preview image (used when server-side image is null/missing)
   const [previewImg, setPreviewImg] = useState<string | null>(image ?? null);
   const [previewLoading, setPreviewLoading] = useState(!image && !!wiki);
   const sheetRef = useRef<HTMLDivElement>(null);
 
+  // Load preview image client-side if not provided by server
   useEffect(() => {
     if (image || !wiki) return;
     setPreviewLoading(true);
