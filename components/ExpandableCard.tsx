@@ -25,26 +25,25 @@ async function wikiDirect(wiki: string): Promise<string[]> {
     fetch(`https://en.wikipedia.org/api/rest_v1/page/media-list/${encodeURIComponent(wiki)}`),
   ]);
 
-  let thumb: string | null = null;
+  const imgs: string[] = [];
   if (summaryRes.status === "fulfilled" && summaryRes.value.ok) {
     const d = await summaryRes.value.json();
-    thumb = d?.originalimage?.source || d?.thumbnail?.source || null;
+    const main = d?.originalimage?.source || d?.thumbnail?.source;
+    if (main && isGoodImg(main)) imgs.push(main);
   }
 
-  const mediaImgs: string[] = [];
   if (mediaRes.status === "fulfilled" && mediaRes.value.ok) {
     const d = await mediaRes.value.json();
     for (const item of (d?.items ?? []) as any[]) {
       if (item.type !== "image") continue;
-      const srcset: any[] = item.srcset ?? [];
-      const best = srcset[srcset.length - 1]?.src ?? item.thumbnail?.source ?? "";
-      const url = best.startsWith("//") ? `https:${best}` : best;
-      if (url && isGoodImg(url)) mediaImgs.push(url);
+      const s: any[] = item.srcset ?? [];
+      const raw = s[s.length - 1]?.src || s[0]?.src || item.thumbnail?.source || "";
+      const url = raw.startsWith("//") ? `https:${raw}` : raw;
+      if (url && isGoodImg(url) && !imgs.includes(url)) imgs.push(url);
+      if (imgs.length >= 10) break;
     }
   }
-
-  const all = [thumb, ...mediaImgs].filter(Boolean) as string[];
-  return [...new Set(all)].filter(isGoodImg).slice(0, 10);
+  return imgs;
 }
 
 async function fetchWikiImages(wiki: string): Promise<string[]> {
