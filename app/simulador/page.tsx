@@ -212,70 +212,28 @@ export default function SimuladorPage() {
 
       {/* Otros simuladores */}
       <div className="container" style={{ paddingBottom: 48 }}>
-        <p className="gold">MÁS SIMULADORES</p>
-        <h2 style={{ fontSize: "clamp(18px, 3.5vw, 26px)", margin: "8px 0 18px", letterSpacing: -0.5 }}>Todos los simuladores de vuelo</h2>
+        <p className="gold">TAMBIÉN PARA ANDROID · 100% GRATIS</p>
+        <h2 style={{ fontSize: "clamp(18px, 3.5vw, 26px)", margin: "8px 0 18px", letterSpacing: -0.5 }}>Otras opciones gratuitas</h2>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32 }}>
           {[
             {
+              name: "X-Plane Mobile",
+              tag: "GRATIS · ANDROID",
+              desc: "El simulador móvil más avanzado del mundo. Física de vuelo de precisión aeronáutica real, desarrollado por Laminar Research — los mismos que hacen la versión profesional de PC. La Cessna 172 viene incluida gratis.",
+              cta: "Descargar en Android",
+              href: "https://play.google.com/store/apps/details?id=com.laminarresearch.xplane",
+              stars: 5,
+              badge: "⭐ Recomendado",
+            },
+            {
               name: "GeoFS",
-              tag: "GRATIS · NAVEGADOR · MOBILE",
-              tagColor: "#22c55e",
-              desc: "El mejor simulador gratuito en el navegador. Terreno satelital real de todo el planeta, 20+ aeronaves, física de vuelo realista. Funciona directo en Chrome o Safari sin instalar nada.",
-              cta: "Abrir GeoFS",
+              tag: "GRATIS · NAVEGADOR",
+              desc: "Funciona directo en Chrome de Android sin instalar nada. Terreno satelital real de todo el planeta, 20+ aeronaves. Ideal si no querés descargar una app.",
+              cta: "Abrir en el navegador",
               href: "https://www.geo-fs.com/geofs.php?v=2.91",
               stars: 3,
-              platforms: "Web · iOS · Android",
-            },
-            {
-              name: "X-Plane Mobile",
-              tag: "GRATIS · APP NATIVA",
-              tagColor: "#22c55e",
-              desc: "El simulador móvil más avanzado del mundo. Desarrollado por Laminar Research, con física de vuelo de precisión aeronáutica real. Versión base gratuita, aeronaves adicionales de pago.",
-              cta: "Descargar X-Plane Mobile",
-              href: "https://www.x-plane.com/mobile/",
-              stars: 5,
-              platforms: "iOS · Android",
-            },
-            {
-              name: "Infinite Flight",
-              tag: "SUSCRIPCIÓN $10/MES",
-              tagColor: "#f59e0b",
-              desc: "El simulador de aviación más completo para móvil. Multijugador en tiempo real, 120+ aeronaves con cabinas interactivas, control ATC real, vuelos online por todo el mundo.",
-              cta: "Ver Infinite Flight",
-              href: "https://infiniteflight.com",
-              stars: 5,
-              platforms: "iOS · Android",
-            },
-            {
-              name: "FlightGear",
-              tag: "GRATIS · CÓDIGO ABIERTO",
-              tagColor: "#22c55e",
-              desc: "El simulador de código abierto más completo. Usado en investigación aeronáutica y entrenamiento. Más de 400 aeronaves, escenarios mundiales, compatible con joystick.",
-              cta: "Descargar FlightGear",
-              href: "https://www.flightgear.org/download/",
-              stars: 4,
-              platforms: "Windows · Mac · Linux",
-            },
-            {
-              name: "Microsoft Flight Simulator 2024",
-              tag: "DE PAGO · PREMIUM",
-              tagColor: "#818cf8",
-              desc: "El simulador más realista del mercado. Terreno generado por IA con el planeta entero, clima en tiempo real, cabinas interactivas. Estándar de la industria para entrenamiento.",
-              cta: "Ver en Xbox / PC",
-              href: "https://www.xbox.com/en-US/games/microsoft-flight-simulator",
-              stars: 5,
-              platforms: "PC · Xbox · Xbox Cloud Gaming",
-            },
-            {
-              name: "DCS World",
-              tag: "GRATIS (base) · AVANZADO",
-              tagColor: "#22c55e",
-              desc: "El simulador de combate aéreo más realista del mundo. Módulos de aviones de combate con sistemas 100% fieles al original. La versión base con el Su-25T y TF-51D es gratuita.",
-              cta: "Ver DCS World",
-              href: "https://www.digitalcombatsimulator.com",
-              stars: 5,
-              platforms: "Windows",
+              badge: null,
             },
           ].map((sim) => (
             <div key={sim.name} style={{
@@ -288,14 +246,21 @@ export default function SimuladorPage() {
                   <h3 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>{sim.name}</h3>
                   <span style={{
                     fontSize: 10, fontWeight: 700, letterSpacing: "0.08em",
-                    color: sim.tagColor, fontFamily: "'Space Mono', monospace",
-                    background: `${sim.tagColor}18`, border: `1px solid ${sim.tagColor}40`,
+                    color: "#22c55e", fontFamily: "'Space Mono', monospace",
+                    background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)",
                     borderRadius: 6, padding: "2px 8px",
                   }}>{sim.tag}</span>
+                  {sim.badge && (
+                    <span style={{
+                      fontSize: 10, fontWeight: 700, color: "#f59e0b",
+                      background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.3)",
+                      borderRadius: 6, padding: "2px 8px",
+                    }}>{sim.badge}</span>
+                  )}
                 </div>
                 <p style={{ fontSize: 13.5, color: "var(--muted2)", lineHeight: 1.6, margin: "0 0 8px" }}>{sim.desc}</p>
-                <p style={{ fontSize: 11, color: "var(--muted)", margin: 0, fontFamily: "'Space Mono', monospace" }}>
-                  {"★".repeat(sim.stars)}{"☆".repeat(5 - sim.stars)} · {sim.platforms}
+                <p style={{ fontSize: 12, color: "var(--muted)", margin: 0, fontFamily: "'Space Mono', monospace" }}>
+                  {"★".repeat(sim.stars)}{"☆".repeat(5 - sim.stars)}
                 </p>
               </div>
               <a
