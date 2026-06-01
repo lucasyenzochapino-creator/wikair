@@ -38,32 +38,69 @@ export default async function HomePage() {
         <div className="container">
           <div className="heroLabel">WIKIAIR · ENCICLOPEDIA DE AVIACIÓN</div>
           <h1 className="heroTitle">
-            Todo sobre<br />
-            <span>aviación</span>
+            Aprendé<br />
+            <span>a volar</span>
           </h1>
           <p className="heroSub">
-            648 aeronaves con fichas técnicas completas — militares, comerciales, históricas,
-            helicópteros, planeadores y más. Imágenes reales, radar en vivo y récords mundiales.
+            Desde cero hasta experto. Glosario, instrumentos, licencias, 648 aeronaves con fichas técnicas,
+            radar en vivo y quiz con 50 preguntas. La escuela de vuelo digital.
           </p>
           <div className="heroCta">
-            <Link className="btnPrimary" href="/enciclopedia">Explorar enciclopedia</Link>
-            <Link className="btnOutline" href="/radar">Radar en vivo</Link>
+            <Link className="btnPrimary" href="/vuelo">Empezar a aprender</Link>
+            <Link className="btnOutline" href="/enciclopedia">Enciclopedia</Link>
           </div>
 
           <div className="statsBar">
-            <div className="statItem"><h3>648</h3><p>Aeronaves en catálogo</p></div>
-            <div className="statItem"><h3>14</h3><p>Categorías</p></div>
-            <div className="statItem"><h3>3</h3><p>Radares en vivo</p></div>
-            <div className="statItem"><h3>20</h3><p>Preguntas en el quiz</p></div>
+            <Link className="statItem statItemLink" href="/enciclopedia"><h3>648</h3><p>Aeronaves en catálogo</p></Link>
+            <Link className="statItem statItemLink" href="/glosario"><h3>60+</h3><p>Términos en el glosario</p></Link>
+            <Link className="statItem statItemLink" href="/quiz"><h3>50</h3><p>Preguntas en el quiz</p></Link>
+            <Link className="statItem statItemLink" href="/radar"><h3>Live</h3><p>Radar en tiempo real</p></Link>
+            <Link className="statItem statItemLink" href="/simulador"><h3>Sim</h3><p>Simulador de vuelo</p></Link>
           </div>
         </div>
       </section>
 
-      {/* SECCIONES */}
+      {/* ESCUELA DE VUELO */}
       <section className="section sectionSm">
         <div className="container">
           <div className="sectionHeader">
-            <div className="sectionLabel">SECCIONES</div>
+            <div className="sectionLabel">ESCUELA DE VUELO</div>
+            <h2 className="sectionTitle">Aprendé aviación paso a paso</h2>
+          </div>
+          <div className="navGrid">
+            <Link className="navCard" href="/vuelo">
+              <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.15em", color: "var(--sky)", opacity: 0.7, textTransform: "uppercase" }}>MÓDULO 01</span>
+              <h2>¿Cómo vuela un avión?</h2>
+              <p>Las 4 fuerzas, las partes del avión y las 7 fases de cada vuelo. El fundamento de todo.</p>
+              <span className="cardArrow">Módulo 1 →</span>
+            </Link>
+            <Link className="navCard" href="/instrumentos">
+              <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.15em", color: "var(--sky)", opacity: 0.7, textTransform: "uppercase" }}>MÓDULO 02</span>
+              <h2>Instrumentos de vuelo</h2>
+              <p>Los 6 básicos del cockpit, glass cockpit moderno, alertas y alarmas. Lo que leen los pilotos.</p>
+              <span className="cardArrow">Módulo 2 →</span>
+            </Link>
+            <Link className="navCard" href="/glosario">
+              <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.15em", color: "var(--sky)", opacity: 0.7, textTransform: "uppercase" }}>MÓDULO 03</span>
+              <h2>Glosario de aviación</h2>
+              <p>60+ términos explicados: ATC, IFR, VFR, METAR, ILS, ETOPS, squawk y todo lo que necesitás saber.</p>
+              <span className="cardArrow">Módulo 3 →</span>
+            </Link>
+            <Link className="navCard" href="/licencias">
+              <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.15em", color: "var(--sky)", opacity: 0.7, textTransform: "uppercase" }}>MÓDULO 04</span>
+              <h2>Licencias de piloto</h2>
+              <p>De PPL a ATPL: requisitos, horas y costos reales. El camino de cero a capitán de aerolínea en Argentina.</p>
+              <span className="cardArrow">Módulo 4 →</span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* EXPLORAR */}
+      <section className="section sectionSm">
+        <div className="container">
+          <div className="sectionHeader">
+            <div className="sectionLabel">EXPLORAR</div>
             <h2 className="sectionTitle">Todo sobre aviación en un lugar</h2>
           </div>
           <div className="navGrid">
@@ -78,19 +115,24 @@ export default async function HomePage() {
               <span className="cardArrow">Ver récords →</span>
             </Link>
             <Link className="navCard" href="/quiz">
-              <h2>Quiz</h2>
-              <p>Ponete a prueba con 20 preguntas sobre aviones, récords, historia y curiosidades. ¿Qué tanto sabés?</p>
+              <h2>Quiz · 50 preguntas</h2>
+              <p>Ponete a prueba con 50 preguntas y 30 segundos por respuesta. Historia, récords, técnica y más.</p>
               <span className="cardArrow">Jugar →</span>
             </Link>
             <Link className="navCard" href="/radar">
               <h2>Radar en vivo</h2>
-              <p>Tráfico aéreo en tiempo real. Seguí vuelos, altitudes y trayectorias en todo el mundo.</p>
+              <p>Tráfico aéreo en tiempo real. Seguí vuelos, altitudes y velocidades en todo el mundo ahora mismo.</p>
               <span className="cardArrow">Ver radar →</span>
             </Link>
             <Link className="navCard" href="/historia">
               <h2>Historia</h2>
               <p>Desde los hermanos Wright hasta la era de los drones. La historia completa de la aviación.</p>
               <span className="cardArrow">Ver historia →</span>
+            </Link>
+            <Link className="navCard" href="/simulador">
+              <h2>Simulador de vuelo ✈</h2>
+              <p>Volá ahora desde el navegador. GeoFS con terreno satelital real, 20+ aeronaves y modo multijugador. 100% gratis.</p>
+              <span className="cardArrow">Volar →</span>
             </Link>
           </div>
         </div>
